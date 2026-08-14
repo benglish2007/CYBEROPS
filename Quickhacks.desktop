@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Quickhacks
+Comment=Launch system control interface
+Exec=/home/user/Documents/scripts/Quickhacks/cyberops.sh
+Icon=/home/user/Documents/scripts/Quickhacks/quickhack.png
+Terminal=true
+Type=Application
+Categories=System;Network;Utility;
+StartupNotify=false

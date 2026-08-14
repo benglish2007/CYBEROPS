@@ -1,0 +1,72 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  shell:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install ShellCheck
+        run: sudo apt-get update && sudo apt-get install --yes shellcheck
+
+      - name: Check Bash syntax
+        run: bash -n cyberops.sh tests/*.sh
+
+      - name: Run ShellCheck
+        run: shellcheck cyberops.sh tests/*.sh
+
+      - name: Run regression tests
+        run: |
+          for test_script in tests/test_*.sh; do
+            bash "$test_script"
+          done
+
+  compatibility:
+    name: Compatibility (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Ubuntu 22.04 LTS
+            image: ubuntu:22.04
+          - name: Ubuntu 24.04 LTS
+            image: ubuntu:24.04
+          - name: Ubuntu 26.04 LTS
+            image: ubuntu:26.04
+          - name: Debian 12
+            image: debian:12
+          - name: Debian 13
+            image: debian:13
+    container:
+      image: ${{ matrix.image }}
+    steps:
+      - name: Install compatibility baseline
+        run: |
+          apt-get update
+          apt-get install --yes bash coreutils findutils gawk grep sed util-linux
+
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Report runtime
+        run: |
+          . /etc/os-release
+          printf '%s %s\n' "$NAME" "$VERSION_ID"
+          bash --version | head -n 1
+
+      - name: Run syntax and regression tests
+        shell: bash
+        run: |
+          bash -n cyberops.sh tests/*.sh
+          for test_script in tests/test_*.sh; do
+            bash "$test_script"
+          done
