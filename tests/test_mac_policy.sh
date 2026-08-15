@@ -29,6 +29,10 @@ record_result() {
 
 have() { return 0; }
 
+strip_ansi() {
+    sed $'s/\033\[[0-9;]*m//g'
+}
+
 nmcli() {
     case "$*" in
         '-g UUID connection show --active')
@@ -95,7 +99,7 @@ record_result "labels unsupported active profile types without mutation" \
     "$unsupported_result" shown
 
 NMCLI_MODE=empty
-empty_output="$(show_mac_address_policies)"
+empty_output="$(show_mac_address_policies | strip_ansi)"
 record_result "reports when NetworkManager has no active profiles" \
     "$empty_output" "[!] No active NetworkManager connections were found."
 
