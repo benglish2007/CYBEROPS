@@ -78,6 +78,26 @@ done <<<"$banner_output"
 record_result "logo chamber preserves continuous aligned side rails" \
     "$logo_frame_result" aligned
 
+if command -v lolcat >/dev/null 2>&1; then
+    original_have_definition="$(declare -f have)"
+    have() {
+        command -v "$1" >/dev/null 2>&1
+    }
+    rainbow_logo_output="$(render_overdrive_logo)"
+    eval "$original_have_definition"
+    if [[ "$rainbow_logo_output" == *$'\033[38;5;'* ]]; then
+        rainbow_logo_result=present
+    else
+        rainbow_logo_result=missing
+    fi
+    rainbow_logo_expected=present
+else
+    rainbow_logo_result=unavailable
+    rainbow_logo_expected=unavailable
+fi
+record_result "framed logo retains the lolcat rainbow when available" \
+    "$rainbow_logo_result" "$rainbow_logo_expected"
+
 section_output="$(ui_section "CONTROL DECK" "SELECT AN OPERATIONS NODE" | strip_ansi)"
 if [[ "$section_output" == *"CONTROL DECK"* &&
     "$section_output" == *"SELECT AN OPERATIONS NODE"* ]]; then

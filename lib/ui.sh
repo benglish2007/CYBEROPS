@@ -375,11 +375,13 @@ render_overdrive_logo() {
     local -a colored_lines=()
 
     mapfile -t plain_lines < <(emit_cyberops_logo)
-    if have lolcat; then
-        mapfile -t colored_lines < <(emit_cyberops_logo | lolcat)
+    if have lolcat && [[ "$CYBEROPS_NO_COLOR" != "1" ]]; then
+        # The framed logo is captured before it is printed, so lolcat cannot
+        # infer terminal color support from stdout. Force its ANSI palette here.
+        mapfile -t colored_lines < <(emit_cyberops_logo | lolcat --force)
     fi
     while ((${#plain_lines[@]} > 0)) &&
-        [[ -z "${plain_lines[${#plain_lines[@]} - 1]}" ]]; do
+        [[ -z "${plain_lines[${#plain_lines[@]} - 1]//[[:space:]]/}" ]]; do
         unset 'plain_lines[${#plain_lines[@]} - 1]'
         ((${#colored_lines[@]} == 0)) || \
             unset 'colored_lines[${#colored_lines[@]} - 1]'
@@ -420,7 +422,7 @@ banner() {
     if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
         render_overdrive_logo
     elif have figlet; then
-        if have lolcat; then
+        if have lolcat && [[ "$CYBEROPS_NO_COLOR" != "1" ]]; then
             figlet -f slant "CYBEROPS" | lolcat
         else
             printf '%b\n' "$CYAN"
