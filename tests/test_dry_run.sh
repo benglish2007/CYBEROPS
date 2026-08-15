@@ -150,6 +150,10 @@ menu_item() {
     return 0
 }
 
+menu_privileged_item() {
+    return 0
+}
+
 prompt_choice() {
     local variable_name="$1"
     printf -v "$variable_name" '%s' "${vpn_choices[$vpn_choice_index]}"

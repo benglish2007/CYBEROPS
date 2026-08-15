@@ -2,6 +2,26 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 2.10.1 — 2026-08-15
+
+Version 2.10.1 adds clearer navigation and privilege cues throughout the
+control deck.
+
+### Interface Polish
+
+- Gave every `[00]` navigation key a distinct palette color while preserving its text and spacing in no-color mode.
+- Added an aligned, color-assisted `[SUDO]` marker to menu operations whose CYBEROPS command path invokes `sudo`.
+- Added UI and cross-menu regression coverage for navigation styling, no-color-safe privilege text, and the complete audited privileged-operation set.
+
+### Roadmap
+
+- Deferred plugin discovery until CYBEROPS has a concrete extension use case and defined trust requirements; separated package-manager portability into a future evaluation.
+- Recorded deferred live header telemetry for bounded local status and optional, cached external-IP discovery with explicit privacy controls.
+
+### Verification
+
+- Recorded successful manual verification of navigation styling, privilege indicators, menu alignment, and no-color behavior.
+
 ## 2.10 — 2026-08-15
 
 Version 2.10 completes **Roadmap Milestone 10: Read-Only Command Expansion**

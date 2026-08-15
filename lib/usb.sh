@@ -869,9 +869,9 @@ usb_menu() {
     while true; do
         banner
         ui_section "USB OPERATIONS" "REMOVABLE MEDIA // WRITE + WIPE"
-        menu_item 1 "Create bootable USB from ISO" "MEDIA // FLASH"
-        menu_item 2 "Quick reset USB signatures" "MEDIA // FAST CLEAR"
-        menu_item 3 "Wipe / zero-fill USB drive" "MEDIA // DESTROY"
+        menu_privileged_item 1 "Create bootable USB from ISO" "MEDIA // FLASH"
+        menu_privileged_item 2 "Quick reset USB signatures" "MEDIA // FAST CLEAR"
+        menu_privileged_item 3 "Wipe / zero-fill USB drive" "MEDIA // DESTROY"
         menu_item 4 "List removable storage" "MEDIA // SCAN"
         menu_navigation_item 0 "Return to control deck" "NAV // BACK"
 

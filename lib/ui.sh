@@ -56,21 +56,36 @@ ui_section() {
         "$MAGENTA" "$RESET"
 }
 
-menu_item() {
+render_menu_item() {
     local key="$1"
     local label="$2"
     local hint="${3:-}"
+    local key_color="${4:-$CYAN}"
+    local privilege="${5:-}"
 
-    printf '  %b[%02d]%b  %-34s' "$CYAN" "$key" "$RESET" "$label"
+    printf '  %b[%02d]%b  %-31s' "$key_color" "$key" "$RESET" "$label"
+    if [[ "$privilege" == "sudo" ]]; then
+        printf '%b[SUDO]%b ' "$YELLOW" "$RESET"
+    else
+        printf '       '
+    fi
     if [[ -n "$hint" ]]; then
         printf ' %b%s%b' "$DIM" "$hint" "$RESET"
     fi
     printf '\n'
 }
 
+menu_item() {
+    render_menu_item "$1" "$2" "${3:-}" "$CYAN"
+}
+
+menu_privileged_item() {
+    render_menu_item "$1" "$2" "${3:-}" "$CYAN" sudo
+}
+
 menu_navigation_item() {
     printf '\n'
-    menu_item "$@"
+    render_menu_item "$1" "$2" "${3:-}" "$MAGENTA"
 }
 
 prompt_choice() {

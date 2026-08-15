@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.10 — Milestone 10 complete.**
+Current release: **v2.10.1 — Milestone 10 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -213,10 +213,29 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 
 - [ ] Build and validate a native `.deb` without replacing the supported Makefile path prematurely.
 
-## Planned Milestone 12: Controlled Extensibility
+## Pre-Milestone 11 Interface Polish
 
-- [ ] Design constrained plugin discovery for experimental modules.
-- [ ] Evaluate additional package managers only where CI can enforce portability.
+- [x] Give every `[00]` Exit Interface and Return to control deck key a distinct navigation color.
+- [x] Preserve navigation separation and readability when color is disabled.
+- [x] Add a visible `[SUDO]` marker to every audited menu operation that invokes `sudo`.
+- [x] Use a text marker in addition to color so privilege requirements remain visible with `NO_COLOR` and `--no-color`.
+- [x] Keep normal and privilege-marked rows aligned across the control deck.
+- [x] Add UI and cross-menu regression coverage for navigation color and privilege-marker consistency.
+
+### Manual verification — 2026-08-15
+
+- [x] Verified distinct `[00]` navigation styling across the control deck.
+- [x] Verified `[SUDO]` indicators, row alignment, and no-color readability.
+
+## Deferred: Controlled Extensibility and Portability
+
+Plugin discovery is intentionally postponed. CYBEROPS will retain its explicit,
+reviewed module list until there is a concrete need for third-party or optional
+feature packages and an appropriate trust model.
+
+- [ ] Reconsider constrained plugin discovery only when a real extension use case exists.
+- [ ] Treat additional package-manager and distribution support as a separate future evaluation.
+- [ ] Claim portability only where CI can enforce the complete runtime and installer contract.
 
 ## Deferred Ideas Backlog
 
@@ -234,11 +253,16 @@ implementation schedule.
 - [ ] Document the difference between a temporary current-session change, connection-level randomization, and restoration of the permanent address.
 - [ ] Add mocked lifecycle and rollback tests before enabling persistent network configuration changes.
 
-### Navigation Color Emphasis
+### Live Header Telemetry
 
-- [ ] Give the `[00]` Exit Interface and Return to control deck key a distinct color in every menu.
-- [ ] Preserve readable alignment and a clear no-color representation when `NO_COLOR` or `--no-color` is active.
-- [ ] Add UI regression coverage for consistent navigation-key styling across all menus.
+- [ ] Add a compact header status area for useful session data such as local time, primary interface, local address, and connectivity state.
+- [ ] Keep local telemetry fast, bounded, and non-blocking so menus remain responsive when networking or system services are unavailable.
+- [ ] Make external/public IP lookup explicitly opt-in because it requires contacting an internet service and discloses network activity.
+- [ ] Cache external results for a documented interval and apply a short timeout rather than querying on every menu redraw.
+- [ ] Clearly distinguish local and public addresses and handle VPN, multiple-interface, IPv4, and IPv6 environments without implying a single address is authoritative.
+- [ ] Allow individual header fields or the entire live-telemetry area to be disabled through configuration.
+- [ ] Preserve a clean layout in narrow terminals and when color is disabled.
+- [ ] Add mocked tests for offline, timeout, VPN, multiple-interface, cached, and disabled states.
 
 ## Release Gate
 

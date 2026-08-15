@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2034,SC2329 # Mocks are invoked indirectly by sourced menu code.
+# shellcheck disable=SC2034,SC2317,SC2329 # Mocks are invoked indirectly by sourced menu code.
 
 set -uo pipefail
 
@@ -30,6 +30,12 @@ record_result() {
 banner() { :; }
 ui_section() { :; }
 menu_item() {
+    return 0
+}
+menu_privileged_item() {
+    return 0
+}
+menu_navigation_item() {
     if [[ "$1" == "0" && "$2" == "Return to control deck" ]]; then
         return_item_seen=1
     fi

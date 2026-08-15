@@ -53,8 +53,8 @@ vpn_menu() {
         banner
         ui_section "VPN CONTROL" "ENCRYPTED LINKS // TUNNEL CONTROL"
         menu_item 1 "Tailscale status" "TAILNET // STATUS"
-        menu_item 2 "Tailscale up" "TAILNET // CONNECT"
-        menu_item 3 "Tailscale down" "TAILNET // DISCONNECT"
+        menu_privileged_item 2 "Tailscale up" "TAILNET // CONNECT"
+        menu_privileged_item 3 "Tailscale down" "TAILNET // DISCONNECT"
         menu_item 4 "ExpressVPN status" "VPN // STATUS"
         menu_item 5 "ExpressVPN connect" "VPN // CONNECT"
         menu_item 6 "ExpressVPN disconnect" "VPN // DISCONNECT"

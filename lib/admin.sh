@@ -54,13 +54,13 @@ admin_menu() {
     while true; do
         banner
         ui_section "ADMIN OPS" "SYSTEM CONTROL // PACKAGES + SERVICES"
-        menu_item 1 "Update package lists" "APT // SYNC"
-        menu_item 2 "Upgrade installed packages" "APT // UPGRADE"
+        menu_privileged_item 1 "Update package lists" "APT // SYNC"
+        menu_privileged_item 2 "Upgrade installed packages" "APT // UPGRADE"
         menu_item 3 "Disk usage" "STORAGE // TELEMETRY"
         menu_item 4 "Memory usage" "MEMORY // TELEMETRY"
         menu_item 5 "Active systemd services" "SERVICES // ACTIVE"
         menu_item 6 "Failed systemd services" "SERVICES // FAILED"
-        menu_item 7 "Reboot system" "POWER // RESTART"
+        menu_privileged_item 7 "Reboot system" "POWER // RESTART"
         menu_navigation_item 0 "Return to control deck" "NAV // BACK"
 
         prompt_choice choice "ADMIN"

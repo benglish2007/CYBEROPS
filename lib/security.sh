@@ -26,12 +26,12 @@ cyber_defense_menu() {
     while true; do
         banner
         ui_section "CYBER DEFENSE" "DEFENSIVE GRID // FIREWALL + THREAT SCANS"
-        menu_item 1 "UFW status" "FIREWALL // STATUS"
-        menu_item 2 "Enable UFW" "FIREWALL // ENABLE"
-        menu_item 3 "Disable UFW" "FIREWALL // DISABLE"
+        menu_privileged_item 1 "UFW status" "FIREWALL // STATUS"
+        menu_privileged_item 2 "Enable UFW" "FIREWALL // ENABLE"
+        menu_privileged_item 3 "Disable UFW" "FIREWALL // DISABLE"
         menu_item 4 "ClamAV scan home directory" "MALWARE // SCAN"
-        menu_item 5 "rkhunter check" "ROOTKIT // SCAN"
-        menu_item 6 "Recent failed SSH logins" "AUTH // EVENTS"
+        menu_privileged_item 5 "rkhunter check" "ROOTKIT // SCAN"
+        menu_privileged_item 6 "Recent failed SSH logins" "AUTH // EVENTS"
         menu_navigation_item 0 "Return to control deck" "NAV // BACK"
 
         prompt_choice choice "DEFENSE"

@@ -15,7 +15,7 @@
 # Callers:
 #   This file must be sourced by cyberops.sh; it is not a standalone command.
 
-VERSION="2.10"
+VERSION="2.10.1"
 
 CYBEROPS_CONFIG_FILE="${CYBEROPS_CONFIG_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/cyberops/config}"
 CYBEROPS_CONFIG_LOADED=0

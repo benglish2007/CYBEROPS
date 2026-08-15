@@ -4,6 +4,11 @@ CYBEROPS does not run the entire process as root. Individual operations request
 `sudo` only when required. Read the confirmation and command preview before
 approving any state change.
 
+Interactive menu rows marked `[SUDO]` invoke `sudo` in their CYBEROPS command
+path. The marker is always printed as text, with color used only as an
+additional cue. Operations without the marker may still depend on user,
+device, Docker-socket, or client-specific permissions documented below.
+
 | Area | Operation | Privilege | Primary side effect |
 | --- | --- | --- | --- |
 | Installer | `make install-deps` | Root (`sudo`) | Updates APT metadata and installs optional packages before runtime use |

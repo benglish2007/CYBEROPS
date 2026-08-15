@@ -3,7 +3,7 @@
   <h1>CYBEROPS TERMINAL</h1>
   <p><strong><code>NEON GRID // UNIFIED LINUX OPERATIONS CONSOLE</code></strong></p>
 
-  [![Release](https://img.shields.io/badge/RELEASE-v2.10-ff2d95?style=for-the-badge)](CHANGELOG.md)
+  [![Release](https://img.shields.io/badge/RELEASE-v2.10.1-ff2d95?style=for-the-badge)](CHANGELOG.md)
   [![Bash](https://img.shields.io/badge/SHELL-BASH_5+-00e5ff?style=for-the-badge&logo=gnubash&logoColor=050816)](cyberops.sh)
   [![Validate](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml)
   [![Platform](https://img.shields.io/badge/PLATFORM-UBUNTU_%2F_DEBIAN-8b5cf6?style=for-the-badge&logo=linux&logoColor=white)](COMPATIBILITY.md)
@@ -22,12 +22,12 @@
 
 ## `//` CURRENT BUILD
 
-### CYBEROPS Terminal v2.10
+### CYBEROPS Terminal v2.10.1
 
-Version 2.10 completes Read-Only Command Expansion with scriptable system,
-storage, network, service, socket, and VPN telemetry that reuses the control
-deck's safe inspection helpers. See the [changelog](CHANGELOG.md) and
-[roadmap](ROADMAP.md) for release history and planned work.
+Version 2.10.1 adds distinct navigation styling and aligned `[SUDO]` markers
+while retaining the Read-Only Command Expansion delivered in v2.10. See the
+[changelog](CHANGELOG.md) and [roadmap](ROADMAP.md) for release history and
+planned work.
 
 ---
 
@@ -100,7 +100,10 @@ sudo make uninstall PREFIX=/opt/cyberops
 | `[06]` | Docker Ops | Selective Compose maintenance, recovery evidence, and status |
 | `[07]` | USB Operations | ISO writing, signature reset, inspection, and zero-fill |
 
-Every submenu also reserves `[00]` for **Return to control deck**.
+Every submenu also reserves `[00]` for **Return to control deck**. Navigation
+keys use a distinct palette color, and operations whose CYBEROPS command path
+invokes elevated privileges display an aligned `[SUDO]` marker. Both cues remain
+readable when color is disabled.
 
 Operations check their required commands before starting and report missing
 dependencies together. State-changing actions provide confirmation and support
@@ -261,7 +264,7 @@ CYBEROPS is released under the [MIT License](LICENSE).
 
 <div align="center">
 
-  **`CYBEROPS TERMINAL v2.10 // LINK STANDBY`**
+  **`CYBEROPS TERMINAL v2.10.1 // LINK STANDBY`**
 
   *One terminal. One toolkit. Linux operations under control.*
 

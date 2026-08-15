@@ -50,6 +50,7 @@ choice_index=0
 banner() { :; }
 ui_section() { :; }
 menu_item() { :; }
+menu_privileged_item() { :; }
 menu_navigation_item() { :; }
 pause() { :; }
 require_commands() { return 0; }

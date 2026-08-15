@@ -47,7 +47,7 @@ have() {
 DRY_RUN=0
 banner_output="$(banner | strip_ansi)"
 if [[ "$banner_output" == *"CYBEROPS // NEON GRID"* &&
-    "$banner_output" == *"BUILD 2.10"* &&
+    "$banner_output" == *"BUILD 2.10.1"* &&
     "$banner_output" == *"NODE ONLINE"* ]]; then
     banner_result=themed
 else
@@ -85,7 +85,31 @@ else
 fi
 record_result "menu nodes include zero-padded keys and subsystem tags" "$item_result" aligned
 
-navigation_output="$(menu_navigation_item 0 "Exit Interface" "SESSION // DISCONNECT" | strip_ansi)"
+privileged_output="$(menu_privileged_item 2 "Upgrade packages" "APT // UPGRADE" | strip_ansi)"
+if [[ "$privileged_output" == *"[02]"* && "$privileged_output" == *"[SUDO]"* &&
+    "$privileged_output" == *"APT // UPGRADE"* ]]; then
+    privilege_result=visible
+else
+    privilege_result=missing
+fi
+record_result "privileged menu rows include a text-safe sudo marker" \
+    "$privilege_result" visible
+
+if [[ "$item_output" != *"[SUDO]"* ]]; then
+    ordinary_privilege_result=clean
+else
+    ordinary_privilege_result=marked
+fi
+record_result "ordinary menu rows omit the sudo marker" "$ordinary_privilege_result" clean
+
+saved_magenta="$MAGENTA"
+saved_cyan="$CYAN"
+MAGENTA='<NAV>'
+CYAN='<ITEM>'
+navigation_colored_output="$(menu_navigation_item 0 "Exit Interface" "SESSION // DISCONNECT")"
+MAGENTA="$saved_magenta"
+CYAN="$saved_cyan"
+navigation_output="$(printf '%s\n' "$navigation_colored_output" | strip_ansi | sed 's/<NAV>//g')"
 if [[ "$navigation_output" == $'\n  [00]'* &&
     "$navigation_output" == *"Exit Interface"* ]]; then
     navigation_result=separated
@@ -94,6 +118,14 @@ else
 fi
 record_result "navigation rows are visually separated from operations" \
     "$navigation_result" separated
+if [[ "$navigation_colored_output" == *'<NAV>[00]'* &&
+    "$navigation_colored_output" != *'<ITEM>[00]'* ]]; then
+    navigation_color_result=distinct
+else
+    navigation_color_result=shared
+fi
+record_result "navigation keys use a distinct palette color" \
+    "$navigation_color_result" distinct
 
 prompt_result=""
 prompt_choice prompt_result "CYBEROPS" <<<"7" >/dev/null
