@@ -5,7 +5,7 @@
 # Inputs:
 #   Runtime state plus shared core and UI helpers loaded by cyberops.sh.
 # Outputs:
-#   Device discovery, identity, mount, imaging, and zero-fill results.
+#   Device discovery, identity, mount, imaging, quick-reset, and zero-fill results.
 # Return statuses:
 #   Menu functions contain operation failures and return control to their caller.
 # Side effects:
@@ -390,6 +390,50 @@ zero_fill_device() {
     esac
 }
 
+quick_reset_nodes() {
+    local target="$1"
+    local node
+    local i
+    local -a nodes=()
+
+    mapfile -t nodes < <(
+        lsblk -ln -o PATH,TYPE -- "$target" 2>/dev/null |
+            awk '$2 == "disk" || $2 == "part" { print $1 }'
+    )
+
+    # Erase child signatures before the disk's partition table makes those
+    # child device nodes disappear from the kernel's view.
+    for ((i = ${#nodes[@]} - 1; i >= 0; i--)); do
+        node="${nodes[$i]}"
+        [[ "$node" == "$target" || "$node" == "$target"[0-9]* ||
+            "$node" == "$target"p[0-9]* ]] || {
+            report_error \
+                "REFUSING: unexpected device node discovered during quick reset." \
+                "Reconnect the device and select it again."
+            return 1
+        }
+        printf '%s\n' "$node"
+    done
+
+    ((${#nodes[@]} > 0)) || {
+        report_error \
+            "Unable to enumerate the selected device for quick reset." \
+            "Reconnect the device, verify it with lsblk, and select it again."
+        return 1
+    }
+}
+
+quick_reset_device() {
+    local target="$1"
+    local reset_node_output
+    local -a reset_nodes=()
+
+    reset_node_output="$(quick_reset_nodes "$target")" || return 1
+    mapfile -t reset_nodes <<<"$reset_node_output"
+
+    sudo wipefs --all -- "${reset_nodes[@]}"
+}
+
 validate_iso() {
     local iso="$1"
 
@@ -556,8 +600,132 @@ build_bootable_usb() {
     pause
 }
 
+usb_quick_reset() {
+    local final_target
+    local target
+    local target_identity
+    local reset_node_output
+    local -a reset_nodes=()
+
+    banner
+    ui_section "USB QUICK RESET" "REMOVABLE MEDIA // SIGNATURE CLEAR"
+    warn_destructive
+    echo "This function removes detected filesystem, RAID, and partition-table signatures."
+    printf '%bTHIS IS NOT A DATA WIPE. FILE CONTENTS MAY REMAIN RECOVERABLE.%b\n' \
+        "$YELLOW" "$RESET"
+    echo
+
+    if ! require_commands readlink lsblk findmnt awk sed sort paste sudo umount wipefs sync; then
+        pause
+        return
+    fi
+
+    if ! select_usb_device; then
+        pause
+        return
+    fi
+
+    target="$SELECTED_USB_DEVICE"
+    target_identity="$SELECTED_USB_IDENTITY"
+
+    if ! validate_usb_target "$target" "$target_identity"; then
+        pause
+        return
+    fi
+
+    echo
+    echo "TARGET: $target"
+    if ! run_checked \
+        "Selected-device detail query" \
+        "Reconnect the device and select it again." \
+        lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINTS,MODEL "$target"; then
+        pause
+        return
+    fi
+    echo
+    printf '%bFILESYSTEM AND PARTITION SIGNATURES WILL BE REMOVED.%b\n' "$RED" "$RESET"
+    echo "Existing file data will not be overwritten and may remain recoverable."
+
+    if is_dry_run; then
+        reset_node_output="$(quick_reset_nodes "$target")" || {
+            pause
+            return
+        }
+        mapfile -t reset_nodes <<<"$reset_node_output"
+        echo
+        preview_device_unmounts "$target"
+        preview_command \
+            "Remove detected signatures from $target and its partitions" \
+            sudo wipefs --all -- "${reset_nodes[@]}"
+        preview_command "Flush filesystem buffers" sync
+        report_success "USB quick-reset preview completed; no device state was changed."
+        pause
+        return
+    fi
+
+    if ! confirm_yes "Type YES to continue: "; then
+        echo "Operation cancelled."
+        pause
+        return
+    fi
+
+    read -r -p "For final confirmation, type the device path exactly ($target): " final_target
+
+    if [[ "$final_target" != "$target" ]]; then
+        printf '%bDevice confirmation did not match. Aborting.%b\n' "$YELLOW" "$RESET"
+        pause
+        return
+    fi
+
+    if ! validate_usb_target "$target" "$target_identity"; then
+        pause
+        return
+    fi
+
+    if ! run_checked \
+        "Target filesystem unmount" \
+        "Close applications using the device, unmount it, and retry." \
+        unmount_device_filesystems "$target"; then
+        pause
+        return
+    fi
+
+    if ! validate_usb_target "$target" "$target_identity" 1; then
+        pause
+        return
+    fi
+
+    echo
+    echo "Removing signatures from $target ..."
+    begin_operation \
+        "USB quick reset on $target" \
+        "The target may have only some signatures removed; inspect it before reuse."
+
+    if run_checked \
+        "USB quick reset" \
+        "Inspect the target and repeat the quick reset before reuse; some signatures may remain." \
+        quick_reset_device "$target"; then
+        if run_checked \
+            "Filesystem buffer sync" \
+            "Keep the USB connected and run 'sync' again before ejecting it." \
+            sync; then
+            end_operation
+            echo
+            report_success "USB quick reset completed."
+            report_warning "This removed signatures only; it did not overwrite existing file data."
+        else
+            end_operation
+        fi
+    else
+        end_operation
+    fi
+
+    pause
+}
+
 usb_zero_fill() {
     local count_mode
+    local final_target
     local target
     local target_identity
     local target_bytes
@@ -702,16 +870,18 @@ usb_menu() {
         banner
         ui_section "USB OPERATIONS" "REMOVABLE MEDIA // WRITE + WIPE"
         menu_item 1 "Create bootable USB from ISO" "MEDIA // FLASH"
-        menu_item 2 "Wipe / zero-fill USB drive" "MEDIA // DESTROY"
-        menu_item 3 "List removable storage" "MEDIA // SCAN"
-        menu_item 4 "Return to control deck" "NAV // BACK"
+        menu_item 2 "Quick reset USB signatures" "MEDIA // FAST CLEAR"
+        menu_item 3 "Wipe / zero-fill USB drive" "MEDIA // DESTROY"
+        menu_item 4 "List removable storage" "MEDIA // SCAN"
+        menu_item 5 "Return to control deck" "NAV // BACK"
 
         prompt_choice choice "USB"
 
         case "$choice" in
             1) build_bootable_usb ;;
-            2) usb_zero_fill ;;
-            3)
+            2) usb_quick_reset ;;
+            3) usb_zero_fill ;;
+            4)
                 echo
                 if require_commands lsblk; then
                     run_checked \
@@ -721,7 +891,7 @@ usb_menu() {
                 fi
                 pause
                 ;;
-            4) return ;;
+            5) return ;;
             *) invalid_selection ;;
         esac
     done

@@ -96,6 +96,18 @@ record_result "falls back to iflag=count_bytes when required" \
     "${SUDO_CALLS[*]}" \
     "dd if=/dev/zero of=/dev/sdb bs=16M count=31994150912 iflag=count_bytes status=progress conv=fsync"
 
+SUDO_CALLS=()
+MOCK_LAYOUT=disk-and-partition
+if quick_reset_device /dev/sdb >/dev/null 2>&1; then
+    reset_result=success
+else
+    reset_result=failure
+fi
+record_result "quick reset succeeds for an enumerated target" "$reset_result" success
+record_result "quick reset clears child signatures before the disk table" \
+    "${SUDO_CALLS[*]}" \
+    "wipefs --all -- /dev/sdb1 /dev/sdb"
+
 printf '1..%d\n' "$tests_run"
 
 if ((tests_failed > 0)); then

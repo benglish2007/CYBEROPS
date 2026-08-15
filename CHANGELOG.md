@@ -2,6 +2,17 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 2.4.1 — 2026-08-15
+
+Version 2.4.1 adds a fast, explicitly non-secure signature-reset workflow for
+removable media while retaining the complete zero-fill operation.
+
+### USB Operations
+
+- Added a separately labeled Quick Reset operation that removes detected filesystem, RAID, and partition-table signatures without claiming to overwrite or securely erase existing file data.
+- Reused protected-disk detection, device-identity revalidation, unmount verification, dry-run previews, and two-step destructive confirmation for USB Quick Reset.
+- Recorded successful manual verification on disposable removable media.
+
 ## 2.4 — 2026-08-15
 
 Version 2.4 completes **Roadmap Milestone 4: Code Structure and Quality** with

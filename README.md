@@ -5,7 +5,7 @@
 
   <p><strong><code>NEON GRID // UNIFIED LINUX OPERATIONS CONSOLE</code></strong></p>
 
-  [![Release](https://img.shields.io/badge/RELEASE-v2.4-ff2d95?style=for-the-badge)](CHANGELOG.md)
+  [![Release](https://img.shields.io/badge/RELEASE-v2.4.1-ff2d95?style=for-the-badge)](CHANGELOG.md)
   [![Bash](https://img.shields.io/badge/SHELL-BASH_5+-00e5ff?style=for-the-badge&logo=gnubash&logoColor=050816)](cyberops.sh)
   [![Validate](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml)
   [![Platform](https://img.shields.io/badge/PLATFORM-UBUNTU_%2F_DEBIAN-8b5cf6?style=for-the-badge&logo=linux&logoColor=white)](COMPATIBILITY.md)
@@ -32,16 +32,16 @@ safety, reliability, packaging, and usability work is tracked in the
 
 ## `//` CURRENT BUILD
 
-### CYBEROPS Terminal v2.4
+### CYBEROPS Terminal v2.4.1
 
-Version 2.4 completes the Code Structure and Quality milestone. CYBEROPS now
-uses a thin, location-independent launcher with focused runtime, core, UI, and
-feature modules; documented contracts; expanded menu and failure-path tests;
-and enforced ShellCheck and `shfmt` quality gates. It builds on the Docker
-Operations work in version 2.3, the compatibility fixes in version 2.2.3,
-native path completion in version 2.2.2, the neon control deck in version
-2.2.1, the Milestone 2 reliability work in version 2.2, and the safety
-foundation in version 2.1. Together, these releases:
+Version 2.4.1 adds a fast USB Quick Reset that removes detected storage
+signatures while clearly warning that existing data may remain recoverable.
+Version 2.4 completed the Code Structure and Quality milestone with a thin,
+location-independent launcher; focused runtime, core, UI, and feature modules;
+documented contracts; expanded menu and failure-path tests; and enforced
+ShellCheck and `shfmt` quality gates. It builds on the Docker Operations work
+in version 2.3 and the earlier reliability and safety releases. Together,
+these releases:
 
 * Hardens destructive USB operations with device identity revalidation and protected-system-disk detection
 * Correctly handles whole-disk and partition-mounted filesystems
@@ -61,6 +61,7 @@ foundation in version 2.1. Together, these releases:
 * Loads focused Bash modules through a small, fail-closed launcher
 * Documents module contracts and validates menu dispatch and loader failures
 * Enforces consistent formatting with `shfmt` and explicit `printf` output
+* Offers a separately confirmed USB signature reset without misrepresenting it as a data wipe
 
 Version 2.0 introduced the integrated Docker Maintenance and USB Operations
 modules. Consult the [transmission log](CHANGELOG.md) for the full release
@@ -479,7 +480,7 @@ Dry-run coverage includes:
 * APT updates, upgrades, and dependency installation
 * Reboot, firewall, VPN, DNS, process, file-shred, and MAC-address changes
 * Docker image pulls, stack recreation, and image pruning
-* USB filesystem unmounts, bootable-image writes, zero-fill, and buffer sync
+* USB filesystem unmounts, bootable-image writes, signature resets, zero-fill, and buffer sync
 
 No state-changing command is executed while dry-run mode is enabled. Normal
 confirmation and validation steps may still appear where they help produce an
@@ -496,6 +497,7 @@ Version 2.0 introduces a dedicated USB Operations module.
 It combines:
 
 * Bootable USB creation
+* USB quick reset
 * USB wipe / zero-fill
 * Removable-storage inspection
 
@@ -617,7 +619,32 @@ sync
 
 ---
 
-### `05 // WIPE / ZERO-FILL`
+### `05 // QUICK RESET`
+
+Quick Reset removes signatures detected on the selected disk and its
+partitions using:
+
+```bash
+sudo wipefs --all -- /dev/sdX1 /dev/sdX
+```
+
+CYBEROPS unmounts the selected device, revalidates its recorded identity, and
+clears child-partition signatures before removing the disk's partition table.
+The operation normally completes in seconds and is useful when preparing media
+for repartitioning or a new filesystem.
+
+> [!WARNING]
+> Quick Reset is not a data wipe. It removes recognized filesystem, RAID, and
+> partition-table signatures, but does not overwrite file contents. Existing
+> data may remain recoverable until it is overwritten.
+
+Quick Reset requires both an explicit `YES` and an exact device-path
+confirmation. Full zero-fill remains available when every addressable byte
+should be overwritten.
+
+---
+
+### `06 // WIPE / ZERO-FILL`
 
 CYBEROPS can zero-fill a selected removable disk.
 
@@ -660,13 +687,13 @@ This operation permanently destroys the existing filesystem and data on the sele
 
 ## `//` CONTROL DECK
 
-CYBEROPS v2.4 presents the following main interface:
+CYBEROPS v2.4.1 presents the following main interface:
 
 ```text
 ╔══[ CYBEROPS // NEON GRID ]══════════════════[ NODE ONLINE ]══╗
                          CYBEROPS
 ╚══════════════════════════════════════════════════════════════╝
-BUILD 2.4  //  UNIFIED LINUX OPERATIONS CONSOLE  //  SESSION ACTIVE
+BUILD 2.4.1  //  UNIFIED LINUX OPERATIONS CONSOLE  //  SESSION ACTIVE
 
 ╭─[ CONTROL DECK ]──────────────────────────────────────────────
 │ SELECT AN OPERATIONS NODE
@@ -964,7 +991,7 @@ See the repository's `LICENSE` file for licensing information.
 
 <div align="center">
 
-  **`CYBEROPS TERMINAL v2.4 // LINK STANDBY`**
+  **`CYBEROPS TERMINAL v2.4.1 // LINK STANDBY`**
 
   *One terminal. One toolkit. Linux operations under control.*
 
