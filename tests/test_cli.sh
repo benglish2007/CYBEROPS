@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2317,SC2329 # Command helpers are dispatched indirectly by cyberops_main.
 
 set -uo pipefail
 
@@ -24,7 +25,7 @@ record_result() {
 }
 
 version_output="$(bash "$LAUNCHER" --version)"
-record_result "version option prints the release" "$version_output" "CYBEROPS Terminal 2.9.2"
+record_result "version option prints the release" "$version_output" "CYBEROPS Terminal 2.10"
 
 help_output="$(bash "$LAUNCHER" --help)"
 if [[ "$help_output" == *"Usage:"* && "$help_output" == *"--no-color"* &&
@@ -81,6 +82,43 @@ record_result "info command dispatches read-only host telemetry" "$info_output" 
 show_docker_status() { printf 'DOCKER_STATUS\n'; }
 docker_output="$(cyberops_main docker status)"
 record_result "docker status command dispatches read-only telemetry" "$docker_output" DOCKER_STATUS
+
+show_local_disk_usage() { printf 'DISK_STATUS\n'; }
+show_memory_usage() { printf 'MEMORY_STATUS\n'; }
+show_running_services() { printf 'SERVICE_STATUS\n'; }
+show_failed_services() { printf 'FAILURE_STATUS\n'; }
+show_storage_devices() { printf 'STORAGE_STATUS\n'; }
+show_network_interfaces() { printf 'INTERFACE_STATUS\n'; }
+show_routing_table() { printf 'ROUTE_STATUS\n'; }
+show_listening_sockets() { printf 'SOCKET_STATUS\n'; }
+show_vpn_status() { printf 'VPN_STATUS\n'; }
+
+command_cases=(
+    "system disk|DISK_STATUS"
+    "system memory|MEMORY_STATUS"
+    "system services|SERVICE_STATUS"
+    "system failures|FAILURE_STATUS"
+    "storage devices|STORAGE_STATUS"
+    "network interfaces|INTERFACE_STATUS"
+    "network routes|ROUTE_STATUS"
+    "network sockets|SOCKET_STATUS"
+    "vpn status|VPN_STATUS"
+)
+for command_case in "${command_cases[@]}"; do
+    command_text="${command_case%%|*}"
+    expected_output="${command_case#*|}"
+    read -r -a command_parts <<<"$command_text"
+    command_output="$(cyberops_main "${command_parts[@]}")"
+    record_result "dispatches read-only '$command_text' telemetry" \
+        "$command_output" "$expected_output"
+done
+
+show_memory_usage() { return 7; }
+set +e
+cyberops_main system memory >/dev/null
+telemetry_failure_status=$?
+set -e
+record_result "preserves telemetry command failure status" "$telemetry_failure_status" 7
 
 set +e
 unknown_command_output="$(cyberops_main not-a-command 2>&1)"

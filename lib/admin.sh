@@ -24,6 +24,30 @@ show_local_disk_usage() {
         df -lhT
 }
 
+show_memory_usage() {
+    require_commands free || return 1
+    run_checked \
+        "Memory usage query" \
+        "Verify procfs is mounted and readable." \
+        free -h
+}
+
+show_running_services() {
+    require_commands systemctl || return 1
+    run_checked \
+        "Running-service query" \
+        "Verify systemd is the active service manager." \
+        systemctl --type=service --state=running --no-pager
+}
+
+show_failed_services() {
+    require_commands systemctl || return 1
+    run_checked \
+        "Failed-service query" \
+        "Verify systemd is the active service manager." \
+        systemctl --failed --no-pager
+}
+
 admin_menu() {
     local choice=""
 
@@ -70,30 +94,15 @@ admin_menu() {
                 pause
                 ;;
             4)
-                if require_commands free; then
-                    run_checked \
-                        "Memory usage query" \
-                        "Verify procfs is mounted and readable." \
-                        free -h
-                fi
+                show_memory_usage
                 pause
                 ;;
             5)
-                if require_commands systemctl; then
-                    run_checked \
-                        "Running-service query" \
-                        "Verify systemd is the active service manager." \
-                        systemctl --type=service --state=running --no-pager
-                fi
+                show_running_services
                 pause
                 ;;
             6)
-                if require_commands systemctl; then
-                    run_checked \
-                        "Failed-service query" \
-                        "Verify systemd is the active service manager." \
-                        systemctl --failed --no-pager
-                fi
+                show_failed_services
                 pause
                 ;;
             7)

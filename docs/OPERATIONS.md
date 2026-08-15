@@ -9,6 +9,11 @@ approving any state change.
 | Installer | `make install-deps` | Root (`sudo`) | Updates APT metadata and installs optional packages before runtime use |
 | Support | Configuration and operation-log inspection | User | Reads CYBEROPS-owned settings or private structured events |
 | Support | Diagnostics export | User | Creates a new mode-`600`, privacy-filtered archive; never overwrites |
+| Command channel | `system disk`, `system memory` | User | Read-only local filesystem, memory, and swap telemetry |
+| Command channel | `system services`, `system failures` | User | Read-only systemd unit telemetry with paging disabled |
+| Command channel | `storage devices` | User | Read-only block-device names, sizes, filesystems, mounts, models, and transport |
+| Command channel | `network interfaces`, `network routes`, `network sockets` | User | Read-only local addresses, routes, and listening sockets; does not contact an external service |
+| Command channel | `vpn status` | User | Queries local status from installed Tailscale and/or ExpressVPN clients |
 | Admin | Update or upgrade packages | `sudo` | Changes package metadata or installed packages |
 | Admin | Local filesystem, memory, and service status | User; some details may be restricted | Read-only telemetry; Disk Usage excludes remote mounts |
 | Admin | Reboot | `sudo` | Terminates the session and restarts the host |
@@ -39,6 +44,15 @@ approving any state change.
 `DRY_RUN=1` prevents state-changing commands from executing and prints their
 shell-escaped form. Discovery, validation, dependency checks, and other
 read-only queries still run so previews describe real targets.
+
+## Non-interactive telemetry boundary
+
+Milestone 10 command channels reuse the same read-only helpers as the
+interactive menus. They never enable services, change networking, install
+packages, scan external hosts, or request a public IP address. Commands preserve
+dependency and query failure statuses for scripts. Storage, address, route,
+socket, service, and VPN output can still contain locally sensitive system
+details; review it before sharing.
 
 ## Failure and interruption behavior
 

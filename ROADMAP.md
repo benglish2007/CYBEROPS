@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.9.2 — Milestone 9 complete.**
+Current release: **v2.10 — Milestone 10 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -186,9 +186,28 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [x] Verified ShellCheck, formatting, all regression tests, and all five compatibility jobs in GitHub Actions.
 - [x] Verified GitHub CLI keyring authentication and Release API access.
 
-## Planned Milestone 10: Read-Only Command Expansion
+## Milestone 10: Read-Only Command Expansion
 
-- [ ] Expose additional safe control-deck telemetry through non-interactive commands.
+- [x] Expose local disk, memory, active-service, and failed-unit telemetry.
+- [x] Expose block-device telemetry through a dedicated storage command.
+- [x] Expose local interface, route, and listening-socket telemetry.
+- [x] Expose combined status for installed supported VPN clients.
+- [x] Reuse the same read-only helpers between menus and command channels.
+- [x] Preserve dependency and operation failure statuses for automation.
+- [x] Keep public-IP lookup, privileged firewall inspection, and every mutation outside the new command surface.
+- [x] Add dispatch, exact-command, missing-client, and failure-status regression coverage.
+- [x] Document privilege, privacy, and external-network boundaries.
+
+### Manual verification — 2026-08-15
+
+- [x] Verified every new command returns directly without opening the interactive control deck.
+- [x] Verified local disk usage remains responsive with remote mounts excluded.
+- [x] Verified service telemetry does not open a pager.
+- [x] Verified network commands remain local and read-only.
+- [x] Verified supported VPN-client status reporting.
+- [x] Verified the new command channels do not request `sudo` or change system state.
+- [x] Verified the corresponding interactive menu operations still work.
+- [x] Verified invalid command combinations return status 2 with usage guidance.
 
 ## Planned Milestone 11: Native Debian Packaging
 
@@ -198,6 +217,28 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 
 - [ ] Design constrained plugin discovery for experimental modules.
 - [ ] Evaluate additional package managers only where CI can enforce portability.
+
+## Deferred Ideas Backlog
+
+These ideas are recorded for future design and are not part of the current
+implementation schedule.
+
+### Persistent MAC Address Controls
+
+- [ ] Offer an opt-in mode that changes the MAC address whenever a selected network connection activates.
+- [ ] Provide explicit enable, disable, and current-status controls for automatic MAC changes.
+- [ ] Preserve and clearly identify the interface's original/permanent hardware MAC address.
+- [ ] Provide a confirmed operation that restores the original MAC address.
+- [ ] Define behavior per interface or connection rather than silently changing every network device.
+- [ ] Detect unsupported network managers and interfaces, fail safely, and preserve connectivity on configuration errors.
+- [ ] Document the difference between a temporary current-session change, connection-level randomization, and restoration of the permanent address.
+- [ ] Add mocked lifecycle and rollback tests before enabling persistent network configuration changes.
+
+### Navigation Color Emphasis
+
+- [ ] Give the `[00]` Exit Interface and Return to control deck key a distinct color in every menu.
+- [ ] Preserve readable alignment and a clear no-color representation when `NO_COLOR` or `--no-color` is active.
+- [ ] Add UI regression coverage for consistent navigation-key styling across all menus.
 
 ## Release Gate
 

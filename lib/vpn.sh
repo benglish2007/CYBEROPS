@@ -16,6 +16,36 @@
 # VPN Control
 # ------------------------------------------------------------------------------
 
+show_vpn_status() {
+    local clients_found=0
+    local failures=0
+
+    if have tailscale; then
+        clients_found=1
+        printf '%s\n' '[TAILSCALE]'
+        run_checked \
+            "Tailscale status query" \
+            "Verify the Tailscale daemon is running." \
+            tailscale status || ((failures += 1))
+    fi
+    if have expressvpn; then
+        ((clients_found == 0)) || printf '\n'
+        clients_found=1
+        printf '%s\n' '[EXPRESSVPN]'
+        run_checked \
+            "ExpressVPN status query" \
+            "Verify the ExpressVPN daemon is running." \
+            expressvpn status || ((failures += 1))
+    fi
+    if ((clients_found == 0)); then
+        report_error \
+            "No supported VPN client is installed." \
+            "Install Tailscale or ExpressVPN, then retry."
+        return 1
+    fi
+    ((failures == 0))
+}
+
 vpn_menu() {
     local choice=""
 

@@ -48,6 +48,38 @@ show_system_summary() {
     fi
 }
 
+show_storage_devices() {
+    require_commands lsblk || return 1
+    run_checked \
+        "Storage-device query" \
+        "Verify sysfs is mounted and block devices are accessible." \
+        lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINTS,MODEL,TRAN
+}
+
+show_network_interfaces() {
+    require_commands ip || return 1
+    run_checked \
+        "Network-interface query" \
+        "Verify the network namespace is accessible." \
+        ip -brief address
+}
+
+show_routing_table() {
+    require_commands ip || return 1
+    run_checked \
+        "Routing-table query" \
+        "Verify the network namespace is accessible." \
+        ip route
+}
+
+show_listening_sockets() {
+    require_commands ss || return 1
+    run_checked \
+        "Listening-socket query" \
+        "Retry with sufficient privileges if process details are unavailable." \
+        ss -tulpn
+}
+
 info_menu() {
     local choice=""
 
@@ -84,30 +116,19 @@ info_menu() {
                 pause
                 ;;
             4)
-                if require_commands lsblk; then
-                    run_checked \
-                        "Storage-device query" \
-                        "Verify sysfs is mounted and block devices are accessible." \
-                        lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINTS,MODEL,TRAN
-                fi
+                show_storage_devices
                 pause
                 ;;
             5)
-                if require_commands ip; then
-                    run_checked "Network-interface query" "Verify the network namespace is accessible." ip -brief address
-                fi
+                show_network_interfaces
                 pause
                 ;;
             6)
-                if require_commands ip; then
-                    run_checked "Routing-table query" "Verify the network namespace is accessible." ip route
-                fi
+                show_routing_table
                 pause
                 ;;
             7)
-                if require_commands ss; then
-                    run_checked "Listening-socket query" "Retry with sufficient privileges if process details are unavailable." ss -tulpn
-                fi
+                show_listening_sockets
                 pause
                 ;;
             8)

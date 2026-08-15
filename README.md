@@ -3,7 +3,7 @@
   <h1>CYBEROPS TERMINAL</h1>
   <p><strong><code>NEON GRID // UNIFIED LINUX OPERATIONS CONSOLE</code></strong></p>
 
-  [![Release](https://img.shields.io/badge/RELEASE-v2.9.2-ff2d95?style=for-the-badge)](CHANGELOG.md)
+  [![Release](https://img.shields.io/badge/RELEASE-v2.10-ff2d95?style=for-the-badge)](CHANGELOG.md)
   [![Bash](https://img.shields.io/badge/SHELL-BASH_5+-00e5ff?style=for-the-badge&logo=gnubash&logoColor=050816)](cyberops.sh)
   [![Validate](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml)
   [![Platform](https://img.shields.io/badge/PLATFORM-UBUNTU_%2F_DEBIAN-8b5cf6?style=for-the-badge&logo=linux&logoColor=white)](COMPATIBILITY.md)
@@ -22,12 +22,12 @@
 
 ## `//` CURRENT BUILD
 
-### CYBEROPS Terminal v2.9.2
+### CYBEROPS Terminal v2.10
 
-Version 2.9.2 streamlines Admin Ops package upgrades by accepting APT's package
-confirmation automatically after the operator selects the upgrade action. See
-the [changelog](CHANGELOG.md) and [roadmap](ROADMAP.md) for release history and
-planned work.
+Version 2.10 completes Read-Only Command Expansion with scriptable system,
+storage, network, service, socket, and VPN telemetry that reuses the control
+deck's safe inspection helpers. See the [changelog](CHANGELOG.md) and
+[roadmap](ROADMAP.md) for release history and planned work.
 
 ---
 
@@ -117,6 +117,10 @@ Detailed behavior, required privilege, and side effects are listed in the
 Usage:
   cyberops [OPTIONS]
   cyberops [OPTIONS] info
+  cyberops [OPTIONS] system <disk|memory|services|failures>
+  cyberops [OPTIONS] storage devices
+  cyberops [OPTIONS] network <interfaces|routes|sockets>
+  cyberops [OPTIONS] vpn status
   cyberops [OPTIONS] docker status
   cyberops [OPTIONS] config <path|show|check>
   cyberops [OPTIONS] logs <path|tail>
@@ -136,6 +140,15 @@ cyberops --version
 cyberops --no-color
 NO_COLOR=1 cyberops
 cyberops info
+cyberops system disk
+cyberops system memory
+cyberops system services
+cyberops system failures
+cyberops storage devices
+cyberops network interfaces
+cyberops network routes
+cyberops network sockets
+cyberops vpn status
 cyberops docker status
 cyberops config check
 cyberops logs tail
@@ -143,9 +156,10 @@ cyberops diagnostics preview
 cyberops diagnostics export
 ```
 
-These command channels are read-only except for diagnostics export, which only
-creates a new private archive and refuses to overwrite an existing file. The
-interactive control deck
+The system, storage, network, VPN, info, and Docker status channels are
+read-only. Network telemetry remains local; none of the new Milestone 10
+commands performs a public-IP lookup. Diagnostics export only creates a new
+private archive and refuses to overwrite an existing file. The interactive control deck
 requires terminal input and output; a redirected invocation without a command
 exits with usage guidance instead of waiting indefinitely.
 
@@ -247,7 +261,7 @@ CYBEROPS is released under the [MIT License](LICENSE).
 
 <div align="center">
 
-  **`CYBEROPS TERMINAL v2.9.2 // LINK STANDBY`**
+  **`CYBEROPS TERMINAL v2.10 // LINK STANDBY`**
 
   *One terminal. One toolkit. Linux operations under control.*
 

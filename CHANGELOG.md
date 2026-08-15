@@ -2,6 +2,28 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 2.10 — 2026-08-15
+
+Version 2.10 completes **Roadmap Milestone 10: Read-Only Command Expansion**
+with reusable, scriptable local system telemetry and explicit privacy and
+privilege boundaries.
+
+### Read-Only Command Channels
+
+- Added non-interactive local disk, memory, active-service, failed-unit, storage-device, network-interface, route, listening-socket, and VPN status commands.
+- Reused focused menu telemetry helpers while preserving dependency and query failure statuses.
+- Kept public-IP disclosure, privileged firewall queries, and state-changing operations outside the expanded command surface.
+- Added regression coverage and operational documentation for dispatch, exact commands, missing VPN clients, and privacy boundaries.
+
+### Roadmap
+
+- Recorded deferred plans for connection-triggered MAC randomization with explicit enable, disable, status, and original-address restoration controls.
+- Recorded a deferred UI refinement that gives every `[00]` navigation key a distinct, no-color-safe visual treatment.
+
+### Milestone
+
+- Completed all Roadmap Milestone 10 work and recorded successful manual verification of every command channel, local-only network behavior, no-pager service output, failure guidance, and interactive-menu compatibility.
+
 ## 2.9.2 — 2026-08-15
 
 Version 2.9.2 streamlines the confirmed Admin Ops package-upgrade workflow.

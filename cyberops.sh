@@ -60,6 +60,10 @@ Unified Linux Operations Console
 Usage:
   cyberops [OPTIONS]
   cyberops [OPTIONS] info
+  cyberops [OPTIONS] system <disk|memory|services|failures>
+  cyberops [OPTIONS] storage devices
+  cyberops [OPTIONS] network <interfaces|routes|sockets>
+  cyberops [OPTIONS] vpn status
   cyberops [OPTIONS] docker status
   cyberops [OPTIONS] config <path|show|check>
   cyberops [OPTIONS] logs <path|tail>
@@ -72,6 +76,16 @@ Options:
 
 Commands:
   info             Print a read-only host summary.
+  system disk      Print local filesystem usage without probing remote mounts.
+  system memory    Print memory and swap usage.
+  system services  Print active systemd services.
+  system failures  Print failed systemd units.
+  storage devices  Print block-device telemetry.
+  network interfaces
+                   Print local network-interface addresses and state.
+  network routes   Print the local routing table.
+  network sockets  Print listening sockets.
+  vpn status       Print status for installed supported VPN clients.
   docker status    Print container status and Docker disk usage.
   config path      Print the active configuration-file path.
   config show      Print the effective non-secret configuration.
@@ -148,6 +162,42 @@ cyberops_main() {
         case "${command_arguments[*]}" in
             info)
                 show_system_summary
+                return
+                ;;
+            "system disk")
+                show_local_disk_usage
+                return
+                ;;
+            "system memory")
+                show_memory_usage
+                return
+                ;;
+            "system services")
+                show_running_services
+                return
+                ;;
+            "system failures")
+                show_failed_services
+                return
+                ;;
+            "storage devices")
+                show_storage_devices
+                return
+                ;;
+            "network interfaces")
+                show_network_interfaces
+                return
+                ;;
+            "network routes")
+                show_routing_table
+                return
+                ;;
+            "network sockets")
+                show_listening_sockets
+                return
+                ;;
+            "vpn status")
+                show_vpn_status
                 return
                 ;;
             "docker status")
