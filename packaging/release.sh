@@ -160,10 +160,23 @@ release_preview() {
     printf '\nTag: v%s\n' "$version"
     printf 'Target: %s\n' "$(git -C "$REPO_DIR" rev-parse HEAD)"
     printf 'Title: CYBEROPS v%s\n' "$version"
+    printf 'Asset: dist/cyberops_%s_all.deb\n' "$version"
     printf '\n--- RELEASE NOTES ---\n'
     extract_release_notes "$version"
     printf '%s\n' '--- END RELEASE NOTES ---'
     printf '\nNo tag or GitHub Release was created.\n'
+}
+
+build_release_artifact() {
+    local version="$1"
+    local package_file="$REPO_DIR/dist/cyberops_${version}_all.deb"
+
+    bash "$REPO_DIR/packaging/build-deb.sh" "$REPO_DIR/dist" >/dev/null || return 1
+    [[ -f "$package_file" ]] || {
+        release_error "Expected release package was not built: $package_file"
+        return 1
+    }
+    printf '%s' "$package_file"
 }
 
 local_tag_state() {
@@ -186,11 +199,12 @@ publish_release() {
     local version="$1"
     local tag="v$version"
     local notes_file
+    local package_file
     local tag_state
 
     unset CYBEROPS_RELEASE_SKIP_TESTS
     release_check "$version" || return 1
-    require_release_command gh mktemp || return 1
+    require_release_command dpkg-deb gh mktemp || return 1
     if ! gh auth status --hostname github.com >/dev/null 2>&1; then
         release_error "GitHub CLI authentication is unavailable." \
             "Run 'gh auth status'; if needed, restore desktop-keyring access or run 'gh auth login'."
@@ -200,6 +214,11 @@ publish_release() {
         release_error "GitHub Release $tag already exists; it will not be overwritten."
         return 1
     fi
+
+    package_file="$(build_release_artifact "$version")" || {
+        release_error "Could not build the Debian release asset."
+        return 1
+    }
 
     tag_state="$(local_tag_state "$tag")"
     case "$tag_state" in
@@ -228,7 +247,9 @@ publish_release() {
     notes_file="$(mktemp)" || return 1
     chmod 600 -- "$notes_file"
     extract_release_notes "$version" >"$notes_file"
-    if ! gh release create "$tag" --verify-tag --title "CYBEROPS v$version" --notes-file "$notes_file"; then
+    if ! gh release create "$tag" --verify-tag --title "CYBEROPS v$version" \
+        --notes-file "$notes_file" \
+        "$package_file#CYBEROPS v$version Debian package"; then
         rm -f -- "$notes_file"
         release_error "Tag $tag is published, but GitHub Release creation failed." \
             "Rerun publish to resume; the existing correct tag will not be replaced."

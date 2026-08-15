@@ -3,7 +3,7 @@
   <h1>CYBEROPS TERMINAL</h1>
   <p><strong><code>NEON GRID // UNIFIED LINUX OPERATIONS CONSOLE</code></strong></p>
 
-  [![Release](https://img.shields.io/badge/RELEASE-v2.10.1-ff2d95?style=for-the-badge)](CHANGELOG.md)
+  [![Release](https://img.shields.io/badge/RELEASE-v2.11-ff2d95?style=for-the-badge)](CHANGELOG.md)
   [![Bash](https://img.shields.io/badge/SHELL-BASH_5+-00e5ff?style=for-the-badge&logo=gnubash&logoColor=050816)](cyberops.sh)
   [![Validate](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml)
   [![Platform](https://img.shields.io/badge/PLATFORM-UBUNTU_%2F_DEBIAN-8b5cf6?style=for-the-badge&logo=linux&logoColor=white)](COMPATIBILITY.md)
@@ -22,12 +22,12 @@
 
 ## `//` CURRENT BUILD
 
-### CYBEROPS Terminal v2.10.1
+### CYBEROPS Terminal v2.11
 
-Version 2.10.1 adds distinct navigation styling and aligned `[SUDO]` markers
-while retaining the Read-Only Command Expansion delivered in v2.10. See the
-[changelog](CHANGELOG.md) and [roadmap](ROADMAP.md) for release history and
-planned work.
+Version 2.11 adds native Debian packaging with tracked `/usr` installation,
+declared dependencies, isolated package validation, and a release-ready `.deb`
+artifact. See the [changelog](CHANGELOG.md) and [roadmap](ROADMAP.md) for
+release history and planned work.
 
 ---
 
@@ -61,6 +61,20 @@ Install optional dependencies and CYBEROPS together with:
 ```bash
 sudo make full-install
 ```
+
+Build and inspect the native Debian package without installing it:
+
+```bash
+make deb
+make deb-inspect
+```
+
+Install the resulting package through APT with
+`sudo apt install ./dist/cyberops_<version>_all.deb`. The default Makefile
+installation remains available as the `/usr/local` fallback. Remove that
+source installation once before migrating so `/usr/local/bin/cyberops` does
+not shadow the packaged command. See the [packaging guide](docs/PACKAGING.md)
+for upgrade, removal, and coexistence boundaries.
 
 The installed desktop application is named **CYBEROPS Terminal**.
 
@@ -250,9 +264,9 @@ The Makefile keeps the installed runtime together under
 `/usr/local/lib/cyberops`.
 
 Validation includes Bash syntax, ShellCheck, `shfmt`, mocked regression tests,
-installer isolation, and a distribution compatibility matrix. Releases use
-annotated tags, changelog-derived notes, and a guarded preview/publish workflow.
-Native `.deb` packaging is deferred until its dedicated milestone.
+installer and Debian-package isolation, and a distribution compatibility
+matrix. Releases use annotated tags, changelog-derived notes, and a guarded
+preview/publish workflow.
 
 ---
 
@@ -264,7 +278,7 @@ CYBEROPS is released under the [MIT License](LICENSE).
 
 <div align="center">
 
-  **`CYBEROPS TERMINAL v2.10.1 // LINK STANDBY`**
+  **`CYBEROPS TERMINAL v2.11 // LINK STANDBY`**
 
   *One terminal. One toolkit. Linux operations under control.*
 

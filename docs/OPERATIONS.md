@@ -12,6 +12,8 @@ device, Docker-socket, or client-specific permissions documented below.
 | Area | Operation | Privilege | Primary side effect |
 | --- | --- | --- | --- |
 | Installer | `make install-deps` | Root (`sudo`) | Updates APT metadata and installs optional packages before runtime use |
+| Packaging | `make deb`, `make deb-inspect` | User | Creates or inspects `dist/cyberops_<version>_all.deb`; does not install host files |
+| Packaging | `apt install ./dist/cyberops_<version>_all.deb` | Root (`sudo`) | Installs or upgrades tracked CYBEROPS files and resolves required dependencies |
 | Support | Configuration and operation-log inspection | User | Reads CYBEROPS-owned settings or private structured events |
 | Support | Diagnostics export | User | Creates a new mode-`600`, privacy-filtered archive; never overwrites |
 | Command channel | `system disk`, `system memory` | User | Read-only local filesystem, memory, and swap telemetry |

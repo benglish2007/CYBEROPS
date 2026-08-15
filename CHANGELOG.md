@@ -2,6 +2,25 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 2.11 — 2026-08-15
+
+Version 2.11 completes **Roadmap Milestone 11: Native Debian Packaging** with
+a package-manager-tracked installation and a release-ready `.deb` artifact.
+
+### Native Debian Packaging
+
+- Added an unprivileged `make deb` workflow that stages the proven Makefile layout beneath `/usr` and creates a versioned, architecture-independent package.
+- Added package metadata with explicit required dependencies and optional integration suggestions.
+- Added `make deb-inspect`, isolated package regression coverage, artifact exclusions, and installation, upgrade, removal, and coexistence documentation.
+
+### Release Automation
+
+- Extended guarded publishing to build and attach `cyberops_2.11_all.deb` to the GitHub Release.
+
+### Milestone
+
+- Recorded successful manual verification of local package installation, dependency resolution, command execution, and desktop integration.
+
 ## 2.10.1 — 2026-08-15
 
 Version 2.10.1 adds clearer navigation and privilege cues throughout the

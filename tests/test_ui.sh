@@ -47,7 +47,7 @@ have() {
 DRY_RUN=0
 banner_output="$(banner | strip_ansi)"
 if [[ "$banner_output" == *"CYBEROPS // NEON GRID"* &&
-    "$banner_output" == *"BUILD 2.10.1"* &&
+    "$banner_output" == *"BUILD 2.11"* &&
     "$banner_output" == *"NODE ONLINE"* ]]; then
     banner_result=themed
 else

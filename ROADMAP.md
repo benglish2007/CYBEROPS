@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.10.1 — Milestone 10 complete.**
+Current release: **v2.11 — Milestone 11 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -209,9 +209,22 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [x] Verified the corresponding interactive menu operations still work.
 - [x] Verified invalid command combinations return status 2 with usage guidance.
 
-## Planned Milestone 11: Native Debian Packaging
+## Milestone 11: Native Debian Packaging
 
-- [ ] Build and validate a native `.deb` without replacing the supported Makefile path prematurely.
+- [x] Reuse the Makefile `DESTDIR` contract to stage a native architecture-independent `.deb`.
+- [x] Install the launcher, modules, desktop entry, icon, documentation, and license beneath Debian's `/usr` hierarchy.
+- [x] Derive package metadata from the runtime version and declare required versus optional dependencies.
+- [x] Provide unprivileged package build and inspection targets without changing the host installation.
+- [x] Add isolated regression coverage for metadata, file layout, resolved templates, and excluded build artifacts.
+- [x] Document package installation, in-place upgrades, removal, user-data retention, and Makefile coexistence boundaries.
+- [x] Manually validate installation, dependency resolution, command execution, and desktop integration on a supported system.
+
+### Manual verification — 2026-08-15
+
+- [x] Built and inspected the package as an unprivileged user.
+- [x] Installed the package through APT and resolved its declared dependency set.
+- [x] Verified `/usr/bin/cyberops`, version reporting, interactive launch, and desktop integration.
+- [x] Confirmed the local-file `_apt` sandbox notice is harmless when repository parent directories are private.
 
 ## Pre-Milestone 11 Interface Polish
 

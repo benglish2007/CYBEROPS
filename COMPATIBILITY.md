@@ -37,7 +37,9 @@ Tailscale, ExpressVPN, UFW, ClamAV, `rkhunter`, `nmap`, `wavemon`, or
 
 GitHub Actions runs Bash syntax validation and the complete shell regression
 suite inside each supported distribution image. The compatibility test also
-exercises the specific Bash and GNU command capabilities used by CYBEROPS.
+exercises the specific Bash and GNU command capabilities used by CYBEROPS. The
+regression suite builds, inspects, and extracts the architecture-independent
+Debian package without installing it into the CI host.
 
 The matrix verifies that the script can be parsed, sourced, and tested on the
 supported base systems. It does not claim that every optional integration is

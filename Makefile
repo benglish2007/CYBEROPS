@@ -15,7 +15,14 @@ INSTALL ?= install
 SED ?= sed
 VERSION ?=
 
-.PHONY: install install-deps full-install uninstall release-check release-preview release
+.PHONY: install install-deps full-install uninstall deb deb-inspect release-check release-preview release
+
+deb:
+	bash packaging/build-deb.sh
+
+deb-inspect: deb
+	dpkg-deb --info "dist/cyberops_$$(sed -n 's/^VERSION="\(.*\)"/\1/p' lib/runtime.sh)_all.deb"
+	dpkg-deb --contents "dist/cyberops_$$(sed -n 's/^VERSION="\(.*\)"/\1/p' lib/runtime.sh)_all.deb"
 
 release-check:
 	@test -n "$(VERSION)" || { echo "VERSION is required (example: make release-check VERSION=2.9)" >&2; exit 2; }
@@ -51,7 +58,7 @@ install:
 	$(SED) -i 's|@CYBEROPS_EXEC@|$(BINDIR)/cyberops|g' "$(DESTDIR)$(APPLICATIONS_DIR)/cyberops.desktop"
 	$(SED) -i 's|@CYBEROPS_ICON@|$(ICON_PATH)|g' "$(DESTDIR)$(APPLICATIONS_DIR)/cyberops.desktop"
 	rm -f -- "$(DESTDIR)$(LEGACY_ICON_PATH)"
-	@if command -v update-desktop-database >/dev/null 2>&1; then \
+	@if test -z "$(DESTDIR)" && command -v update-desktop-database >/dev/null 2>&1; then \
 		update-desktop-database "$(DESTDIR)$(APPLICATIONS_DIR)" >/dev/null; \
 	fi
 
@@ -63,7 +70,7 @@ uninstall:
 	rm -f -- "$(DESTDIR)$(DOC_DIR)/DEMO.md" "$(DESTDIR)$(DOC_DIR)/DOCKER.md"
 	rm -f -- "$(DESTDIR)$(DOC_DIR)/OPERATIONS.md" "$(DESTDIR)$(DOC_DIR)/USB.md"
 	rm -f -- "$(DESTDIR)$(DOC_DIR)/CONFIGURATION.md" "$(DESTDIR)$(DOC_DIR)/cyberops.conf.example"
-	rm -f -- "$(DESTDIR)$(DOC_DIR)/RELEASING.md"
+	rm -f -- "$(DESTDIR)$(DOC_DIR)/RELEASING.md" "$(DESTDIR)$(DOC_DIR)/PACKAGING.md"
 	rm -f -- "$(DESTDIR)$(CYBEROPS_DIR)/cyberops.sh" "$(DESTDIR)$(CYBEROPS_DIR)/lib/"*.sh
 	rmdir --ignore-fail-on-non-empty -- "$(DESTDIR)$(CYBEROPS_DIR)/lib" "$(DESTDIR)$(CYBEROPS_DIR)"
 	rmdir --ignore-fail-on-non-empty -- "$(DESTDIR)$(DOC_DIR)"
