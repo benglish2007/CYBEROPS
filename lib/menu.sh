@@ -22,7 +22,6 @@ main_menu() {
     while true; do
         banner
         ui_section "CONTROL DECK" "SELECT AN OPERATIONS NODE"
-        menu_item 0 "System Setup" "BOOTSTRAP // DEPENDENCIES"
         menu_item 1 "Admin Ops" "SYSTEM // CONTROL"
         menu_item 2 "Info Scan" "HOST // RECON"
         menu_item 3 "VPN Control" "NETWORK // TUNNELS"
@@ -30,12 +29,11 @@ main_menu() {
         menu_item 5 "Quickhacks" "TOOLS // FIELD KIT"
         menu_item 6 "Docker Ops" "CONTAINERS // GRID"
         menu_item 7 "USB Operations" "MEDIA // I/O"
-        menu_item 8 "Exit Interface" "SESSION // DISCONNECT"
+        menu_navigation_item 0 "Exit Interface" "SESSION // DISCONNECT"
 
         prompt_choice choice "CYBEROPS"
 
         case "$choice" in
-            0) system_setup ;;
             1) admin_menu ;;
             2) info_menu ;;
             3) vpn_menu ;;
@@ -43,7 +41,7 @@ main_menu() {
             5) quickhacks_menu ;;
             6) docker_menu ;;
             7) usb_menu ;;
-            8)
+            0)
                 echo
                 typewrite "LINK TERMINATED // Returning control to local shell..." 0.015
                 exit 0

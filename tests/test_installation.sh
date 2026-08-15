@@ -47,6 +47,13 @@ module_count="$(find "$TEST_ROOT$PREFIX/lib/cyberops/lib" -maxdepth 1 -name '*.s
 source_module_count="$(find "$REPO_DIR/lib" -maxdepth 1 -name '*.sh' -type f | wc -l)"
 record_result "installs every runtime module" "$module_count" "$source_module_count"
 
+if [[ ! -e "$TEST_ROOT$PREFIX/lib/cyberops/lib/setup.sh" ]]; then
+    setup_module_result=absent
+else
+    setup_module_result=installed
+fi
+record_result "keeps dependency setup out of the installed runtime" "$setup_module_result" absent
+
 [[ -x "$installed_wrapper" ]] && wrapper_result=installed || wrapper_result=missing
 record_result "installs the command wrapper as executable" "$wrapper_result" installed
 

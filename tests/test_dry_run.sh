@@ -136,7 +136,7 @@ record_result "Docker dry-run previews pull and recreation without execution" "$
 
 vpn_choice_index=0
 vpn_command=""
-vpn_choices=(3 7)
+vpn_choices=(3 0)
 
 banner() {
     return 0

@@ -62,7 +62,7 @@ info_menu() {
         menu_item 6 "Routing table" "NETWORK // ROUTES"
         menu_item 7 "Listening sockets" "NETWORK // PORTS"
         menu_item 8 "Public IP address" "NETWORK // EGRESS"
-        menu_item 9 "Return to control deck" "NAV // BACK"
+        menu_navigation_item 0 "Return to control deck" "NAV // BACK"
 
         prompt_choice choice "SCAN"
 
@@ -121,7 +121,7 @@ info_menu() {
                 fi
                 pause
                 ;;
-            9) return ;;
+            0) return ;;
             *) invalid_selection ;;
         esac
     done

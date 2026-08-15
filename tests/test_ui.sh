@@ -42,7 +42,7 @@ have() {
 DRY_RUN=0
 banner_output="$(banner | strip_ansi)"
 if [[ "$banner_output" == *"CYBEROPS // NEON GRID"* &&
-    "$banner_output" == *"BUILD 2.6"* &&
+    "$banner_output" == *"BUILD 2.7"* &&
     "$banner_output" == *"NODE ONLINE"* ]]; then
     banner_result=themed
 else
@@ -79,6 +79,16 @@ else
     item_result=missing
 fi
 record_result "menu nodes include zero-padded keys and subsystem tags" "$item_result" aligned
+
+navigation_output="$(menu_navigation_item 0 "Exit Interface" "SESSION // DISCONNECT" | strip_ansi)"
+if [[ "$navigation_output" == $'\n  [00]'* &&
+    "$navigation_output" == *"Exit Interface"* ]]; then
+    navigation_result=separated
+else
+    navigation_result=joined
+fi
+record_result "navigation rows are visually separated from operations" \
+    "$navigation_result" separated
 
 prompt_result=""
 prompt_choice prompt_result "CYBEROPS" <<<"7" >/dev/null

@@ -3,7 +3,7 @@
   <h1>CYBEROPS TERMINAL</h1>
   <p><strong><code>NEON GRID // UNIFIED LINUX OPERATIONS CONSOLE</code></strong></p>
 
-  [![Release](https://img.shields.io/badge/RELEASE-v2.6-ff2d95?style=for-the-badge)](CHANGELOG.md)
+  [![Release](https://img.shields.io/badge/RELEASE-v2.7-ff2d95?style=for-the-badge)](CHANGELOG.md)
   [![Bash](https://img.shields.io/badge/SHELL-BASH_5+-00e5ff?style=for-the-badge&logo=gnubash&logoColor=050816)](cyberops.sh)
   [![Validate](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml)
   [![Platform](https://img.shields.io/badge/PLATFORM-UBUNTU_%2F_DEBIAN-8b5cf6?style=for-the-badge&logo=linux&logoColor=white)](COMPATIBILITY.md)
@@ -22,14 +22,14 @@
 
 ## `//` CURRENT BUILD
 
-### CYBEROPS Terminal v2.6
+### CYBEROPS Terminal v2.7
 
-Version 2.6 completes the User Experience and Documentation milestone with
-terminal-safe options, read-only command channels, standard `NO_COLOR`
-support, safe non-interactive behavior, a concise README, focused operational
-guides, explicit privilege and side-effect documentation, and an installed
-terminal demonstration. See the [changelog](CHANGELOG.md) and
-[roadmap](ROADMAP.md) for release history and planned work.
+Version 2.7 completes the Installer and Navigation Consistency milestone.
+Optional dependency bootstrap now lives in explicit installer targets rather
+than the interactive runtime, option `[00]` consistently exits or returns, and
+navigation rows are visually separated from operational choices. See the
+[changelog](CHANGELOG.md) and [roadmap](ROADMAP.md) for release history and
+planned work.
 
 ---
 
@@ -49,6 +49,19 @@ Install the command, modular runtime, icon, desktop entry, and license:
 ```bash
 sudo make install
 cyberops
+```
+
+Optional utilities are installed separately and explicitly through the
+installer rather than from the CYBEROPS runtime:
+
+```bash
+sudo make install-deps
+```
+
+Install optional dependencies and CYBEROPS together with:
+
+```bash
+sudo make full-install
 ```
 
 The installed desktop application is named **CYBEROPS Terminal**.
@@ -80,7 +93,7 @@ sudo make uninstall PREFIX=/opt/cyberops
 
 | NODE | MODULE | CAPABILITIES |
 | :---: | --- | --- |
-| `[00]` | System Setup | Optional Ubuntu/Debian dependency installation |
+| `[00]` | Exit Interface | Disconnect from the control deck |
 | `[01]` | Admin Ops | APT, storage, memory, services, and reboot |
 | `[02]` | Info Scan | Host, hardware, network, route, and socket telemetry |
 | `[03]` | VPN Control | Tailscale and ExpressVPN status and links |
@@ -88,6 +101,8 @@ sudo make uninstall PREFIX=/opt/cyberops
 | `[05]` | Quickhacks | Diagnostics, process, DNS, shred, and MAC utilities |
 | `[06]` | Docker Ops | Selective Compose maintenance, recovery evidence, and status |
 | `[07]` | USB Operations | ISO writing, signature reset, inspection, and zero-fill |
+
+Every submenu also reserves `[00]` for **Return to control deck**.
 
 Operations check their required commands before starting and report missing
 dependencies together. State-changing actions provide confirmation and support
@@ -222,7 +237,7 @@ CYBEROPS is released under the [MIT License](LICENSE).
 
 <div align="center">
 
-  **`CYBEROPS TERMINAL v2.6 // LINK STANDBY`**
+  **`CYBEROPS TERMINAL v2.7 // LINK STANDBY`**
 
   *One terminal. One toolkit. Linux operations under control.*
 

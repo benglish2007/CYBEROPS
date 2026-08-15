@@ -12,7 +12,6 @@
 #   - Quickhacks
 #   - Docker Maintenance
 #   - USB Operations
-#   - System Setup
 #
 # Designed primarily for Ubuntu/Debian systems.
 # ==============================================================================
@@ -22,7 +21,7 @@ set -o pipefail
 CYBEROPS_SOURCE_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 CYBEROPS_LIB_DIR="${CYBEROPS_LIB_DIR:-$CYBEROPS_SOURCE_DIR/lib}"
 CYBEROPS_REQUIRED_MODULES=(
-    runtime core ui docker admin info vpn security quickhacks usb setup menu
+    runtime core ui docker admin info vpn security quickhacks usb menu
 )
 
 load_cyberops_module() {

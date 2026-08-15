@@ -27,7 +27,7 @@ record_result() {
 
 record_result "resolves the launcher directory" "$CYBEROPS_SOURCE_DIR" "$REPO_DIR"
 record_result "resolves the default module directory" "$CYBEROPS_LIB_DIR" "$REPO_DIR/lib"
-record_result "loads the version from runtime.sh" "$VERSION" 2.6
+record_result "loads the version from runtime.sh" "$VERSION" 2.7
 
 if declare -F docker_menu >/dev/null && declare -F usb_zero_fill >/dev/null; then
     functions_result=available
@@ -35,6 +35,13 @@ else
     functions_result=missing
 fi
 record_result "keeps feature functions available after modular runtime load" "$functions_result" available
+
+if declare -F system_setup >/dev/null; then
+    setup_result=runtime
+else
+    setup_result=installer
+fi
+record_result "keeps optional dependency setup out of the runtime" "$setup_result" installer
 
 shopt -s extdebug
 docker_function_details="$(declare -F docker_menu)"
@@ -58,7 +65,6 @@ module_function_pairs=(
     "cyber_defense_menu:security.sh"
     "quickhacks_menu:quickhacks.sh"
     "usb_zero_fill:usb.sh"
-    "system_setup:setup.sh"
     "main_menu:menu.sh"
 )
 for module_function_pair in "${module_function_pairs[@]}"; do

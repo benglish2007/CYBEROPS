@@ -2,6 +2,29 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 2.7 — 2026-08-15
+
+Version 2.7 completes **Roadmap Milestone 7: Installer and Navigation
+Consistency** by moving dependency bootstrap into explicit installer targets
+and reserving option zero for navigation throughout the interface.
+
+### Installer
+
+- Moved optional APT dependency bootstrap out of the interactive runtime into explicit `make install-deps` and `make full-install` targets.
+- Removed the System Setup module from the launcher and added upgrade cleanup for previously installed copies of `lib/setup.sh`.
+- Updated missing-command guidance to point to the installer dependency target.
+
+### Navigation
+
+- Standardized main-menu option `[00]` as Exit Interface.
+- Standardized `[00]` as Return to control deck in every feature submenu.
+- Added a consistent blank-line separator before every Exit Interface and Return to control deck row.
+- Added regression coverage for dependency installation, removal of runtime setup, main-menu dispatch, and every submenu return path.
+
+### Milestone
+
+- Completed all Roadmap Milestone 7 work and recorded successful manual verification of runtime setup removal, zero-key navigation, and navigation-row spacing.
+
 ## 2.6 — 2026-08-15
 
 Version 2.6 completes **Roadmap Milestone 6: User Experience and

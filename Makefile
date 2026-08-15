@@ -14,13 +14,19 @@ LEGACY_ICON_PATH := $(DATADIR)/icons/hicolor/1024x1024/apps/cyberops.png
 INSTALL ?= install
 SED ?= sed
 
-.PHONY: install uninstall
+.PHONY: install install-deps full-install uninstall
+
+install-deps:
+	bash packaging/install-dependencies.sh
+
+full-install: install-deps install
 
 install:
 	$(INSTALL) -d "$(DESTDIR)$(BINDIR)" "$(DESTDIR)$(CYBEROPS_DIR)/lib"
 	$(INSTALL) -d "$(DESTDIR)$(APPLICATIONS_DIR)" "$(DESTDIR)$(PIXMAPS_DIR)" "$(DESTDIR)$(DOC_DIR)"
 	$(INSTALL) -m 755 cyberops.sh "$(DESTDIR)$(CYBEROPS_DIR)/cyberops.sh"
 	$(INSTALL) -m 644 lib/*.sh "$(DESTDIR)$(CYBEROPS_DIR)/lib/"
+	rm -f -- "$(DESTDIR)$(CYBEROPS_DIR)/lib/setup.sh"
 	$(INSTALL) -m 755 packaging/cyberops.in "$(DESTDIR)$(BINDIR)/cyberops"
 	$(SED) -i 's|@CYBEROPS_LAUNCHER@|$(CYBEROPS_DIR)/cyberops.sh|g' "$(DESTDIR)$(BINDIR)/cyberops"
 	$(INSTALL) -m 644 cyberops.png "$(DESTDIR)$(ICON_PATH)"

@@ -82,7 +82,7 @@ quickhacks_menu() {
         menu_item 5 "Flush DNS cache" "DNS // PURGE"
         menu_item 6 "Securely shred a file" "DATA // DESTROY"
         menu_item 7 "Randomize MAC address" "IDENTITY // MASK"
-        menu_item 8 "Return to control deck" "NAV // BACK"
+        menu_navigation_item 0 "Return to control deck" "NAV // BACK"
 
         prompt_choice choice "HACKS"
 
@@ -164,7 +164,7 @@ quickhacks_menu() {
                 randomize_mac_address "$iface"
                 pause
                 ;;
-            8) return ;;
+            0) return ;;
             *) invalid_selection ;;
         esac
     done

@@ -873,7 +873,7 @@ usb_menu() {
         menu_item 2 "Quick reset USB signatures" "MEDIA // FAST CLEAR"
         menu_item 3 "Wipe / zero-fill USB drive" "MEDIA // DESTROY"
         menu_item 4 "List removable storage" "MEDIA // SCAN"
-        menu_item 5 "Return to control deck" "NAV // BACK"
+        menu_navigation_item 0 "Return to control deck" "NAV // BACK"
 
         prompt_choice choice "USB"
 
@@ -891,7 +891,7 @@ usb_menu() {
                 fi
                 pause
                 ;;
-            5) return ;;
+            0) return ;;
             *) invalid_selection ;;
         esac
     done

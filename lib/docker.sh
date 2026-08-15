@@ -599,14 +599,14 @@ docker_menu() {
         printf '  %bSTACK ROOT%b  %s\n\n' "$MAGENTA" "$RESET" "$STACK_ROOT"
         menu_item 1 "Select/update Compose stacks" "GRID // DEPLOY"
         menu_item 2 "Container/status overview" "GRID // STATUS"
-        menu_item 3 "Return to control deck" "NAV // BACK"
+        menu_navigation_item 0 "Return to control deck" "NAV // BACK"
 
         prompt_choice choice "DOCKER"
 
         case "$choice" in
             1) docker_update_stacks ;;
             2) docker_status ;;
-            3) return ;;
+            0) return ;;
             *) invalid_selection ;;
         esac
     done

@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.6 — Milestone 6 complete.**
+Current release: **v2.7 — Milestone 7 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -81,7 +81,6 @@ lib/security.sh
 lib/quickhacks.sh
 lib/docker.sh
 lib/usb.sh
-lib/setup.sh
 lib/menu.sh
 tests/
 ```
@@ -132,6 +131,22 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [x] Verified help, version, no-color, host information, and Docker status command channels.
 - [x] Verified normal terminal and GNOME desktop launches still open the interactive control deck.
 - [x] Verified the focused documentation is included in the system-wide installation.
+
+## Milestone 7: Installer and Navigation Consistency
+
+- [x] Move optional dependency bootstrap out of the interactive runtime.
+- [x] Add explicit installer targets for optional dependencies and a combined full installation.
+- [x] Remove the obsolete System Setup runtime module and clean it during upgrades.
+- [x] Reserve main-menu option `0` for Exit Interface.
+- [x] Reserve submenu option `0` for Return to control deck across every module.
+- [x] Add regression coverage for installer dependency setup and zero-key navigation.
+
+### Manual verification — 2026-08-15
+
+- [x] Verified System Setup is absent from the installed control deck.
+- [x] Verified main-menu option `[00]` exits the interface.
+- [x] Verified submenu option `[00]` returns to the control deck across all modules.
+- [x] Verified blank-line separation visually distinguishes navigation from operations.
 
 ## Potential Future Features
 

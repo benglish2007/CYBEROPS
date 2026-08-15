@@ -24,7 +24,7 @@ required module cannot be read.
 2. `core.sh` and `ui.sh` provide shared validation, operation, and terminal
    helpers.
 3. `docker.sh`, `admin.sh`, `info.sh`, `vpn.sh`, `security.sh`,
-   `quickhacks.sh`, `usb.sh`, and `setup.sh` provide focused feature modules.
+   `quickhacks.sh`, and `usb.sh` provide focused feature modules.
 4. `menu.sh` loads last and dispatches the feature menus.
 
 Dependencies between feature modules should be avoided. Shared behavior belongs

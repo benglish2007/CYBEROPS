@@ -29,7 +29,7 @@ admin_menu() {
         menu_item 5 "Active systemd services" "SERVICES // ACTIVE"
         menu_item 6 "Failed systemd services" "SERVICES // FAILED"
         menu_item 7 "Reboot system" "POWER // RESTART"
-        menu_item 8 "Return to control deck" "NAV // BACK"
+        menu_navigation_item 0 "Return to control deck" "NAV // BACK"
 
         prompt_choice choice "ADMIN"
 
@@ -102,7 +102,7 @@ admin_menu() {
                         sudo reboot
                 fi
                 ;;
-            8) return ;;
+            0) return ;;
             *) invalid_selection ;;
         esac
     done

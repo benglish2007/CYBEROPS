@@ -27,7 +27,7 @@ record_result() {
 }
 
 run_menu_sequence() {
-    local -a choices=(0 1 2 3 4 5 6 7 8)
+    local -a choices=(1 2 3 4 5 6 7 0)
     local choice_index=0
 
     banner() { :; }
@@ -38,7 +38,6 @@ run_menu_sequence() {
         destination="${choices[choice_index]}"
         ((choice_index += 1))
     }
-    system_setup() { printf 'system_setup\n'; }
     admin_menu() { printf 'admin_menu\n'; }
     info_menu() { printf 'info_menu\n'; }
     vpn_menu() { printf 'vpn_menu\n'; }
@@ -58,7 +57,6 @@ set -e
 record_result "main menu exits successfully after dispatch sequence" "$dispatch_status" 0
 
 expected_dispatches=(
-    system_setup
     admin_menu
     info_menu
     vpn_menu
@@ -84,7 +82,7 @@ fi
 record_result "shows the disconnect message" "$exit_result" shown
 
 run_invalid_selection() {
-    local -a choices=(invalid 8)
+    local -a choices=(invalid 0)
     local choice_index=0
 
     banner() { :; }
@@ -106,7 +104,12 @@ invalid_output="$(run_invalid_selection 2>&1)"
 invalid_status=$?
 set -e
 record_result "invalid selection path still permits a clean exit" "$invalid_status" 0
-record_result "dispatches invalid selections to the UI helper" "$invalid_output" invalid_selection
+if [[ "$invalid_output" == *"invalid_selection"* ]]; then
+    invalid_result=dispatched
+else
+    invalid_result=missing
+fi
+record_result "dispatches invalid selections to the UI helper" "$invalid_result" dispatched
 
 printf '1..%d\n' "$tests_run"
 

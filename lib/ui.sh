@@ -68,6 +68,11 @@ menu_item() {
     printf '\n'
 }
 
+menu_navigation_item() {
+    printf '\n'
+    menu_item "$@"
+}
+
 prompt_choice() {
     local variable_name="$1"
     local channel="${2:-COMMAND}"
