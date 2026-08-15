@@ -31,8 +31,13 @@ typewrite() {
 }
 
 pause() {
-    printf '\n%b[ RETURN ]%b Press Enter to reconnect to the control deck...' \
-        "$MAGENTA" "$RESET"
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        printf '\n%b[ LINK HOLD ]%b Press Enter to rejoin the command lattice...' \
+            "$MAGENTA" "$RESET"
+    else
+        printf '\n%b[ RETURN ]%b Press Enter to reconnect to the control deck...' \
+            "$MAGENTA" "$RESET"
+    fi
     read -r _
 }
 
@@ -45,15 +50,47 @@ separator() {
     printf '%*s\n' 78 '' | tr ' ' '='
 }
 
+ui_repeat() {
+    local character="$1"
+    local count="$2"
+    local index
+
+    for ((index = 0; index < count; index++)); do
+        printf '%s' "$character"
+    done
+}
+
 ui_section() {
     local title="$1"
     local subtitle="${2:-SELECT AN OPERATION}"
+    local frame_width=64
+    local fill
 
-    printf '%b╭─[%b %s %b]──────────────────────────────────────────────%b\n' \
-        "$MAGENTA" "$CYAN" "$title" "$MAGENTA" "$RESET"
-    printf '%b│%b %s%b\n' "$MAGENTA" "$DIM" "$subtitle" "$RESET"
-    printf '%b╰──────────────────────────────────────────────────────────%b\n\n' \
-        "$MAGENTA" "$RESET"
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        fill=$((frame_width - ${#title} - 7))
+        printf '%b╭─┤%b %s %b├' "$MAGENTA" "$CYAN" "$title" "$MAGENTA"
+        ui_repeat '─' "$fill"
+        printf '╮%b\n' "$RESET"
+
+        fill=$((frame_width - ${#subtitle} - 14))
+        ((fill < 1)) && fill=1
+        printf '%b│%b  CHANNEL:: %b%s%b' \
+            "$MAGENTA" "$RESET" "$MUTED" "$subtitle" "$RESET"
+        ui_repeat ' ' "$fill"
+        printf '%b│%b\n' "$MAGENTA" "$RESET"
+
+        fill=$((frame_width - 30))
+        printf '%b╰─┤%b AWAITING OPERATOR INPUT %b├' \
+            "$MAGENTA" "$PURPLE" "$MAGENTA"
+        ui_repeat '─' "$fill"
+        printf '╯%b\n\n' "$RESET"
+    else
+        printf '%b╭─[%b %s %b]──────────────────────────────────────────────%b\n' \
+            "$MAGENTA" "$CYAN" "$title" "$MAGENTA" "$RESET"
+        printf '%b│%b %s%b\n' "$MAGENTA" "$DIM" "$subtitle" "$RESET"
+        printf '%b╰──────────────────────────────────────────────────────────%b\n\n' \
+            "$MAGENTA" "$RESET"
+    fi
 }
 
 render_menu_item() {
@@ -63,7 +100,11 @@ render_menu_item() {
     local key_color="${4:-$CYAN}"
     local privilege="${5:-}"
 
-    printf '  %b[%02d]%b  %-31s' "$key_color" "$key" "$RESET" "$label"
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        printf '  %b├─[%02d]%b %-30s' "$key_color" "$key" "$RESET" "$label"
+    else
+        printf '  %b[%02d]%b  %-31s' "$key_color" "$key" "$RESET" "$label"
+    fi
     if [[ "$privilege" == "sudo" ]]; then
         printf '%b[SUDO]%b ' "$YELLOW" "$RESET"
     else
@@ -93,7 +134,13 @@ prompt_choice() {
     local channel="${2:-COMMAND}"
     local response
 
-    printf '\n%b%s%b %b>%b ' "$MAGENTA" "$channel" "$RESET" "$CYAN" "$RESET"
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        printf '\n%b%s%b%b::%b%bEXEC%b %b❯%b ' \
+            "$MAGENTA" "$channel" "$RESET" "$MUTED" "$RESET" \
+            "$CYAN" "$RESET" "$MAGENTA" "$RESET"
+    else
+        printf '\n%b%s%b %b>%b ' "$MAGENTA" "$channel" "$RESET" "$CYAN" "$RESET"
+    fi
     IFS= read -r response
     printf -v "$variable_name" '%s' "$response"
 }
@@ -218,8 +265,17 @@ render_header_telemetry() {
 banner() {
     clear_screen
 
-    printf '%b╔══[%b CYBEROPS // NEON GRID %b]══════════════════[%b NODE ONLINE %b]══╗%b\n' \
-        "$MAGENTA" "$CYAN" "$MAGENTA" "$GREEN" "$MAGENTA" "$RESET"
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        printf '%b╔═[%b CYBEROPS // NIGHT CITY RELAY %b]═════════[%b THREATGRID: ONLINE %b]═╗%b\n' \
+            "$MAGENTA" "$CYAN" "$MAGENTA" "$GREEN" "$MAGENTA" "$RESET"
+        printf '%b║%b  SYS://CYBEROPS  %bBUILD://%s%b  OPERATOR://LOCAL  TRUST://ZERO   %b║%b\n' \
+            "$MAGENTA" "$RESET" "$PURPLE" "$VERSION" "$RESET" "$MAGENTA" "$RESET"
+        printf '%b╠═[%b NEURAL COMMAND FABRIC %b]═══════════════════════════════════════╣%b\n' \
+            "$MAGENTA" "$ORANGE" "$MAGENTA" "$RESET"
+    else
+        printf '%b╔══[%b CYBEROPS // NEON GRID %b]══════════════════[%b NODE ONLINE %b]══╗%b\n' \
+            "$MAGENTA" "$CYAN" "$MAGENTA" "$GREEN" "$MAGENTA" "$RESET"
+    fi
 
     if have figlet; then
         if have lolcat; then
@@ -241,12 +297,21 @@ EOF
         printf '%b\n' "$RESET"
     fi
 
-    printf '%b╚══════════════════════════════════════════════════════════════╝%b\n' \
-        "$MAGENTA" "$RESET"
-    printf '%bBUILD %s%b  //  UNIFIED LINUX OPERATIONS CONSOLE  //  SESSION ACTIVE\n' \
-        "$CYAN" "$VERSION" "$RESET"
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        printf '%b╠═[%b LIVE SIGNAL MATRIX %b]══════════════════════════════════════════╣%b\n' \
+            "$MAGENTA" "$GREEN" "$MAGENTA" "$RESET"
+    else
+        printf '%b╚══════════════════════════════════════════════════════════════╝%b\n' \
+            "$MAGENTA" "$RESET"
+        printf '%bBUILD %s%b  //  UNIFIED LINUX OPERATIONS CONSOLE  //  SESSION ACTIVE\n' \
+            "$CYAN" "$VERSION" "$RESET"
+    fi
     collect_header_telemetry
     render_header_telemetry
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        printf '%b╚═[%b SESSION LINKED // ICE MONITORING ACTIVE %b]═════════════════════╝%b\n' \
+            "$MAGENTA" "$CYAN" "$MAGENTA" "$RESET"
+    fi
     if is_dry_run; then
         printf '%b[ PREVIEW PROTOCOL ]%b State-changing commands are simulation-only.\n' \
             "$YELLOW" "$RESET"
@@ -255,8 +320,9 @@ EOF
 }
 
 warn_destructive() {
-    printf '%b╔═[ DESTRUCTIVE PROTOCOL ]═══════════════════════════════════╗%b\n' \
-        "$RED" "$RESET"
+    local protocol="DESTRUCTIVE PROTOCOL"
+    [[ "$CYBEROPS_THEME" != "neon-overdrive" ]] || protocol="BLACK ICE // DESTRUCTIVE PROTOCOL"
+    printf '%b╔═[ %-34s ]═════════════════════╗%b\n' "$RED" "$protocol" "$RESET"
     printf '%b║ WARNING: THIS OPERATION CAN PERMANENTLY DESTROY DATA.      ║%b\n' \
         "$RED" "$RESET"
     printf '%b╚════════════════════════════════════════════════════════════╝%b\n' \

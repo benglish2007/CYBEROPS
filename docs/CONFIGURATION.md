@@ -18,6 +18,12 @@ cyberops config show
 Supported keys include the operational settings above plus the header controls
 documented below. Unknown keys and malformed lines fail validation.
 
+## Interface theme
+
+`CYBEROPS_THEME=neon-overdrive` enables the experimental high-intensity command
+deck. Set `CYBEROPS_THEME=classic` to retain the stable v2.13 presentation.
+Both themes honor `CYBEROPS_NO_COLOR`, `NO_COLOR`, and `--no-color`.
+
 ## Live header telemetry
 
 `CYBEROPS_HEADER_TELEMETRY=1` enables the interactive status header. Its local

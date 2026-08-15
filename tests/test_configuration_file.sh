@@ -40,6 +40,7 @@ printf '%s\n' \
     'HEALTH_INTERVAL=8' \
     'FAILURE_LOG_LINES=120' \
     'DRY_RUN=1' \
+    'CYBEROPS_THEME=classic' \
     'CYBEROPS_NO_COLOR=1' \
     'CYBEROPS_HEADER_MAC=0' \
     'CYBEROPS_HEADER_PUBLIC_IP=0' >"$CONFIG_FILE"
@@ -52,6 +53,7 @@ if [[ "$config_show_output" == *"Configuration state: loaded"* &&
     "$config_show_output" == *"STACK_ROOT=/config/stacks"* &&
     "$config_show_output" == *"RETRY_DELAY=9"* &&
     "$config_show_output" == *"DRY_RUN=1"* &&
+    "$config_show_output" == *"CYBEROPS_THEME=classic"* &&
     "$config_show_output" == *"CYBEROPS_HEADER_MAC=0"* ]]; then
     config_show_result=loaded
 else

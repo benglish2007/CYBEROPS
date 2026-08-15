@@ -178,6 +178,11 @@ validate_configuration() {
         ((errors += 1))
     fi
 
+    if [[ "$CYBEROPS_THEME" != "classic" && "$CYBEROPS_THEME" != "neon-overdrive" ]]; then
+        printf '%b[!] CYBEROPS_THEME must be classic or neon-overdrive.%b\n' "$RED" "$RESET"
+        ((errors += 1))
+    fi
+
     if [[ "$CYBEROPS_NO_COLOR" != "0" && "$CYBEROPS_NO_COLOR" != "1" ]]; then
         printf '%b[!] CYBEROPS_NO_COLOR must be either 0 or 1.%b\n' "$RED" "$RESET"
         ((errors += 1))
@@ -237,6 +242,7 @@ show_configuration() {
     printf 'HEALTH_INTERVAL=%s\n' "$HEALTH_INTERVAL"
     printf 'FAILURE_LOG_LINES=%s\n' "$FAILURE_LOG_LINES"
     printf 'DRY_RUN=%s\n' "$DRY_RUN"
+    printf 'CYBEROPS_THEME=%s\n' "$CYBEROPS_THEME"
     printf 'CYBEROPS_NO_COLOR=%s\n' "$CYBEROPS_NO_COLOR"
     printf 'CYBEROPS_LOGGING=%s\n' "$CYBEROPS_LOGGING"
     printf 'CYBEROPS_HEADER_TELEMETRY=%s\n' "$CYBEROPS_HEADER_TELEMETRY"

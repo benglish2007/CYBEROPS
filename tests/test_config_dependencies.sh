@@ -56,6 +56,7 @@ set_valid_configuration() {
     HEALTH_INTERVAL=5
     FAILURE_LOG_LINES=80
     DRY_RUN=0
+    CYBEROPS_THEME=neon-overdrive
     CYBEROPS_NO_COLOR=0
     CYBEROPS_LOGGING=1
     CYBEROPS_HEADER_TELEMETRY=1
@@ -79,6 +80,10 @@ expect_config_success "accepts enabled dry-run mode"
 set_valid_configuration
 DRY_RUN=yes
 expect_config_failure "rejects an invalid dry-run value"
+
+set_valid_configuration
+CYBEROPS_THEME=ultraviolet
+expect_config_failure "rejects an unknown interface theme"
 
 set_valid_configuration
 RETRY_DELAY=08

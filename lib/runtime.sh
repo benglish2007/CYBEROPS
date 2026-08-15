@@ -55,7 +55,7 @@ load_configuration_file() {
         key="$(trim_configuration_value "${line%%=*}")"
         value="$(trim_configuration_value "${line#*=}")"
         case "$key" in
-            STACK_ROOT | RETRY_DELAY | HEALTH_TIMEOUT | HEALTH_INTERVAL | FAILURE_LOG_LINES | DRY_RUN | CYBEROPS_NO_COLOR | CYBEROPS_LOGGING | CYBEROPS_HEADER_TELEMETRY | CYBEROPS_HEADER_TIME | CYBEROPS_HEADER_LINK | CYBEROPS_HEADER_VPN | CYBEROPS_HEADER_IFACE | CYBEROPS_HEADER_LOCAL_IP | CYBEROPS_HEADER_MAC | CYBEROPS_HEADER_PUBLIC_IP | CYBEROPS_HEADER_TIMEOUT | CYBEROPS_PUBLIC_IP_CACHE_TTL)
+            STACK_ROOT | RETRY_DELAY | HEALTH_TIMEOUT | HEALTH_INTERVAL | FAILURE_LOG_LINES | DRY_RUN | CYBEROPS_THEME | CYBEROPS_NO_COLOR | CYBEROPS_LOGGING | CYBEROPS_HEADER_TELEMETRY | CYBEROPS_HEADER_TIME | CYBEROPS_HEADER_LINK | CYBEROPS_HEADER_VPN | CYBEROPS_HEADER_IFACE | CYBEROPS_HEADER_LOCAL_IP | CYBEROPS_HEADER_MAC | CYBEROPS_HEADER_PUBLIC_IP | CYBEROPS_HEADER_TIMEOUT | CYBEROPS_PUBLIC_IP_CACHE_TTL)
                 if ! [[ -v $key ]]; then
                     printf -v "$key" '%s' "$value"
                 fi
@@ -76,11 +76,17 @@ disable_color() {
     YELLOW=""
     RED=""
     GREEN=""
+    PURPLE=""
+    BLUE=""
+    ORANGE=""
+    WHITE=""
+    MUTED=""
     DIM=""
     RESET=""
     CYBEROPS_NO_COLOR=1
 }
 
+CYBEROPS_THEME="${CYBEROPS_THEME:-neon-overdrive}"
 CYBEROPS_NO_COLOR="${CYBEROPS_NO_COLOR:-0}"
 CYBEROPS_LOGGING="${CYBEROPS_LOGGING:-1}"
 CYBEROPS_HEADER_TELEMETRY="${CYBEROPS_HEADER_TELEMETRY:-1}"
@@ -111,11 +117,29 @@ CYBEROPS_LOG_FILE="${CYBEROPS_LOG_FILE:-$CYBEROPS_STATE_DIR/operations.log}"
 if [[ -v NO_COLOR ]] || [[ "$CYBEROPS_NO_COLOR" == "1" ]]; then
     disable_color
 else
-    CYAN='\033[1;96m'
-    MAGENTA='\033[1;95m'
-    YELLOW='\033[1;93m'
-    RED='\033[1;91m'
-    GREEN='\033[1;92m'
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        CYAN='\033[1;38;2;0;245;255m'
+        MAGENTA='\033[1;38;2;255;45;149m'
+        YELLOW='\033[1;38;2;255;230;0m'
+        RED='\033[1;38;2;255;49;71m'
+        GREEN='\033[1;38;2;57;255;20m'
+        PURPLE='\033[1;38;2;179;0;255m'
+        BLUE='\033[1;38;2;35;120;255m'
+        ORANGE='\033[1;38;2;255;126;0m'
+        WHITE='\033[1;97m'
+        MUTED='\033[38;2;116;132;156m'
+    else
+        CYAN='\033[1;96m'
+        MAGENTA='\033[1;95m'
+        YELLOW='\033[1;93m'
+        RED='\033[1;91m'
+        GREEN='\033[1;92m'
+        PURPLE="$MAGENTA"
+        BLUE="$CYAN"
+        ORANGE="$YELLOW"
+        WHITE='\033[1;97m'
+        MUTED='\033[2m'
+    fi
     DIM='\033[2m'
     RESET='\033[0m'
 fi

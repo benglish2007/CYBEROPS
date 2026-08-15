@@ -46,9 +46,10 @@ have() {
 
 DRY_RUN=0
 banner_output="$(banner | strip_ansi)"
-if [[ "$banner_output" == *"CYBEROPS // NEON GRID"* &&
-    "$banner_output" == *"BUILD 2.13"* &&
-    "$banner_output" == *"NODE ONLINE"* ]]; then
+if [[ "$banner_output" == *"CYBEROPS // NIGHT CITY RELAY"* &&
+    "$banner_output" == *"BUILD://2.13"* &&
+    "$banner_output" == *"THREATGRID: ONLINE"* &&
+    "$banner_output" == *"LIVE SIGNAL MATRIX"* ]]; then
     banner_result=themed
 else
     banner_result=missing
@@ -110,7 +111,7 @@ navigation_colored_output="$(menu_navigation_item 0 "Exit Interface" "SESSION //
 MAGENTA="$saved_magenta"
 CYAN="$saved_cyan"
 navigation_output="$(printf '%s\n' "$navigation_colored_output" | strip_ansi | sed 's/<NAV>//g')"
-if [[ "$navigation_output" == $'\n  [00]'* &&
+if [[ "$navigation_output" == $'\n  ├─[00]'* &&
     "$navigation_output" == *"Exit Interface"* ]]; then
     navigation_result=separated
 else
@@ -118,8 +119,8 @@ else
 fi
 record_result "navigation rows are visually separated from operations" \
     "$navigation_result" separated
-if [[ "$navigation_colored_output" == *'<NAV>[00]'* &&
-    "$navigation_colored_output" != *'<ITEM>[00]'* ]]; then
+if [[ "$navigation_colored_output" == *'<NAV>├─[00]'* &&
+    "$navigation_colored_output" != *'<ITEM>├─[00]'* ]]; then
     navigation_color_result=distinct
 else
     navigation_color_result=shared
@@ -130,6 +131,18 @@ record_result "navigation keys use a distinct palette color" \
 prompt_result=""
 prompt_choice prompt_result "CYBEROPS" <<<"7" >/dev/null
 record_result "themed prompt preserves the selected value" "$prompt_result" 7
+
+CYBEROPS_THEME=classic
+classic_banner_output="$(banner | strip_ansi)"
+if [[ "$classic_banner_output" == *"CYBEROPS // NEON GRID"* &&
+    "$classic_banner_output" == *"NODE ONLINE"* ]]; then
+    classic_result=available
+else
+    classic_result=missing
+fi
+record_result "classic presentation remains available for comparison" \
+    "$classic_result" available
+CYBEROPS_THEME=neon-overdrive
 
 completed_path=""
 prompt_path completed_path "FILE PATH" <<<"$HOME/My\ File.iso" >/dev/null
