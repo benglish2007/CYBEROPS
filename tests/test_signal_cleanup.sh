@@ -56,6 +56,23 @@ perform_registered_cleanup >/dev/null 2>&1
 record_result "does not raise an interface that was originally down" \
     "${SUDO_CALLS[*]}" ""
 
+SUDO_CALLS=()
+register_connection_restore ethernet-uuid \
+    802-3-ethernet.cloned-mac-address random
+mark_connection_for_reactivation
+if perform_registered_cleanup >/dev/null 2>&1; then
+    connection_cleanup_result=success
+else
+    connection_cleanup_result=failure
+fi
+record_result "restores a registered NetworkManager policy" \
+    "$connection_cleanup_result" success
+record_result "reactivates a connection interrupted during restoration" \
+    "${SUDO_CALLS[*]}" \
+    "nmcli connection modify ethernet-uuid 802-3-ethernet.cloned-mac-address random nmcli connection up ethernet-uuid"
+record_result "clears NetworkManager recovery state before cleanup" \
+    "$NETWORK_CONNECTION_RESTORE_UUID|$NETWORK_CONNECTION_REACTIVATE" "|0"
+
 set +e
 signal_output="$(
     ACTIVE_OPERATION="USB test write"

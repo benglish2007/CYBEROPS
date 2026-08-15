@@ -48,6 +48,8 @@ current_menu="security"
 cyber_defense_menu >/dev/null
 current_menu="quickhacks"
 quickhacks_menu >/dev/null
+current_menu="mac"
+mac_address_menu >/dev/null
 current_menu="docker"
 docker_menu >/dev/null
 current_menu="usb"
@@ -68,7 +70,11 @@ expected_rows=(
     "security:6:Recent failed SSH logins"
     "quickhacks:3:Wi-Fi analyzer"
     "quickhacks:5:Flush DNS cache"
-    "quickhacks:7:Randomize MAC address"
+    "quickhacks:7:MAC address controls"
+    "mac:2:Randomize MAC for this session"
+    "mac:3:Enable automatic MAC randomization"
+    "mac:4:Disable automatic MAC randomization"
+    "mac:5:Restore permanent MAC now"
     "usb:1:Create bootable USB from ISO"
     "usb:2:Quick reset USB signatures"
     "usb:3:Wipe / zero-fill USB drive"

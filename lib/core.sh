@@ -281,24 +281,77 @@ register_network_restore() {
     fi
 }
 
+register_connection_restore() {
+    NETWORK_CONNECTION_RESTORE_UUID="$1"
+    NETWORK_CONNECTION_RESTORE_PROPERTY="$2"
+    NETWORK_CONNECTION_RESTORE_POLICY="$3"
+    NETWORK_CONNECTION_REACTIVATE=0
+}
+
+mark_connection_for_reactivation() {
+    NETWORK_CONNECTION_REACTIVATE=1
+}
+
+clear_connection_restore() {
+    NETWORK_CONNECTION_RESTORE_UUID=""
+    NETWORK_CONNECTION_RESTORE_PROPERTY=""
+    NETWORK_CONNECTION_RESTORE_POLICY=""
+    NETWORK_CONNECTION_REACTIVATE=0
+}
+
+perform_connection_cleanup() {
+    local connection_uuid="$NETWORK_CONNECTION_RESTORE_UUID"
+    local property="$NETWORK_CONNECTION_RESTORE_PROPERTY"
+    local policy="$NETWORK_CONNECTION_RESTORE_POLICY"
+    local reactivate="$NETWORK_CONNECTION_REACTIVATE"
+    local result=0
+
+    clear_connection_restore
+    [[ -n "$connection_uuid" ]] || return 0
+
+    printf '%bRestoring NetworkManager profile %s to its previous MAC policy...%b\n' \
+        "$YELLOW" "$connection_uuid" "$RESET"
+    if ! sudo nmcli connection modify "$connection_uuid" "$property" "$policy"; then
+        report_error \
+            "Automatic MAC policy rollback failed for $connection_uuid." \
+            "Inspect it manually with: nmcli connection show $connection_uuid"
+        result=1
+    fi
+
+    if ((reactivate == 1)); then
+        printf '%bReactivating NetworkManager profile %s...%b\n' \
+            "$YELLOW" "$connection_uuid" "$RESET"
+        if ! sudo nmcli connection up "$connection_uuid"; then
+            report_error \
+                "Automatic connection recovery failed for $connection_uuid." \
+                "Run manually: sudo nmcli connection up $connection_uuid"
+            result=1
+        fi
+    fi
+
+    return "$result"
+}
+
 perform_registered_cleanup() {
     local iface="$NETWORK_RESTORE_INTERFACE"
+    local result=0
 
     # Clear registration before cleanup so a failed command is never retried
     # recursively by the EXIT trap.
     NETWORK_RESTORE_INTERFACE=""
-    [[ -n "$iface" ]] || return 0
-
-    printf '%bRestoring network interface %s to its original up state...%b\n' \
-        "$YELLOW" "$iface" "$RESET"
-    if ! sudo ip link set dev "$iface" up; then
-        report_error \
-            "Automatic restoration failed for $iface." \
-            "Run manually: sudo ip link set dev $iface up"
-        return 1
+    if [[ -n "$iface" ]]; then
+        printf '%bRestoring network interface %s to its original up state...%b\n' \
+            "$YELLOW" "$iface" "$RESET"
+        if ! sudo ip link set dev "$iface" up; then
+            report_error \
+                "Automatic restoration failed for $iface." \
+                "Run manually: sudo ip link set dev $iface up"
+            result=1
+        fi
     fi
 
-    return 0
+    perform_connection_cleanup || result=1
+    return "$result"
 }
 
 cleanup_on_exit() {

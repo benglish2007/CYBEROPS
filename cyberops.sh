@@ -21,7 +21,7 @@ set -o pipefail
 CYBEROPS_SOURCE_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 CYBEROPS_LIB_DIR="${CYBEROPS_LIB_DIR:-$CYBEROPS_SOURCE_DIR/lib}"
 CYBEROPS_REQUIRED_MODULES=(
-    runtime core telemetry ui diagnostics docker admin info vpn security quickhacks usb menu
+    runtime core telemetry ui diagnostics docker admin info vpn security mac quickhacks usb menu
 )
 
 load_cyberops_module() {

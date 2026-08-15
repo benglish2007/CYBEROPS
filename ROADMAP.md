@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.12.1 — Milestone 12 complete.**
+Current release: **v2.13 — Milestone 13 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -261,6 +261,27 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [x] Verified MAC randomization updates the header state correctly.
 - [x] Verified Tailscale on/off badges and removal of the stale-interface false positive after `tailscale down`.
 
+## Milestone 13: Persistent MAC Address Controls
+
+- [x] Replace the one-off Quickhacks entry with a dedicated MAC control panel and numbered active-profile selection for temporary session randomization.
+- [x] Add a read-only view of active NetworkManager connections and their effective cloned-MAC policy.
+- [x] Select a specific supported NetworkManager connection by stable UUID before changing persistent policy.
+- [x] Enable per-connection MAC randomization on every activation with explicit profile selection and dry-run preview.
+- [x] Disable automatic randomization for a selected connection by explicitly applying its permanent-address policy.
+- [x] Restore the permanent hardware MAC immediately, verify the result, and reconcile the selected connection profile safely.
+- [x] Detect unavailable NetworkManager state and unsupported connection types and fail without mutation.
+- [x] Add mocked lifecycle, rollback, dry-run, menu, interruption-recovery, and packaging coverage.
+- [x] Document temporary randomization, persistent connection policy, reconnection effects, and recovery.
+- [x] Manually verify enable, reconnect/randomize, disable, and permanent restoration on the available supported Ethernet profile; retain mocked Wi-Fi coverage until suitable hardware is available.
+
+### Manual verification — 2026-08-15
+
+- [x] Verified read-only policy reporting for the active `netplan-enp7s0` Ethernet profile.
+- [x] Verified numbered active-profile selection without manual interface entry.
+- [x] Verified persistent randomization enablement and the resulting modified-MAC header state after reconnection.
+- [x] Verified persistent randomization disablement and immediate permanent-MAC restoration with successful reconnection.
+- [x] Accepted mocked Wi-Fi lifecycle coverage for this release because the verification host has no Wi-Fi hardware; hardware-specific corrections will be handled in a future patch if needed.
+
 ## Deferred: Controlled Extensibility and Portability
 
 Plugin discovery is intentionally postponed. CYBEROPS will retain its explicit,
@@ -270,22 +291,6 @@ feature packages and an appropriate trust model.
 - [ ] Reconsider constrained plugin discovery only when a real extension use case exists.
 - [ ] Treat additional package-manager and distribution support as a separate future evaluation.
 - [ ] Claim portability only where CI can enforce the complete runtime and installer contract.
-
-## Deferred Ideas Backlog
-
-These ideas are recorded for future design and are not part of the current
-implementation schedule.
-
-### Persistent MAC Address Controls
-
-- [ ] Offer an opt-in mode that changes the MAC address whenever a selected network connection activates.
-- [ ] Provide explicit enable, disable, and current-status controls for automatic MAC changes.
-- [ ] Preserve and clearly identify the interface's original/permanent hardware MAC address.
-- [ ] Provide a confirmed operation that restores the original MAC address.
-- [ ] Define behavior per interface or connection rather than silently changing every network device.
-- [ ] Detect unsupported network managers and interfaces, fail safely, and preserve connectivity on configuration errors.
-- [ ] Document the difference between a temporary current-session change, connection-level randomization, and restoration of the permanent address.
-- [ ] Add mocked lifecycle and rollback tests before enabling persistent network configuration changes.
 
 ## Release Gate
 

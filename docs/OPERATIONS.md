@@ -45,7 +45,11 @@ permanent-address state is yellow rather than being misreported as modified.
 | Quickhacks | Kill process | User or `sudo` depending on owner | Terminates the selected process |
 | Quickhacks | Flush DNS cache | `sudo` | Clears local resolver caches |
 | Quickhacks | Shred file | File permissions; may request `sudo` | Overwrites and removes the selected file; storage behavior may limit guarantees |
-| Quickhacks | Randomize MAC address | `sudo` | Temporarily drops a network link and changes its MAC address |
+| Quickhacks | Show active MAC policies | User | Reads active NetworkManager profile and cloned-MAC settings |
+| Quickhacks | Randomize MAC for this session | `sudo` | Temporarily drops a network link and changes its MAC address |
+| Quickhacks | Enable automatic MAC randomization | `sudo` | Sets only the selected wired or wireless profile to use a random MAC on activation |
+| Quickhacks | Disable automatic MAC randomization | `sudo` | Sets only the selected profile to use its permanent hardware address on activation |
+| Quickhacks | Restore permanent MAC now | `sudo` | Briefly disconnects one selected active profile, restores its hardware MAC, and reconnects it |
 | Docker | Status | Docker socket access | Read-only container and disk-usage telemetry |
 | Docker | Compose maintenance | Docker socket access | Pulls images and recreates selected containers |
 | Docker | Image prune | Docker socket access plus separate confirmation | Removes unused images |
@@ -53,6 +57,40 @@ permanent-address state is yellow rather than being misreported as modified.
 | USB | ISO write | `sudo` | Unmounts and overwrites the selected removable disk |
 | USB | Quick Reset | `sudo` | Unmounts media and removes recognized storage signatures; file contents may remain |
 | USB | Full zero-fill | `sudo` | Unmounts and overwrites every addressable byte on the selected disk |
+
+## MAC control boundary
+
+The Quickhacks MAC control panel separates temporary interface changes from
+persistent connection policy. Its policy view is read-only and queries active
+NetworkManager profiles by UUID. An empty cloned-MAC value is reported as
+`default`; connection types without a supported wired or wireless cloned-MAC
+setting are reported as `not applicable`.
+
+The existing session randomizer remains temporary. It uses the same numbered
+active-profile selector as immediate restoration, resolves the selected
+profile to its current device, drops only that interface, requests a random
+address through `macchanger`, and restores the interface's original up/down
+state. Manual interface-name entry is not required.
+
+Persistent controls list only saved wired and wireless profiles and select the
+target by its stable UUID. Enable sets NetworkManager's cloned-MAC policy to
+`random`; disable sets it to `permanent`. Selecting the profile is the action's
+authorization point, so there is no redundant second `YES` prompt. CYBEROPS
+shows the connection, UUID, device, current policy, and requested policy, then
+revalidates the profile immediately before changing it. No other connection is
+modified. The new policy applies on the next activation: CYBEROPS does not
+disconnect or reconnect the profile automatically. Use the read-only status
+view after reconnecting to verify the effective policy.
+
+Immediate restoration lists only active supported profiles. It records the
+profile's previous policy, applies `permanent`, deactivates the connection,
+explicitly brings its link down, uses `macchanger -p` on the device, reactivates
+it, and verifies the current address against the detected permanent address.
+If restoration, activation, or verification fails, CYBEROPS restores the
+previous profile policy and attempts connection recovery. Registered policy
+and reactivation state are also handled by the signal cleanup path. This
+operation briefly interrupts networking; do not run it through the connection
+being used for a remote administrative session.
 
 ## Preview boundary
 

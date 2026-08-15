@@ -2,6 +2,26 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 2.13 — 2026-08-15
+
+Version 2.13 completes **Roadmap Milestone 13: Persistent MAC Address
+Controls** with connection-aware temporary and persistent identity management.
+
+### Milestone 13: Persistent MAC Address Controls
+
+- Replaced the one-off Quickhacks MAC entry with a dedicated MAC control panel and numbered active-profile selection for temporary session randomization.
+- Added a read-only view of active NetworkManager profiles, devices, connection types, and cloned-MAC policies.
+- Added explicit handling for default policies, unsupported profile types, absent active profiles, and NetworkManager query failures.
+- Added stable-UUID selection for saved wired and wireless profiles while excluding VPN, bridge, and loopback profiles from persistent changes.
+- Added selection-driven, dry-run-aware controls that set a chosen profile to `random` on every activation or back to its permanent-address policy without a redundant second confirmation.
+- Deferred profile reconnection so policy changes cannot unexpectedly interrupt the active session.
+- Added immediate permanent-MAC restoration for active profiles with hardware-address verification, connection reactivation, previous-policy rollback, and signal-safe recovery.
+
+### Milestone
+
+- Completed manual Ethernet verification for policy reporting, numbered selection, automatic randomization, disablement, reconnection, and immediate permanent-MAC restoration.
+- Retained mocked Wi-Fi lifecycle coverage because the verification host has no Wi-Fi hardware; future hardware-specific corrections remain eligible for patch releases.
+
 ## 2.12.1 — 2026-08-15
 
 Version 2.12.1 refines the live header with a dedicated VPN status and address

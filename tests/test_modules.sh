@@ -27,7 +27,7 @@ record_result() {
 
 record_result "resolves the launcher directory" "$CYBEROPS_SOURCE_DIR" "$REPO_DIR"
 record_result "resolves the default module directory" "$CYBEROPS_LIB_DIR" "$REPO_DIR/lib"
-record_result "loads the version from runtime.sh" "$VERSION" 2.12.1
+record_result "loads the version from runtime.sh" "$VERSION" 2.13
 
 if declare -F docker_menu >/dev/null && declare -F usb_zero_fill >/dev/null; then
     functions_result=available
@@ -68,6 +68,7 @@ module_function_pairs=(
     "info_menu:info.sh"
     "vpn_menu:vpn.sh"
     "cyber_defense_menu:security.sh"
+    "mac_address_menu:mac.sh"
     "quickhacks_menu:quickhacks.sh"
     "usb_zero_fill:usb.sh"
     "main_menu:menu.sh"
