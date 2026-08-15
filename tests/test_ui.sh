@@ -75,6 +75,14 @@ else
 fi
 record_result "destructive warning box uses consistent border widths" \
     "$destructive_box_result" aligned
+destructive_wording="$(warn_destructive | strip_ansi)"
+if [[ "$destructive_wording" == *"BLACK ICE // DESTRUCTIVE PROTOCOL"* ]]; then
+    destructive_language=themed
+else
+    destructive_language=generic
+fi
+record_result "overdrive destructive boundary uses explicit themed language" \
+    "$destructive_language" themed
 
 item_output="$(menu_item 3 "VPN Control" "NETWORK // TUNNELS" | strip_ansi)"
 if [[ "$item_output" == *"[03]"* &&
@@ -132,6 +140,19 @@ prompt_result=""
 prompt_choice prompt_result "CYBEROPS" <<<"7" >/dev/null
 record_result "themed prompt preserves the selected value" "$prompt_result" 7
 
+set +e
+confirmation_output="$(confirm_yes "Type YES to continue: " <<<'YES' | strip_ansi)"
+confirmation_status=$?
+set -e
+if [[ "$confirmation_status" == "0" &&
+    "$confirmation_output" == *"[ AUTH GATE ] Type YES to continue:"* ]]; then
+    confirmation_result=themed
+else
+    confirmation_result=missing
+fi
+record_result "destructive confirmation uses the overdrive auth gate" \
+    "$confirmation_result" themed
+
 CYBEROPS_THEME=classic
 classic_banner_output="$(banner | strip_ansi)"
 if [[ "$classic_banner_output" == *"CYBEROPS // NEON GRID"* &&
@@ -165,6 +186,23 @@ fi
 record_result "overdrive signal matrix uses aligned instrument rows" \
     "$signal_result" legible
 
+COLUMNS=50
+narrow_signal_output="$(render_header_telemetry | strip_ansi)"
+if [[ "$narrow_signal_output" == *"║ TIME  │ 2088-08-15"* &&
+    "$narrow_signal_output" == *"║ LINK  │ ROUTED"* &&
+    "$narrow_signal_output" == *"║ NET   │ IFACE enp7s0"* &&
+    "$narrow_signal_output" == *"║ IP    │ 192.0.2.13"* &&
+    "$narrow_signal_output" == *"║ VPN   │ STATUS [ON // tailscale0]"* &&
+    "$narrow_signal_output" == *"║ V-IP  │ 100.64.0.13"* &&
+    "$narrow_signal_output" == *"║ L2    │ [MODIFIED // 02:13:37:aa:bb:cc]"* ]]; then
+    narrow_signal_result=legible
+else
+    narrow_signal_result=compressed
+fi
+record_result "narrow terminals split telemetry into legible instrument rows" \
+    "$narrow_signal_result" legible
+COLUMNS=80
+
 completed_path=""
 prompt_path completed_path "FILE PATH" <<<"$HOME/My\ File.iso" >/dev/null
 record_result "path completion escapes resolve to literal spaces" \
@@ -197,6 +235,24 @@ else
     preview_result=missing
 fi
 record_result "dry-run state remains visible in the themed banner" "$preview_result" visible
+
+disable_color
+plain_feedback_output="$(
+    report_success "Operation complete."
+    report_warning "Verify the uplink."
+    report_error "Uplink unavailable." "Inspect the active route."
+)"
+if [[ "$plain_feedback_output" == *"[ ACK ] Operation complete."* &&
+    "$plain_feedback_output" == *"[ CAUTION ] Verify the uplink."* &&
+    "$plain_feedback_output" == *"[ FAULT ] Uplink unavailable."* &&
+    "$plain_feedback_output" == *"RECOVERY:: Inspect the active route."* &&
+    "$plain_feedback_output" != *$'\033['* ]]; then
+    plain_feedback_result=legible
+else
+    plain_feedback_result=styled
+fi
+record_result "no-color mode preserves the feedback vocabulary without escapes" \
+    "$plain_feedback_result" legible
 
 printf '1..%d\n' "$tests_run"
 

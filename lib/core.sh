@@ -37,20 +37,36 @@ require_commands() {
 }
 
 report_success() {
-    printf '%b[OK] %s%b\n' "$GREEN" "$1" "$RESET"
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        printf '%b[ ACK ]%b %s\n' "$GREEN" "$RESET" "$1"
+    else
+        printf '%b[OK] %s%b\n' "$GREEN" "$1" "$RESET"
+    fi
 }
 
 report_warning() {
-    printf '%b[!] %s%b\n' "$YELLOW" "$1" "$RESET"
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        printf '%b[ CAUTION ]%b %s\n' "$YELLOW" "$RESET" "$1"
+    else
+        printf '%b[!] %s%b\n' "$YELLOW" "$1" "$RESET"
+    fi
 }
 
 report_error() {
     local message="$1"
     local recovery="${2:-}"
 
-    printf '%b[!] %s%b\n' "$RED" "$message" "$RESET"
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        printf '%b[ FAULT ]%b %s\n' "$RED" "$RESET" "$message"
+    else
+        printf '%b[!] %s%b\n' "$RED" "$message" "$RESET"
+    fi
     if [[ -n "$recovery" ]]; then
-        echo "Next step: $recovery"
+        if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+            printf '%bRECOVERY::%b %s\n' "$ORANGE" "$RESET" "$recovery"
+        else
+            echo "Next step: $recovery"
+        fi
     fi
 }
 
@@ -105,8 +121,13 @@ preview_command() {
     local action="$1"
 
     shift
-    printf '%b[DRY-RUN] %s%b\n' "$CYAN" "$action" "$RESET"
-    printf 'Command:'
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        printf '%b[ SIMULATION ]%b %s\n' "$PURPLE" "$RESET" "$action"
+        printf '%bPAYLOAD::%b' "$MUTED" "$RESET"
+    else
+        printf '%b[DRY-RUN] %s%b\n' "$CYAN" "$action" "$RESET"
+        printf 'Command:'
+    fi
     printf ' %q' "$@"
     printf '\n'
     write_operation_log preview "$action" 0
@@ -143,53 +164,53 @@ validate_configuration() {
     local header_toggle
 
     for config_error in "${CYBEROPS_CONFIG_ERRORS[@]}"; do
-        printf '%b[!] %s%b\n' "$RED" "$config_error" "$RESET"
+        report_error "$config_error"
         ((errors += 1))
     done
 
     if [[ "$STACK_ROOT" != /* || -z "${STACK_ROOT//\//}" ||
         "$STACK_ROOT" =~ (^|/)\.\.?(/|$) ]]; then
-        printf '%b[!] STACK_ROOT must be a safe absolute path other than /.%b\n' "$RED" "$RESET"
+        report_error "STACK_ROOT must be a safe absolute path other than /."
         ((errors += 1))
     fi
 
     if ! integer_in_range "$RETRY_DELAY" 0 3600; then
-        printf '%b[!] RETRY_DELAY must be an integer from 0 to 3600 seconds.%b\n' "$RED" "$RESET"
+        report_error "RETRY_DELAY must be an integer from 0 to 3600 seconds."
         ((errors += 1))
     fi
 
     if ! integer_in_range "$HEALTH_TIMEOUT" 1 86400; then
-        printf '%b[!] HEALTH_TIMEOUT must be an integer from 1 to 86400 seconds.%b\n' "$RED" "$RESET"
+        report_error "HEALTH_TIMEOUT must be an integer from 1 to 86400 seconds."
         ((errors += 1))
     fi
 
     if ! integer_in_range "$HEALTH_INTERVAL" 1 3600; then
-        printf '%b[!] HEALTH_INTERVAL must be an integer from 1 to 3600 seconds.%b\n' "$RED" "$RESET"
+        report_error "HEALTH_INTERVAL must be an integer from 1 to 3600 seconds."
         ((errors += 1))
     fi
 
     if ! integer_in_range "$FAILURE_LOG_LINES" 1 10000; then
-        printf '%b[!] FAILURE_LOG_LINES must be an integer from 1 to 10000.%b\n' "$RED" "$RESET"
+        report_error "FAILURE_LOG_LINES must be an integer from 1 to 10000."
         ((errors += 1))
     fi
 
     if [[ "$DRY_RUN" != "0" && "$DRY_RUN" != "1" ]]; then
-        printf '%b[!] DRY_RUN must be either 0 or 1.%b\n' "$RED" "$RESET"
+        report_error "DRY_RUN must be either 0 or 1."
         ((errors += 1))
     fi
 
     if [[ "$CYBEROPS_THEME" != "classic" && "$CYBEROPS_THEME" != "neon-overdrive" ]]; then
-        printf '%b[!] CYBEROPS_THEME must be classic or neon-overdrive.%b\n' "$RED" "$RESET"
+        report_error "CYBEROPS_THEME must be classic or neon-overdrive."
         ((errors += 1))
     fi
 
     if [[ "$CYBEROPS_NO_COLOR" != "0" && "$CYBEROPS_NO_COLOR" != "1" ]]; then
-        printf '%b[!] CYBEROPS_NO_COLOR must be either 0 or 1.%b\n' "$RED" "$RESET"
+        report_error "CYBEROPS_NO_COLOR must be either 0 or 1."
         ((errors += 1))
     fi
 
     if [[ "$CYBEROPS_LOGGING" != "0" && "$CYBEROPS_LOGGING" != "1" ]]; then
-        printf '%b[!] CYBEROPS_LOGGING must be either 0 or 1.%b\n' "$RED" "$RESET"
+        report_error "CYBEROPS_LOGGING must be either 0 or 1."
         ((errors += 1))
     fi
 
@@ -198,31 +219,30 @@ validate_configuration() {
         CYBEROPS_HEADER_VPN CYBEROPS_HEADER_IFACE CYBEROPS_HEADER_LOCAL_IP \
         CYBEROPS_HEADER_MAC CYBEROPS_HEADER_PUBLIC_IP; do
         if [[ "${!header_toggle}" != "0" && "${!header_toggle}" != "1" ]]; then
-            printf '%b[!] %s must be either 0 or 1.%b\n' \
-                "$RED" "$header_toggle" "$RESET"
+            report_error "$header_toggle must be either 0 or 1."
             ((errors += 1))
         fi
     done
 
     if ! integer_in_range "$CYBEROPS_HEADER_TIMEOUT" 1 10; then
-        printf '%b[!] CYBEROPS_HEADER_TIMEOUT must be an integer from 1 to 10 seconds.%b\n' "$RED" "$RESET"
+        report_error "CYBEROPS_HEADER_TIMEOUT must be an integer from 1 to 10 seconds."
         ((errors += 1))
     fi
 
     if ! integer_in_range "$CYBEROPS_PUBLIC_IP_CACHE_TTL" 30 86400; then
-        printf '%b[!] CYBEROPS_PUBLIC_IP_CACHE_TTL must be an integer from 30 to 86400 seconds.%b\n' "$RED" "$RESET"
+        report_error "CYBEROPS_PUBLIC_IP_CACHE_TTL must be an integer from 30 to 86400 seconds."
         ((errors += 1))
     fi
 
     if integer_in_range "$HEALTH_TIMEOUT" 1 86400 &&
         integer_in_range "$HEALTH_INTERVAL" 1 3600 &&
         ((10#$HEALTH_INTERVAL > 10#$HEALTH_TIMEOUT)); then
-        printf '%b[!] HEALTH_INTERVAL cannot exceed HEALTH_TIMEOUT.%b\n' "$RED" "$RESET"
+        report_error "HEALTH_INTERVAL cannot exceed HEALTH_TIMEOUT."
         ((errors += 1))
     fi
 
     if ((errors > 0)); then
-        printf '%bCYBEROPS configuration is invalid. Correct the settings above and retry.%b\n' "$RED" "$RESET"
+        report_error "CYBEROPS configuration is invalid. Correct the settings above and retry."
         return 1
     fi
 
@@ -379,8 +399,13 @@ handle_signal() {
     esac
 
     echo
-    printf '%b[!] Received %s; stopping CYBEROPS.%b\n' \
-        "$YELLOW" "$signal_name" "$RESET"
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        printf '%b[ LINK SEVERED ]%b Received %s; stopping CYBEROPS.\n' \
+            "$YELLOW" "$RESET" "$signal_name"
+    else
+        printf '%b[!] Received %s; stopping CYBEROPS.%b\n' \
+            "$YELLOW" "$signal_name" "$RESET"
+    fi
     if [[ -n "$ACTIVE_OPERATION" ]]; then
         echo "Interrupted operation: $ACTIVE_OPERATION"
     fi

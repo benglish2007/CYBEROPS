@@ -52,7 +52,8 @@ DRY_RUN=1
 confirmation_result=0
 docker_calls=""
 preview_output="$(offer_image_prune 2>&1)"
-if [[ "$preview_output" == *"[DRY-RUN] Prune unused Docker images"* &&
+if [[ "$preview_output" == *"[ SIMULATION ]"* &&
+    "$preview_output" == *"Prune unused Docker images"* &&
     "$preview_output" == *"docker image prune -f"* &&
     -z "$docker_calls" ]]; then
     preview_result=safe

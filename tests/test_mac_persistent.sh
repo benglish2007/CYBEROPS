@@ -129,7 +129,7 @@ NMCLI_MODE=normal
 CALL_LOG=()
 DRY_RUN=1
 dry_run_output="$(set_mac_connection_policy ethernet-uuid random)"
-if [[ "$dry_run_output" == *"[DRY-RUN]"* &&
+if [[ "$dry_run_output" == *"[ SIMULATION ]"* &&
     "$dry_run_output" == *"connection modify ethernet-uuid"* ]]; then
     dry_run_result=previewed
 else

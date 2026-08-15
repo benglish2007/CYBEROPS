@@ -24,6 +24,10 @@ record_result() {
     fi
 }
 
+strip_ansi() {
+    sed $'s/\033\[[0-9;]*m//g'
+}
+
 successful_command() {
     printf 'command output\n'
     return 0
@@ -49,6 +53,7 @@ failure_output="$(run_checked "Test action" "Apply the test recovery." failing_c
 failure_status=$?
 set -e
 record_result "checked failure preserves the command exit status" "$failure_status" 37
+failure_output="$(printf '%s\n' "$failure_output" | strip_ansi)"
 
 if [[ "$failure_output" == *"Test action failed (exit status 37)."* ]]; then
     action_result=reported
@@ -57,7 +62,7 @@ else
 fi
 record_result "checked failure identifies the action and exit status" "$action_result" reported
 
-if [[ "$failure_output" == *"Next step: Apply the test recovery."* ]]; then
+if [[ "$failure_output" == *"RECOVERY:: Apply the test recovery."* ]]; then
     recovery_result=reported
 else
     recovery_result=missing
@@ -70,13 +75,34 @@ argument_output="$(run_checked "Argument test" "" show_arguments "one two" "$lit
 record_result "checked command forwards arguments without evaluation" \
     "$argument_output" "one two|${literal_argument}|three"
 
-success_message="$(report_success "Operation complete")"
-if [[ "$success_message" == *"[OK] Operation complete"* ]]; then
+success_message="$(report_success "Operation complete" | strip_ansi)"
+if [[ "$success_message" == *"[ ACK ] Operation complete"* ]]; then
     format_result=standard
 else
     format_result=unexpected
 fi
 record_result "success reports use the standard marker" "$format_result" standard
+
+warning_message="$(report_warning "Review required" | strip_ansi)"
+error_message="$(report_error "Operation failed" "Retry safely" | strip_ansi)"
+preview_message="$(preview_command "Inspect mutation" printf payload | strip_ansi)"
+if [[ "$warning_message" == *"[ CAUTION ] Review required"* &&
+    "$error_message" == *"[ FAULT ] Operation failed"* &&
+    "$error_message" == *"RECOVERY:: Retry safely"* &&
+    "$preview_message" == *"[ SIMULATION ] Inspect mutation"* &&
+    "$preview_message" == *"PAYLOAD:: printf payload"* ]]; then
+    overdrive_signals=consistent
+else
+    overdrive_signals=mixed
+fi
+record_result "overdrive feedback uses a consistent signal vocabulary" \
+    "$overdrive_signals" consistent
+
+CYBEROPS_THEME=classic
+classic_success="$(report_success "Operation complete" | strip_ansi)"
+record_result "classic feedback marker remains available" \
+    "$classic_success" "[OK] Operation complete"
+CYBEROPS_THEME=neon-overdrive
 
 printf '1..%d\n' "$tests_run"
 

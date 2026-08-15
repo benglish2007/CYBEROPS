@@ -38,7 +38,8 @@ dry_output="$(run_mutating_checked "Test mutation" "Test recovery" mutating_comm
 dry_status=$?
 set -e
 record_result "dry-run mutation returns success" "$dry_status" 0
-if [[ "$dry_output" == *"[DRY-RUN] Test mutation"* &&
+if [[ "$dry_output" == *"[ SIMULATION ]"* &&
+    "$dry_output" == *"Test mutation"* &&
     "$dry_output" != *"MUTATION_EXECUTED"* ]]; then
     dry_result=previewed
 else

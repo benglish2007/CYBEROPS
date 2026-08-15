@@ -101,7 +101,7 @@ record_result "labels unsupported active profile types without mutation" \
 NMCLI_MODE=empty
 empty_output="$(show_mac_address_policies | strip_ansi)"
 record_result "reports when NetworkManager has no active profiles" \
-    "$empty_output" "[!] No active NetworkManager connections were found."
+    "$empty_output" "[ CAUTION ] No active NetworkManager connections were found."
 
 NMCLI_MODE=failure
 set +e

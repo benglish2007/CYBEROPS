@@ -423,7 +423,11 @@ warn_destructive() {
 confirm_yes() {
     local prompt="${1:-Type YES to continue: }"
     local answer
-    printf '%bCONFIRM%b // %s' "$RED" "$RESET" "$prompt"
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        printf '%b[ AUTH GATE ]%b %s' "$RED" "$RESET" "$prompt"
+    else
+        printf '%bCONFIRM%b // %s' "$RED" "$RESET" "$prompt"
+    fi
     read -r answer
     [[ "$answer" == "YES" ]]
 }
