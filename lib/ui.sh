@@ -353,6 +353,55 @@ render_header_telemetry() {
     fi
 }
 
+emit_cyberops_logo() {
+    if have figlet; then
+        figlet -f slant "CYBEROPS"
+        return
+    fi
+
+    cat <<'EOF'
+   ________  ______  __________  ____  ____  ____  _____
+  / ____/\ \/ / __ )/ ____/ __ \/ __ \/ __ \/ __ \/ ___/
+ / /      \  / __  / __/ / /_/ / / / / /_/ / /_/ /\__ \
+/ /___    / / /_/ / /___/ _, _/ /_/ / ____/ ____/___/ /
+\____/   /_/_____/_____/_/ |_|\____/_/   /_/    /____/
+EOF
+}
+
+render_overdrive_logo() {
+    local frame_inner_width=65
+    local index padding
+    local -a plain_lines=()
+    local -a colored_lines=()
+
+    mapfile -t plain_lines < <(emit_cyberops_logo)
+    if have lolcat; then
+        mapfile -t colored_lines < <(emit_cyberops_logo | lolcat)
+    fi
+    while ((${#plain_lines[@]} > 0)) &&
+        [[ -z "${plain_lines[${#plain_lines[@]} - 1]}" ]]; do
+        unset 'plain_lines[${#plain_lines[@]} - 1]'
+        ((${#colored_lines[@]} == 0)) || \
+            unset 'colored_lines[${#colored_lines[@]} - 1]'
+    done
+
+    printf '%b║%b%*s%b║%b\n' "$MAGENTA" "$RESET" "$frame_inner_width" '' \
+        "$MAGENTA" "$RESET"
+    for index in "${!plain_lines[@]}"; do
+        padding=$((frame_inner_width - ${#plain_lines[index]}))
+        ((padding < 0)) && padding=0
+        printf '%b║%b' "$MAGENTA" "$RESET"
+        if ((${#colored_lines[@]} > index)); then
+            printf '%s' "${colored_lines[index]}"
+        else
+            printf '%b%s%b' "$CYAN" "${plain_lines[index]}" "$RESET"
+        fi
+        printf '%*s%b║%b\n' "$padding" '' "$MAGENTA" "$RESET"
+    done
+    printf '%b║%b%*s%b║%b\n' "$MAGENTA" "$RESET" "$frame_inner_width" '' \
+        "$MAGENTA" "$RESET"
+}
+
 banner() {
     clear_screen
 
@@ -368,7 +417,9 @@ banner() {
             "$MAGENTA" "$CYAN" "$MAGENTA" "$GREEN" "$MAGENTA" "$RESET"
     fi
 
-    if have figlet; then
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        render_overdrive_logo
+    elif have figlet; then
         if have lolcat; then
             figlet -f slant "CYBEROPS" | lolcat
         else

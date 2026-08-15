@@ -56,6 +56,28 @@ else
 fi
 record_result "banner exposes the cyberpunk control-deck theme" "$banner_result" themed
 
+logo_frame_result=aligned
+logo_frame_active=0
+logo_frame_rows=0
+while IFS= read -r banner_line; do
+    if [[ "$banner_line" == *"NEURAL COMMAND FABRIC"* ]]; then
+        logo_frame_active=1
+        continue
+    fi
+    if [[ "$banner_line" == *"LIVE SIGNAL MATRIX"* ]]; then
+        break
+    fi
+    if ((logo_frame_active)); then
+        ((logo_frame_rows += 1))
+        if [[ "$banner_line" != ║*║ || ${#banner_line} -ne 67 ]]; then
+            logo_frame_result=broken
+        fi
+    fi
+done <<<"$banner_output"
+((logo_frame_rows > 2)) || logo_frame_result=missing
+record_result "logo chamber preserves continuous aligned side rails" \
+    "$logo_frame_result" aligned
+
 section_output="$(ui_section "CONTROL DECK" "SELECT AN OPERATIONS NODE" | strip_ansi)"
 if [[ "$section_output" == *"CONTROL DECK"* &&
     "$section_output" == *"SELECT AN OPERATIONS NODE"* ]]; then
