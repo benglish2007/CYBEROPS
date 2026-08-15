@@ -24,7 +24,7 @@ record_result() {
 }
 
 version_output="$(bash "$LAUNCHER" --version)"
-record_result "version option prints the release" "$version_output" "CYBEROPS Terminal 2.8"
+record_result "version option prints the release" "$version_output" "CYBEROPS Terminal 2.9"
 
 help_output="$(bash "$LAUNCHER" --help)"
 if [[ "$help_output" == *"Usage:"* && "$help_output" == *"--no-color"* &&

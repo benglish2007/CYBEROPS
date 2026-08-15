@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.8 — Milestone 8 complete.**
+Current release: **v2.9 — Milestone 9 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -178,8 +178,13 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [x] Document release preparation, publishing, recovery, and rollback boundaries.
 - [x] Add mocked regression coverage that never changes GitHub.
 
-Manual verification and the v2.8 release backfill remain required before
-Milestone 9 is complete.
+### Manual verification — 2026-08-15
+
+- [x] Ran the real clean-tree release check and exact no-mutation preview.
+- [x] Confirmed stale-version publishing is blocked when post-release notes exist.
+- [x] Backfilled annotated tag and GitHub Release v2.8 at its historical release commit.
+- [x] Verified ShellCheck, formatting, all regression tests, and all five compatibility jobs in GitHub Actions.
+- [x] Verified GitHub CLI keyring authentication and Release API access.
 
 ## Planned Milestone 10: Read-Only Command Expansion
 

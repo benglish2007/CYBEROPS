@@ -2,7 +2,11 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
-## Unreleased
+## 2.9 — 2026-08-15
+
+Version 2.9 completes **Roadmap Milestone 9: Release Automation** with guarded,
+repeatable validation, annotated tags, changelog-derived GitHub Releases, and
+explicit retry and rollback boundaries.
 
 ### Release Engineering
 
@@ -12,6 +16,16 @@ All notable changes to CYBEROPS are documented in this file.
 - Added annotated tag publishing and GitHub Release notes extracted directly from the matching changelog section.
 - Added resumable handling when a correct tag exists but GitHub Release creation did not finish.
 - Added mocked release regression coverage and a release/recovery operations guide.
+
+### Validation and Compatibility
+
+- Made destructive-warning alignment regression coverage independent of container locale.
+- Cleared ShellCheck and `shfmt` failures so the complete shell-quality job and five-distribution matrix pass.
+- Backfilled the v2.8 annotated tag and GitHub Release at the original v2.8 release commit.
+
+### Milestone
+
+- Completed all Roadmap Milestone 9 work and recorded successful end-to-end verification of release preview, historical backfill, GitHub publishing, CI safeguards, and conflict refusal.
 
 ## 2.8 — 2026-08-15
 
