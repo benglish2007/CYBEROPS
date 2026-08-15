@@ -40,12 +40,15 @@ invalid_version_status=$?
 set -e
 record_result "rejects a version with a v prefix" "$invalid_version_status" 1
 
-verify_release_metadata 2.8
-record_result "accepts consistent release metadata" "$?" 0
+set +e
+verify_release_metadata 2.8 >/dev/null 2>&1
+unreleased_status=$?
+set -e
+record_result "rejects publishing over post-release work" "$unreleased_status" 1
 notes="$(extract_release_notes 2.8)"
 [[ "$notes" == *"Configuration and Supportability"* &&
     "$notes" != *"## 2.7.1"* ]]
-record_result "extracts only the requested changelog section" "$?" 0
+record_result "still extracts historical release notes safely" "$?" 0
 
 if grep -Fq 'release-check:' "$REPO_DIR/Makefile" &&
     grep -Fq 'release-preview:' "$REPO_DIR/Makefile" &&

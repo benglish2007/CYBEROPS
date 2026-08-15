@@ -8,7 +8,9 @@ Release, or push the `main` branch.
 
 Update the version in `lib/runtime.sh`, README, roadmap, changelog, demo, and
 version assertions. Commit and push the prepared release to synchronized
-`main`. The changelog heading must use `## VERSION — YYYY-MM-DD`.
+`main`. The changelog heading must use `## VERSION — YYYY-MM-DD`, and no
+`## Unreleased` section may remain when publishing. This prevents later work
+from being accidentally attached to an older version tag.
 
 ## Validate and preview
 
@@ -62,3 +64,7 @@ git tag -d v2.9
 
 The first command must report no matching remote tag. Release tooling never
 deletes tags or Releases automatically.
+
+Historical releases must be backfilled deliberately at their original release
+commit. Do not use the normal publish target from a newer `main` commit merely
+because the runtime still reports the older released version.

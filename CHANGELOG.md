@@ -8,6 +8,7 @@ All notable changes to CYBEROPS are documented in this file.
 
 - Added guarded `release-check`, `release-preview`, and `release` Makefile targets.
 - Added version consistency, clean-tree, synchronized-branch, full-suite, tag conflict, and existing-Release safeguards.
+- Blocked normal publishing while post-release work remains under an `Unreleased` changelog section.
 - Added annotated tag publishing and GitHub Release notes extracted directly from the matching changelog section.
 - Added resumable handling when a correct tag exists but GitHub Release creation did not finish.
 - Added mocked release regression coverage and a release/recovery operations guide.

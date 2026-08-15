@@ -57,6 +57,12 @@ verify_release_metadata() {
     local version="$1"
     local failure=0
 
+    if grep -Fqx '## Unreleased' "$REPO_DIR/CHANGELOG.md"; then
+        release_error "CHANGELOG.md still contains an Unreleased section." \
+            "Convert the prepared notes into the dated v$version section before publishing."
+        failure=1
+    fi
+
     if ! grep -Fqx "VERSION=\"$version\"" "$REPO_DIR/lib/runtime.sh"; then
         release_error "lib/runtime.sh does not declare VERSION=\"$version\"."
         failure=1
