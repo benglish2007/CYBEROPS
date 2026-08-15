@@ -60,7 +60,7 @@ admin_menu() {
                         run_mutating_checked \
                             "Package upgrade" \
                             "Review the APT error above, resolve held or conflicting packages, then retry." \
-                            sudo apt upgrade
+                            sudo apt upgrade -y
                     fi
                 fi
                 pause

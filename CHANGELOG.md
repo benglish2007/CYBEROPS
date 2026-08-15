@@ -2,6 +2,14 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 2.9.2 — 2026-08-15
+
+Version 2.9.2 streamlines the confirmed Admin Ops package-upgrade workflow.
+
+### Admin Operations
+
+- Added APT's `-y` option to Admin Ops package upgrades so the already-selected upgrade proceeds without a second package-confirmation prompt.
+
 ## 2.9.1 — 2026-08-15
 
 Version 2.9.1 refreshes CYBEROPS desktop artwork for clearer recognition in

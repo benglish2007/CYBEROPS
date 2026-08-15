@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2329 # Mocks are invoked indirectly by sourced admin code.
+# shellcheck disable=SC2317,SC2329 # Mocks are invoked indirectly by sourced admin code.
 
 set -uo pipefail
 
@@ -43,6 +43,29 @@ else
 fi
 record_result "local disk usage query succeeds through checked execution" "$query_result" success
 record_result "local disk usage excludes remote filesystems" "$checked_command" "df -lhT"
+
+mutating_commands=()
+choices=(2 0)
+choice_index=0
+banner() { :; }
+ui_section() { :; }
+menu_item() { :; }
+menu_navigation_item() { :; }
+pause() { :; }
+require_commands() { return 0; }
+prompt_choice() {
+    local -n destination="$1"
+    destination="${choices[choice_index]}"
+    ((choice_index += 1))
+}
+run_mutating_checked() {
+    shift 2
+    mutating_commands+=("$*")
+}
+
+admin_menu >/dev/null
+record_result "package upgrade accepts APT confirmation automatically" \
+    "${mutating_commands[*]}" "sudo apt update sudo apt upgrade -y"
 
 printf '1..%d\n' "$tests_run"
 
