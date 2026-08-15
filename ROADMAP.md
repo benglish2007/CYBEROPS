@@ -272,7 +272,7 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [x] Detect unavailable NetworkManager state and unsupported connection types and fail without mutation.
 - [x] Add mocked lifecycle, rollback, dry-run, menu, interruption-recovery, and packaging coverage.
 - [x] Document temporary randomization, persistent connection policy, reconnection effects, and recovery.
-- [x] Manually verify enable, reconnect/randomize, disable, and permanent restoration on the available supported Ethernet profile; retain mocked Wi-Fi coverage until suitable hardware is available.
+- [x] Manually verify enable, reconnect/randomize, disable, and permanent restoration across supported Ethernet and Wi-Fi hardware.
 
 ### Manual verification — 2026-08-15
 
@@ -280,7 +280,7 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [x] Verified numbered active-profile selection without manual interface entry.
 - [x] Verified persistent randomization enablement and the resulting modified-MAC header state after reconnection.
 - [x] Verified persistent randomization disablement and immediate permanent-MAC restoration with successful reconnection.
-- [x] Accepted mocked Wi-Fi lifecycle coverage for this release because the verification host has no Wi-Fi hardware; hardware-specific corrections will be handled in a future patch if needed.
+- [x] Downloaded and installed the released v2.13 `.deb` on a separate Wi-Fi laptop and verified the Wi-Fi MAC-control workflow successfully.
 
 ## Deferred: Controlled Extensibility and Portability
 

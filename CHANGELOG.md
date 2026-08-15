@@ -2,6 +2,12 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## Unreleased
+
+### Post-release Verification
+
+- Verified the released v2.13 Debian package on a separate Wi-Fi laptop, including the Wi-Fi MAC-control workflow.
+
 ## 2.13 — 2026-08-15
 
 Version 2.13 completes **Roadmap Milestone 13: Persistent MAC Address
