@@ -225,6 +225,8 @@ USB unmount, image-write, signature-reset, zero-fill, and sync operations.
 | [USB Operations](docs/USB.md) | Target safety, ISO writing, Quick Reset, full zero-fill, and flash-storage limits |
 | [Privileges and Side Effects](docs/OPERATIONS.md) | Privileges, mutations, network disclosure, previews, and interruption behavior |
 | [Configuration, Logs, and Diagnostics](docs/CONFIGURATION.md) | Safe XDG configuration, private operation events, and privacy-filtered support bundles |
+| [Neon Overdrive Interface](docs/NEON-OVERDRIVE.md) | Theme selection, visual language, classic fallback, and accessible rendering |
+| [v3 Readiness Gate](docs/V3-READINESS.md) | Stable contracts plus automated and manual release-candidate checks |
 | [Release Operations](docs/RELEASING.md) | Validation, preview, publishing, retry, and rollback boundaries |
 | [Terminal Demonstration](docs/DEMO.md) | Short CLI and non-interactive session |
 | [Compatibility](COMPATIBILITY.md) | Supported releases, dependencies, and CI boundaries |

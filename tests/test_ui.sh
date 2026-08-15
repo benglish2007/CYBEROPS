@@ -108,7 +108,7 @@ fi
 record_result "logo chamber avoids doubled visual spacing above the FIGlet art" \
     "$logo_spacing_result" balanced
 
-if command -v lolcat >/dev/null 2>&1; then
+if command -v lolcat >/dev/null 2>&1 && [[ "$CYBEROPS_NO_COLOR" != "1" ]]; then
     original_have_definition="$(declare -f have)"
     have() {
         command -v "$1" >/dev/null 2>&1

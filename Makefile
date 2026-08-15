@@ -14,8 +14,26 @@ LEGACY_ICON_PATH := $(DATADIR)/icons/hicolor/1024x1024/apps/cyberops.png
 INSTALL ?= install
 SED ?= sed
 VERSION ?=
+SHELL_SOURCES := cyberops.sh $(wildcard lib/*.sh) $(wildcard packaging/*.sh) \
+	packaging/cyberops.in $(wildcard tests/*.sh)
 
-.PHONY: install install-deps full-install uninstall deb deb-inspect release-check release-preview release
+.PHONY: check syntax quality test install install-deps full-install uninstall deb deb-inspect release-check release-preview release
+
+syntax:
+	bash -n $(SHELL_SOURCES)
+
+quality:
+	@command -v shellcheck >/dev/null 2>&1 || { echo "shellcheck is required for 'make check'." >&2; exit 1; }
+	shellcheck $(SHELL_SOURCES)
+	@command -v shfmt >/dev/null 2>&1 || { echo "shfmt is required for 'make check'." >&2; exit 1; }
+	shfmt -d -i 4 -ci $(SHELL_SOURCES)
+
+test:
+	@for test_script in tests/test_*.sh; do \
+		env -u NO_COLOR -u CYBEROPS_NO_COLOR bash "$$test_script" || exit 1; \
+	done
+
+check: syntax quality test
 
 deb:
 	bash packaging/build-deb.sh
@@ -71,6 +89,7 @@ uninstall:
 	rm -f -- "$(DESTDIR)$(DOC_DIR)/OPERATIONS.md" "$(DESTDIR)$(DOC_DIR)/USB.md"
 	rm -f -- "$(DESTDIR)$(DOC_DIR)/CONFIGURATION.md" "$(DESTDIR)$(DOC_DIR)/cyberops.conf.example"
 	rm -f -- "$(DESTDIR)$(DOC_DIR)/RELEASING.md" "$(DESTDIR)$(DOC_DIR)/PACKAGING.md"
+	rm -f -- "$(DESTDIR)$(DOC_DIR)/NEON-OVERDRIVE.md" "$(DESTDIR)$(DOC_DIR)/V3-READINESS.md"
 	rm -f -- "$(DESTDIR)$(CYBEROPS_DIR)/cyberops.sh" "$(DESTDIR)$(CYBEROPS_DIR)/lib/"*.sh
 	rmdir --ignore-fail-on-non-empty -- "$(DESTDIR)$(CYBEROPS_DIR)/lib" "$(DESTDIR)$(CYBEROPS_DIR)"
 	rmdir --ignore-fail-on-non-empty -- "$(DESTDIR)$(DOC_DIR)"

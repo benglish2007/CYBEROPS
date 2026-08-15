@@ -292,6 +292,23 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [x] Add regression coverage for theme selection, layout, feedback signals, narrow terminals, and no-color rendering.
 - [x] Manually verify standard-width, narrow-width, full-color, and no-color presentation.
 
+## Milestone 15: v3 Readiness and Contract Freeze
+
+- [x] Define the stable CLI, configuration, safety, privacy, packaging, and interface contracts proposed for v3.
+- [x] Add a single local validation target matching syntax, ShellCheck, formatting, and regression expectations.
+- [x] Audit package-managed files and ensure uninstall removes every installed v2.14 guide.
+- [x] Add an isolated in-place source-upgrade contract test covering legacy cleanup and user-data retention.
+- [x] Remove stale experimental wording from the released Neon Overdrive configuration guide.
+- [x] Remove the clean, fully merged Neon Overdrive experiment worktree and local branch.
+- [ ] Verify the complete GitHub Actions shell and five-distribution compatibility matrix.
+- [ ] Upgrade an installed v2 package to the v3 release candidate without uninstalling it.
+- [ ] Verify command, desktop, icon, configuration, and operation-log continuity after upgrade.
+- [ ] Run the documented v3 manual release-candidate checks on disposable targets.
+- [ ] Prepare an untagged v3.0 candidate, complete the real v2-to-v3 upgrade test, then tag and publish only after every gate passes.
+
+See [docs/V3-READINESS.md](docs/V3-READINESS.md) for the contract and exact
+automated versus manual verification boundaries.
+
 ## Deferred: Controlled Extensibility and Portability
 
 Plugin discovery is intentionally postponed. CYBEROPS will retain its explicit,

@@ -64,6 +64,15 @@ else
 fi
 record_result "installs the complete application beneath /usr" "$layout_result" complete
 
+if [[ -f "$EXTRACT_DIR/usr/share/doc/cyberops/NEON-OVERDRIVE.md" &&
+    -f "$EXTRACT_DIR/usr/share/doc/cyberops/V3-READINESS.md" ]]; then
+    readiness_docs_result=included
+else
+    readiness_docs_result=missing
+fi
+record_result "packages interface and v3 readiness documentation" \
+    "$readiness_docs_result" included
+
 if grep -Fq 'exec "/usr/lib/cyberops/cyberops.sh"' "$EXTRACT_DIR/usr/bin/cyberops" &&
     ! grep -R -Fq '@CYBEROPS_' "$EXTRACT_DIR/usr"; then
     template_result=resolved

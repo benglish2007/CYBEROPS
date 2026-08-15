@@ -2,6 +2,17 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## Unreleased
+
+### Milestone 15: v3 Readiness and Contract Freeze
+
+- Added a documented v3 contract and release-candidate gate covering CLI, configuration, safety, privacy, packaging, interface, upgrade, and removal behavior.
+- Added a unified `make check` target for syntax, ShellCheck, formatting, and the complete regression suite.
+- Corrected source uninstall coverage for the Neon Overdrive and v3 readiness guides.
+- Added isolated upgrade regression coverage for obsolete managed-file cleanup and user configuration/state retention.
+- Replaced stale experimental wording now that Neon Overdrive is the released default interface.
+- Removed the clean, fully merged Neon Overdrive experiment worktree and local branch after preserving its complete history on `main`.
+
 ## 2.14 — 2026-08-15
 
 Version 2.14 completes **Roadmap Milestone 14: Neon Overdrive Interface** with

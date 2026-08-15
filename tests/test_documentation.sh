@@ -33,7 +33,7 @@ else
 fi
 record_result "README remains a concise project entry point" "$readme_result" concise
 
-required_guides=(DOCKER.md USB.md OPERATIONS.md DEMO.md CONFIGURATION.md RELEASING.md PACKAGING.md)
+required_guides=(DOCKER.md USB.md OPERATIONS.md DEMO.md CONFIGURATION.md RELEASING.md PACKAGING.md NEON-OVERDRIVE.md V3-READINESS.md)
 for required_guide in "${required_guides[@]}"; do
     [[ -s "$REPO_DIR/docs/$required_guide" ]] && guide_result=present || guide_result=missing
     record_result "provides docs/$required_guide" "$guide_result" present
@@ -53,6 +53,16 @@ else
     demo_result=stale
 fi
 record_result "terminal demonstration uses the current version" "$demo_result" current
+
+if grep -Fq "make check" "$REPO_DIR/docs/V3-READINESS.md" &&
+    grep -Fq "Do not create the" "$REPO_DIR/docs/V3-READINESS.md" &&
+    grep -Fq "v3.0 tag or GitHub Release" "$REPO_DIR/docs/V3-READINESS.md"; then
+    v3_gate_result=documented
+else
+    v3_gate_result=missing
+fi
+record_result "documents the automated and manual v3 release gate" \
+    "$v3_gate_result" documented
 
 printf '1..%d\n' "$tests_run"
 
