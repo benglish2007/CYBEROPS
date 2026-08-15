@@ -393,8 +393,6 @@ render_overdrive_logo() {
     left_padding=$(((frame_inner_width - block_width) / 2))
     ((left_padding < 0)) && left_padding=0
 
-    printf '%b║%b%*s%b║%b\n' "$MAGENTA" "$RESET" "$frame_inner_width" '' \
-        "$MAGENTA" "$RESET"
     for index in "${!plain_lines[@]}"; do
         right_padding=$((frame_inner_width - left_padding - ${#plain_lines[index]}))
         ((right_padding < 0)) && right_padding=0

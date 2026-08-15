@@ -92,11 +92,21 @@ mapfile -t framed_logo_lines < <(render_overdrive_logo | strip_ansi)
 logo_center_result=centered
 for logo_index in "${!raw_logo_lines[@]}"; do
     expected_logo_row="║$(printf '%*s' "$expected_logo_margin" '')${raw_logo_lines[logo_index]}"
-    [[ "${framed_logo_lines[logo_index + 1]}" == "$expected_logo_row"* ]] || \
+    [[ "${framed_logo_lines[logo_index]}" == "$expected_logo_row"* ]] || \
         logo_center_result=shifted
 done
 record_result "logo chamber centers the FIGlet block without distorting it" \
     "$logo_center_result" centered
+
+last_framed_logo_index=$((${#framed_logo_lines[@]} - 1))
+if [[ "${framed_logo_lines[0]}" != "║$(printf '%65s' '')║" &&
+    "${framed_logo_lines[last_framed_logo_index]}" == "║$(printf '%65s' '')║" ]]; then
+    logo_spacing_result=balanced
+else
+    logo_spacing_result=uneven
+fi
+record_result "logo chamber avoids doubled visual spacing above the FIGlet art" \
+    "$logo_spacing_result" balanced
 
 if command -v lolcat >/dev/null 2>&1; then
     original_have_definition="$(declare -f have)"
