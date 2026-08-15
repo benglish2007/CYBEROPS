@@ -92,7 +92,7 @@ write_diagnostics_report() {
         fi
         printf '\n[docker_versions]\n'
         if have docker; then
-            docker version --format 'client={{.Client.Version}} server={{.Server.Version}}' 2>/dev/null || \
+            docker version --format 'client={{.Client.Version}} server={{.Server.Version}}' 2>/dev/null ||
                 printf 'Docker daemon unavailable\n'
         else
             printf 'Docker unavailable\n'
