@@ -66,8 +66,8 @@ record_result "reports a failed MAC change" "$mac_result" failure
 
 calls=" ${CALL_LOG[*]} "
 if [[ "$calls" == *" ip link set dev eth0 down "* &&
-      "$calls" == *" macchanger -r eth0 "* &&
-      "$calls" == *" ip link set dev eth0 up "* ]]; then
+    "$calls" == *" macchanger -r eth0 "* &&
+    "$calls" == *" ip link set dev eth0 up "* ]]; then
     restore_result=restored
 else
     restore_result=missing

@@ -2,7 +2,26 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
-## Unreleased
+## 2.4 — 2026-08-15
+
+Version 2.4 completes **Roadmap Milestone 4: Code Structure and Quality** with
+a modular runtime, stronger test boundaries, consistent shell formatting, and
+documented function contracts.
+
+### Code Structure
+
+- Added a location-independent, fail-closed module loader and extracted release configuration, theme values, operation settings, and shared runtime state into `lib/runtime.sh`.
+- Extracted the complete Docker subsystem into `lib/docker.sh` while preserving the established interface and operation behavior.
+- Extracted shared command validation, dry-run execution, signal cleanup, and operation-state helpers into `lib/core.sh`.
+- Extracted banners, menus, prompts, confirmations, and terminal presentation into `lib/ui.sh` with explicit load-order contracts.
+- Extracted the remaining admin, information, VPN, security, quickhacks, USB, setup, and main-menu features into focused modules, leaving `cyberops.sh` as a small launcher.
+- Added `shfmt` enforcement to CI and replaced all remaining `echo -e` output with explicit `printf` formatting.
+- Documented module contracts and the modular runtime layout, added direct main-menu dispatch tests, and expanded CI syntax and ShellCheck coverage to include `lib/*.sh`.
+- Corrected the destructive-protocol warning panel so its header and body borders use a consistent width.
+
+### Milestone
+
+- Completed all Roadmap Milestone 4 work and recorded successful manual verification of the modular interface and existing operation workflows.
 
 ## 2.3 — 2026-08-15
 

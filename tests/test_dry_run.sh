@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# DRY_RUN is consumed by several dynamically loaded feature modules.
+# shellcheck disable=SC2034
+
 set -uo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -36,7 +39,7 @@ dry_status=$?
 set -e
 record_result "dry-run mutation returns success" "$dry_status" 0
 if [[ "$dry_output" == *"[DRY-RUN] Test mutation"* &&
-      "$dry_output" != *"MUTATION_EXECUTED"* ]]; then
+    "$dry_output" != *"MUTATION_EXECUTED"* ]]; then
     dry_result=previewed
 else
     dry_result=executed
@@ -89,8 +92,8 @@ macchanger() {
 DRY_RUN=1
 mac_output="$(randomize_mac_address eth0 2>&1)"
 if [[ "$mac_output" == *"Bring eth0 down"* &&
-      "$mac_output" == *"Restore eth0 to its original up state"* &&
-      "$mac_output" != *"MUTATION_EXECUTED"* ]]; then
+    "$mac_output" == *"Restore eth0 to its original up state"* &&
+    "$mac_output" != *"MUTATION_EXECUTED"* ]]; then
     mac_result=previewed
 else
     mac_result=unsafe
@@ -108,7 +111,7 @@ device_mountpoints() {
 
 unmount_output="$(preview_device_unmounts /dev/sdb 2>&1)"
 if [[ "$unmount_output" == *"umount"* &&
-      "$unmount_output" != *"SUDO_MUTATION_EXECUTED"* ]]; then
+    "$unmount_output" != *"SUDO_MUTATION_EXECUTED"* ]]; then
     unmount_result=previewed
 else
     unmount_result=unsafe
@@ -122,9 +125,9 @@ docker() {
 
 docker_output="$(update_one_stack /srv/stacks/example/compose.yml 2>&1)"
 if [[ "$docker_output" == *"docker compose"* &&
-      "$docker_output" == *"pull"* &&
-      "$docker_output" == *"up -d"* &&
-      "$docker_output" != *"DOCKER_MUTATION_EXECUTED"* ]]; then
+    "$docker_output" == *"pull"* &&
+    "$docker_output" == *"up -d"* &&
+    "$docker_output" != *"DOCKER_MUTATION_EXECUTED"* ]]; then
     docker_result=previewed
 else
     docker_result=unsafe

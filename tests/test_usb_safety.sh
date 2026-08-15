@@ -130,7 +130,7 @@ expect_failure "rejects mounted filesystems before writing" \
     validate_usb_target /dev/sdz "$expected_identity" 1
 MOCK_MOUNTS=""
 
-if select_usb_device <<< "1" >/dev/null 2>&1; then
+if select_usb_device <<<"1" >/dev/null 2>&1; then
     record_result "selector returns only the chosen device through state" \
         "$SELECTED_USB_DEVICE" /dev/sdz
 else

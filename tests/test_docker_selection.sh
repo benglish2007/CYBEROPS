@@ -31,10 +31,10 @@ available_stacks=(
 )
 selected_stacks=()
 
-select_compose_stacks available_stacks selected_stacks <<< "2, 1 2" >/dev/null
+select_compose_stacks available_stacks selected_stacks <<<"2, 1 2" >/dev/null
 if ((${#selected_stacks[@]} == 2)) &&
-   [[ "${selected_stacks[0]}" == "${available_stacks[1]}" ]] &&
-   [[ "${selected_stacks[1]}" == "${available_stacks[0]}" ]]; then
+    [[ "${selected_stacks[0]}" == "${available_stacks[1]}" ]] &&
+    [[ "${selected_stacks[1]}" == "${available_stacks[0]}" ]]; then
     selection_result=selected
 else
     selection_result=incorrect
@@ -42,22 +42,22 @@ fi
 record_result "selects numbered stacks and removes duplicates" "$selection_result" selected
 
 selected_stacks=()
-select_compose_stacks available_stacks selected_stacks <<< "A" >/dev/null
+select_compose_stacks available_stacks selected_stacks <<<"A" >/dev/null
 record_result "selects every stack with A" "${#selected_stacks[@]}" 3
 
 selected_stacks=()
 set +e
-select_compose_stacks available_stacks selected_stacks <<< "Q" >/dev/null
+select_compose_stacks available_stacks selected_stacks <<<"Q" >/dev/null
 cancel_status=$?
 set -e
 record_result "cancels stack selection with Q" "$cancel_status" 1
 
 selected_stacks=()
-select_compose_stacks available_stacks selected_stacks <<< $'9\n3' >/dev/null
-retry_output="$(select_compose_stacks available_stacks selected_stacks <<< $'9\n3')"
+select_compose_stacks available_stacks selected_stacks <<<$'9\n3' >/dev/null
+retry_output="$(select_compose_stacks available_stacks selected_stacks <<<$'9\n3')"
 if [[ "$retry_output" == *"Invalid stack selection"* ]] &&
-   ((${#selected_stacks[@]} == 1)) &&
-   [[ "${selected_stacks[0]}" == "${available_stacks[2]}" ]]; then
+    ((${#selected_stacks[@]} == 1)) &&
+    [[ "${selected_stacks[0]}" == "${available_stacks[2]}" ]]; then
     retry_result=recovered
 else
     retry_result=incorrect
@@ -67,22 +67,22 @@ record_result "re-prompts after an invalid selection" "$retry_result" recovered
 selected_stacks=("${available_stacks[1]}")
 plan_output="$(show_docker_update_plan selected_stacks)"
 if [[ "$plan_output" == *"PROJECT: beta"* ]] &&
-   [[ "$plan_output" == *"${available_stacks[1]}"* ]] &&
-   [[ "$plan_output" == *"pull"* ]] &&
-   [[ "$plan_output" == *"up -d --remove-orphans"* ]] &&
-   [[ "$plan_output" == *"docker image prune -f"* ]] &&
-   [[ "$plan_output" == *"separate confirmation"* ]] &&
-   [[ "$plan_output" != *"PROJECT: alpha"* ]]; then
+    [[ "$plan_output" == *"${available_stacks[1]}"* ]] &&
+    [[ "$plan_output" == *"pull"* ]] &&
+    [[ "$plan_output" == *"up -d --remove-orphans"* ]] &&
+    [[ "$plan_output" == *"docker image prune -f"* ]] &&
+    [[ "$plan_output" == *"separate confirmation"* ]] &&
+    [[ "$plan_output" != *"PROJECT: alpha"* ]]; then
     plan_result=exact
 else
     plan_result=incomplete
 fi
 record_result "preflight plan lists only selected projects and actions" "$plan_result" exact
 
-selection_output="$(select_compose_stacks available_stacks selected_stacks <<< "Q" || true)"
+selection_output="$(select_compose_stacks available_stacks selected_stacks <<<"Q" || true)"
 if [[ "$selection_output" == *"[01] alpha"* &&
-      "$selection_output" == *"[02] beta"* &&
-      "$selection_output" == *"[03] gamma"* ]]; then
+    "$selection_output" == *"[02] beta"* &&
+    "$selection_output" == *"[03] gamma"* ]]; then
     discovery_result=listed
 else
     discovery_result=incomplete

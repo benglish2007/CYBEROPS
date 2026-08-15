@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Health timing overrides are consumed by the dynamically loaded Docker module.
+# shellcheck disable=SC2034
+
 set -uo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -44,7 +47,7 @@ compose_for_file() {
             local count
             count="$(<"$compose_counter_file")"
             count=$((count + 1))
-            printf '%s\n' "$count" > "$compose_counter_file"
+            printf '%s\n' "$count" >"$compose_counter_file"
             if ((count == 1)); then
                 printf 'web-old\n'
             else
@@ -62,7 +65,7 @@ docker() {
     local cid="$4"
 
     case "$format:$cid" in
-        *State.Status*:job-ok|*State.Status*:job-failed)
+        *State.Status*:job-ok | *State.Status*:job-failed)
             printf 'exited\n'
             ;;
         *State.ExitCode*:job-ok)
@@ -71,10 +74,10 @@ docker() {
         *State.ExitCode*:job-failed)
             printf '23\n'
             ;;
-        *State.Status*:web-healthy|*State.Status*:web-new)
+        *State.Status*:web-healthy | *State.Status*:web-new)
             printf 'running\n'
             ;;
-        *State.Health*:web-healthy|*State.Health*:web-new)
+        *State.Health*:web-healthy | *State.Health*:web-new)
             printf 'healthy\n'
             ;;
         *State.Status*:web-old)
@@ -133,7 +136,7 @@ check_stack_health /srv/stacks/web/compose.yml >/dev/null
 record_result "accepts a healthy running container" "$?" 0
 
 compose_counter_file="$(mktemp)"
-printf '0\n' > "$compose_counter_file"
+printf '0\n' >"$compose_counter_file"
 compose_mode=replacing
 check_stack_health /srv/stacks/web/compose.yml >/dev/null
 replacement_status=$?

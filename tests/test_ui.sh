@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# DRY_RUN is consumed by the dynamically loaded UI module.
+# shellcheck disable=SC2034
+
 set -uo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -39,8 +42,8 @@ have() {
 DRY_RUN=0
 banner_output="$(banner | strip_ansi)"
 if [[ "$banner_output" == *"CYBEROPS // NEON GRID"* &&
-      "$banner_output" == *"BUILD 2.3"* &&
-      "$banner_output" == *"NODE ONLINE"* ]]; then
+    "$banner_output" == *"BUILD 2.4"* &&
+    "$banner_output" == *"NODE ONLINE"* ]]; then
     banner_result=themed
 else
     banner_result=missing
@@ -49,17 +52,28 @@ record_result "banner exposes the cyberpunk control-deck theme" "$banner_result"
 
 section_output="$(ui_section "CONTROL DECK" "SELECT AN OPERATIONS NODE" | strip_ansi)"
 if [[ "$section_output" == *"CONTROL DECK"* &&
-      "$section_output" == *"SELECT AN OPERATIONS NODE"* ]]; then
+    "$section_output" == *"SELECT AN OPERATIONS NODE"* ]]; then
     section_result=themed
 else
     section_result=missing
 fi
 record_result "section headers include title and subsystem context" "$section_result" themed
 
+mapfile -t destructive_box_lines < <(warn_destructive | strip_ansi)
+destructive_box_width=${#destructive_box_lines[0]}
+if ((${#destructive_box_lines[1]} == destructive_box_width && \
+    ${#destructive_box_lines[2]} == destructive_box_width)); then
+    destructive_box_result=aligned
+else
+    destructive_box_result=uneven
+fi
+record_result "destructive warning box uses consistent border widths" \
+    "$destructive_box_result" aligned
+
 item_output="$(menu_item 3 "VPN Control" "NETWORK // TUNNELS" | strip_ansi)"
 if [[ "$item_output" == *"[03]"* &&
-      "$item_output" == *"VPN Control"* &&
-      "$item_output" == *"NETWORK // TUNNELS"* ]]; then
+    "$item_output" == *"VPN Control"* &&
+    "$item_output" == *"NETWORK // TUNNELS"* ]]; then
     item_result=aligned
 else
     item_result=missing
@@ -87,7 +101,7 @@ record_result "quoted tilde paths are normalized safely" \
 
 path_prompt_output="$(prompt_path ignored_path "FILE PATH" <<<"/tmp/example" | strip_ansi)"
 if [[ "$path_prompt_output" == *"TAB autocomplete"* &&
-      "$path_prompt_output" == *"CTRL-U clear path"* ]]; then
+    "$path_prompt_output" == *"CTRL-U clear path"* ]]; then
     path_hint_result=visible
 else
     path_hint_result=missing

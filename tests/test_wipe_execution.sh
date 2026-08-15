@@ -71,6 +71,8 @@ record_result "unmounts child partitions before the parent disk" \
     "${SUDO_CALLS[*]}" "umount -- /dev/sdb1 umount -- /dev/sdb"
 
 SUDO_CALLS=()
+# This mock is invoked indirectly by zero_fill_device from lib/usb.sh.
+# shellcheck disable=SC2329
 dd_byte_count_mode() {
     printf 'suffix\n'
 }

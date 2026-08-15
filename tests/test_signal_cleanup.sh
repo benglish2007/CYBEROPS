@@ -66,7 +66,7 @@ signal_status=$?
 set -e
 record_result "SIGINT exits with status 130" "$signal_status" 130
 if [[ "$signal_output" == *"USB test write"* &&
-      "$signal_output" == *"USB test warning"* ]]; then
+    "$signal_output" == *"USB test warning"* ]]; then
     signal_context=reported
 else
     signal_context=missing

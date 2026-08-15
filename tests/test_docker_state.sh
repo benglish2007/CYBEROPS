@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# State-directory and stack-root overrides are consumed by the dynamic modules.
+# shellcheck disable=SC2034
+
 set -uo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -61,7 +64,7 @@ report_content="$(<"$DOCKER_REPORT_FILE")"
 
 record_result "captures Compose state successfully" "$capture_status" 0
 if [[ "$report_content" == *"[BEFORE example]"* &&
-      "$report_content" == *"Compose file: /srv/stacks/example/compose.yml"* ]]; then
+    "$report_content" == *"Compose file: /srv/stacks/example/compose.yml"* ]]; then
     header_result=present
 else
     header_result=missing
@@ -69,9 +72,9 @@ fi
 record_result "records phase and Compose file" "$header_result" present
 
 if [[ "$report_content" == *"container=/container-one"* &&
-      "$report_content" == *"image_id=sha256:container-one"* &&
-      "$report_content" == *"container=/container-two"* &&
-      "$report_content" == *"health=healthy"* ]]; then
+    "$report_content" == *"image_id=sha256:container-one"* &&
+    "$report_content" == *"container=/container-two"* &&
+    "$report_content" == *"health=healthy"* ]]; then
     state_result=complete
 else
     state_result=incomplete

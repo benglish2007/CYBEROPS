@@ -44,7 +44,7 @@ fi
 record_result "lsblk exposes the MOUNTPOINTS column" "$lsblk_result" supported
 
 if dd if=/dev/zero of=/dev/null bs=16M count=1B 2>/dev/null ||
-   dd if=/dev/zero of=/dev/null bs=16M count=1 iflag=count_bytes 2>/dev/null; then
+    dd if=/dev/zero of=/dev/null bs=16M count=1 iflag=count_bytes 2>/dev/null; then
     dd_result=supported
 else
     dd_result=missing

@@ -5,12 +5,12 @@
 
   <p><strong><code>NEON GRID // UNIFIED LINUX OPERATIONS CONSOLE</code></strong></p>
 
-  [![Release](https://img.shields.io/badge/RELEASE-v2.3-ff2d95?style=for-the-badge)](CHANGELOG.md)
+  [![Release](https://img.shields.io/badge/RELEASE-v2.4-ff2d95?style=for-the-badge)](CHANGELOG.md)
   [![Bash](https://img.shields.io/badge/SHELL-BASH_5+-00e5ff?style=for-the-badge&logo=gnubash&logoColor=050816)](cyberops.sh)
   [![Validate](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml)
   [![Platform](https://img.shields.io/badge/PLATFORM-UBUNTU_%2F_DEBIAN-8b5cf6?style=for-the-badge&logo=linux&logoColor=white)](COMPATIBILITY.md)
 
-  **One script. One interface. Linux operations under control.**
+  **One interface. Modular Linux operations under control.**
 
   [OPERATIONS GRID](#operations-grid) · [DOCKER GRID](#docker-grid) · [USB PROTOCOLS](#usb-protocols) · [DEPLOYMENT](#deployment) · [SECURITY](#security-protocols)
 </div>
@@ -32,14 +32,15 @@ safety, reliability, packaging, and usability work is tracked in the
 
 ## `//` CURRENT BUILD
 
-### CYBEROPS Terminal v2.3
+### CYBEROPS Terminal v2.4
 
-Version 2.3 completes the Docker Operations milestone with selective Compose
-maintenance, exact preflight plans, one-shot and replacement-container health
-handling, private recovery reports, documented manual rollback boundaries, and
-separately confirmed image pruning. It builds on the compatibility fixes in
-version 2.2.3, native path completion in version 2.2.2, the neon control deck in
-version 2.2.1, the Milestone 2 reliability work in version 2.2, and the safety
+Version 2.4 completes the Code Structure and Quality milestone. CYBEROPS now
+uses a thin, location-independent launcher with focused runtime, core, UI, and
+feature modules; documented contracts; expanded menu and failure-path tests;
+and enforced ShellCheck and `shfmt` quality gates. It builds on the Docker
+Operations work in version 2.3, the compatibility fixes in version 2.2.3,
+native path completion in version 2.2.2, the neon control deck in version
+2.2.1, the Milestone 2 reliability work in version 2.2, and the safety
 foundation in version 2.1. Together, these releases:
 
 * Hardens destructive USB operations with device identity revalidation and protected-system-disk detection
@@ -57,6 +58,9 @@ foundation in version 2.1. Together, these releases:
 * Handles successful one-shot jobs and replacement containers during health checks
 * Preserves private before/after container and image state for manual recovery
 * Keeps rollback manual and makes image pruning a separate confirmed action
+* Loads focused Bash modules through a small, fail-closed launcher
+* Documents module contracts and validates menu dispatch and loader failures
+* Enforces consistent formatting with `shfmt` and explicit `printf` output
 
 Version 2.0 introduced the integrated Docker Maintenance and USB Operations
 modules. Consult the [transmission log](CHANGELOG.md) for the full release
@@ -656,13 +660,13 @@ This operation permanently destroys the existing filesystem and data on the sele
 
 ## `//` CONTROL DECK
 
-CYBEROPS v2.3 presents the following main interface:
+CYBEROPS v2.4 presents the following main interface:
 
 ```text
 ╔══[ CYBEROPS // NEON GRID ]══════════════════[ NODE ONLINE ]══╗
                          CYBEROPS
 ╚══════════════════════════════════════════════════════════════╝
-BUILD 2.3  //  UNIFIED LINUX OPERATIONS CONSOLE  //  SESSION ACTIVE
+BUILD 2.4  //  UNIFIED LINUX OPERATIONS CONSOLE  //  SESSION ACTIVE
 
 ╭─[ CONTROL DECK ]──────────────────────────────────────────────
 │ SELECT AN OPERATIONS NODE
@@ -714,18 +718,36 @@ Run it directly:
 
 ---
 
-### `02 // SYSTEM-WIDE LINK`
+### `02 // MODULAR RUNTIME`
 
-CYBEROPS can optionally be installed into `/usr/local/bin`:
+The launcher loads its required modules from `lib/` relative to its own
+location, so it works even when started from another directory:
 
 ```bash
-sudo install -m 755 cyberops.sh /usr/local/bin/cyberops
+cd /tmp
+/path/to/CYBEROPS/cyberops.sh
 ```
 
-It can then be launched from anywhere:
+Keep `cyberops.sh` and `lib/` together. Copying only the launcher will fail
+closed with a message identifying the missing module. The planned Milestone 5
+installer will provide a supported system-wide command and desktop entry.
 
-```bash
-cyberops
+Current source layout:
+
+```text
+cyberops.sh       Thin launcher and module loader
+lib/runtime.sh    Version, theme, configuration, and shared state
+lib/core.sh       Validation, command execution, dry-run, and cleanup
+lib/ui.sh         Banner, menus, prompts, and confirmations
+lib/docker.sh     Docker and Compose operations
+lib/admin.sh      System administration operations
+lib/info.sh       System and network information
+lib/vpn.sh        VPN controls
+lib/security.sh   Defensive security operations
+lib/quickhacks.sh Troubleshooting and field utilities
+lib/usb.sh        Removable-media operations and safety checks
+lib/setup.sh      Optional dependency setup
+lib/menu.sh       Main control-deck dispatcher
 ```
 
 ---
@@ -738,11 +760,7 @@ After pulling a new version from GitHub:
 git pull
 ```
 
-Reinstall the current version:
-
-```bash
-sudo install -m 755 cyberops.sh /usr/local/bin/cyberops
-```
+No reinstall is needed when launching from the cloned repository.
 
 ---
 
@@ -946,7 +964,7 @@ See the repository's `LICENSE` file for licensing information.
 
 <div align="center">
 
-  **`CYBEROPS TERMINAL v2.3 // LINK STANDBY`**
+  **`CYBEROPS TERMINAL v2.4 // LINK STANDBY`**
 
   *One terminal. One toolkit. Linux operations under control.*
 

@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# DRY_RUN is consumed by the dynamically loaded core and Docker modules.
+# shellcheck disable=SC2034
+
 set -uo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -50,8 +53,8 @@ confirmation_result=0
 docker_calls=""
 preview_output="$(offer_image_prune 2>&1)"
 if [[ "$preview_output" == *"[DRY-RUN] Prune unused Docker images"* &&
-      "$preview_output" == *"docker image prune -f"* &&
-      -z "$docker_calls" ]]; then
+    "$preview_output" == *"docker image prune -f"* &&
+    -z "$docker_calls" ]]; then
     preview_result=safe
 else
     preview_result=unsafe

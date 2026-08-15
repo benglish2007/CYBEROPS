@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Runtime configuration is consumed by functions loaded through the dynamic
+# module manifest, which independent-file analysis cannot follow.
+# shellcheck disable=SC2034
+
 set -uo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"

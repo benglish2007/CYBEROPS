@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.3 — Milestone 3 complete.**
+Current release: **v2.4 — Milestone 4 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -60,25 +60,41 @@ runtime capabilities and integration-testing boundaries.
 
 ## Milestone 4: Code Structure and Quality
 
-- [ ] Split the monolithic script into a small launcher and focused modules under `lib/`.
+- [x] Split the monolithic script into a small launcher and focused modules under `lib/`.
 - [x] Add a main-entry guard so functions can be sourced safely by tests.
-- [ ] Expand Bats or shell-based tests for menus, validators, and failure paths.
-- [ ] Add formatting checks with `shfmt`.
-- [ ] Prefer consistent `printf` output over `echo -e`.
-- [ ] Add clear function contracts for output, return values, and side effects.
+- [x] Expand Bats or shell-based tests for menus, validators, and failure paths.
+- [x] Add formatting checks with `shfmt`.
+- [x] Prefer consistent `printf` output over `echo -e`.
+- [x] Add clear function contracts for output, return values, and side effects.
 
 Suggested layout:
 
 ```text
-bin/cyberops
+cyberops.sh
+lib/runtime.sh
+lib/core.sh
 lib/ui.sh
 lib/admin.sh
+lib/info.sh
+lib/vpn.sh
 lib/security.sh
+lib/quickhacks.sh
 lib/docker.sh
 lib/usb.sh
-lib/validation.sh
+lib/setup.sh
+lib/menu.sh
 tests/
 ```
+
+### Manual verification — 2026-08-15
+
+- [x] Launched the modular runtime from the repository and from an unrelated working directory.
+- [x] Opened each control-deck node, returned through its submenu, and exited cleanly.
+- [x] Verified representative read-only and dry-run operations after module extraction.
+- [x] Verified native path completion and cancellation behavior at file and ISO prompts.
+- [x] Verified Docker and removable-media workflows retained their expected behavior.
+- [x] Verified missing modules fail closed and identify the required module.
+- [x] Corrected and visually verified the destructive-protocol warning-panel alignment.
 
 ## Milestone 5: Installation and Packaging
 
