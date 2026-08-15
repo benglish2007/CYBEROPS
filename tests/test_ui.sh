@@ -78,6 +78,26 @@ done <<<"$banner_output"
 record_result "logo chamber preserves continuous aligned side rails" \
     "$logo_frame_result" aligned
 
+mapfile -t raw_logo_lines < <(emit_cyberops_logo)
+while ((${#raw_logo_lines[@]} > 0)) &&
+    [[ -z "${raw_logo_lines[${#raw_logo_lines[@]} - 1]//[[:space:]]/}" ]]; do
+    unset 'raw_logo_lines[${#raw_logo_lines[@]} - 1]'
+done
+raw_logo_width=0
+for raw_logo_line in "${raw_logo_lines[@]}"; do
+    ((${#raw_logo_line} > raw_logo_width)) && raw_logo_width=${#raw_logo_line}
+done
+expected_logo_margin=$(((65 - raw_logo_width) / 2))
+mapfile -t framed_logo_lines < <(render_overdrive_logo | strip_ansi)
+logo_center_result=centered
+for logo_index in "${!raw_logo_lines[@]}"; do
+    expected_logo_row="║$(printf '%*s' "$expected_logo_margin" '')${raw_logo_lines[logo_index]}"
+    [[ "${framed_logo_lines[logo_index + 1]}" == "$expected_logo_row"* ]] || \
+        logo_center_result=shifted
+done
+record_result "logo chamber centers the FIGlet block without distorting it" \
+    "$logo_center_result" centered
+
 if command -v lolcat >/dev/null 2>&1; then
     original_have_definition="$(declare -f have)"
     have() {

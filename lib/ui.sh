@@ -370,7 +370,7 @@ EOF
 
 render_overdrive_logo() {
     local frame_inner_width=65
-    local index padding
+    local index block_width=0 left_padding right_padding
     local -a plain_lines=()
     local -a colored_lines=()
 
@@ -386,19 +386,25 @@ render_overdrive_logo() {
         ((${#colored_lines[@]} == 0)) || \
             unset 'colored_lines[${#colored_lines[@]} - 1]'
     done
+    for index in "${!plain_lines[@]}"; do
+        ((${#plain_lines[index]} > block_width)) && \
+            block_width=${#plain_lines[index]}
+    done
+    left_padding=$(((frame_inner_width - block_width) / 2))
+    ((left_padding < 0)) && left_padding=0
 
     printf '%b║%b%*s%b║%b\n' "$MAGENTA" "$RESET" "$frame_inner_width" '' \
         "$MAGENTA" "$RESET"
     for index in "${!plain_lines[@]}"; do
-        padding=$((frame_inner_width - ${#plain_lines[index]}))
-        ((padding < 0)) && padding=0
-        printf '%b║%b' "$MAGENTA" "$RESET"
+        right_padding=$((frame_inner_width - left_padding - ${#plain_lines[index]}))
+        ((right_padding < 0)) && right_padding=0
+        printf '%b║%b%*s' "$MAGENTA" "$RESET" "$left_padding" ''
         if ((${#colored_lines[@]} > index)); then
             printf '%s' "${colored_lines[index]}"
         else
             printf '%b%s%b' "$CYAN" "${plain_lines[index]}" "$RESET"
         fi
-        printf '%*s%b║%b\n' "$padding" '' "$MAGENTA" "$RESET"
+        printf '%*s%b║%b\n' "$right_padding" '' "$MAGENTA" "$RESET"
     done
     printf '%b║%b%*s%b║%b\n' "$MAGENTA" "$RESET" "$frame_inner_width" '' \
         "$MAGENTA" "$RESET"
