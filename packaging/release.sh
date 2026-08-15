@@ -56,6 +56,7 @@ extract_release_notes() {
 verify_release_metadata() {
     local version="$1"
     local failure=0
+    local module_version_assertion="\"\$VERSION\" $version"
 
     if grep -Fqx '## Unreleased' "$REPO_DIR/CHANGELOG.md"; then
         release_error "CHANGELOG.md still contains an Unreleased section." \
@@ -82,7 +83,7 @@ verify_release_metadata() {
         failure=1
     fi
     if ! grep -Fq "CYBEROPS Terminal $version\"" "$REPO_DIR/tests/test_cli.sh" ||
-        ! grep -Fq '"$VERSION" '"$version" "$REPO_DIR/tests/test_modules.sh" ||
+        ! grep -Fq "$module_version_assertion" "$REPO_DIR/tests/test_modules.sh" ||
         ! grep -Fq "BUILD $version" "$REPO_DIR/tests/test_ui.sh"; then
         release_error "Version assertions under tests/ are not synchronized with v$version."
         failure=1

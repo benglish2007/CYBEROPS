@@ -131,6 +131,8 @@ cyberops_main() {
             ;;
     esac
 
+    # Consumed by write_operation_log after modules are sourced dynamically.
+    # shellcheck disable=SC2034
     CYBEROPS_LOG_ACTIVE=1
 
     if ((${#command_arguments[@]} > 0)); then

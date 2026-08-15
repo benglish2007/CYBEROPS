@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2034,SC2329 # Mocks are invoked indirectly by sourced menu code.
+# shellcheck disable=SC2034,SC2317,SC2329 # Mocks are invoked indirectly by sourced menu code.
 
 set -uo pipefail
 

@@ -31,6 +31,11 @@ strip_ansi() {
     sed $'s/\033\[[0-9;]*m//g'
 }
 
+normalize_box_borders() {
+    sed -e 's/╔/+/g' -e 's/╗/+/g' -e 's/╚/+/g' -e 's/╝/+/g' \
+        -e 's/═/-/g' -e 's/║/|/g'
+}
+
 clear_screen() {
     return 0
 }
@@ -59,7 +64,7 @@ else
 fi
 record_result "section headers include title and subsystem context" "$section_result" themed
 
-mapfile -t destructive_box_lines < <(warn_destructive | strip_ansi)
+mapfile -t destructive_box_lines < <(warn_destructive | strip_ansi | normalize_box_borders)
 destructive_box_width=${#destructive_box_lines[0]}
 if ((${#destructive_box_lines[1]} == destructive_box_width && \
     ${#destructive_box_lines[2]} == destructive_box_width)); then
