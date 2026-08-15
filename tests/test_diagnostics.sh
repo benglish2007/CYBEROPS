@@ -33,21 +33,36 @@ record_result() {
 }
 
 preview_output="$(diagnostics_preview)"
-[[ "$preview_output" == *"Included:"* && "$preview_output" == *"Excluded:"* ]]
-record_result "previews included and excluded data" "$?" 0
+if [[ "$preview_output" == *"Included:"* && "$preview_output" == *"Excluded:"* ]]; then
+    preview_result=complete
+else
+    preview_result=incomplete
+fi
+record_result "previews included and excluded data" "$preview_result" complete
 
+set +e
 export_output="$(cyberops_main --no-color diagnostics export "$TEST_DIR/bundle.tar.gz")"
-record_result "exports a diagnostics archive" "$?" 0
-[[ "$export_output" == *"Diagnostics bundle created:"* ]]
-record_result "reports the archive location" "$?" 0
+export_status=$?
+set -e
+record_result "exports a diagnostics archive" "$export_status" 0
+if [[ "$export_output" == *"Diagnostics bundle created:"* ]]; then
+    location_result=reported
+else
+    location_result=missing
+fi
+record_result "reports the archive location" "$location_result" reported
 record_result "sets private archive permissions" \
     "$(stat -c '%a' "$TEST_DIR/bundle.tar.gz")" 600
 
 tar -xOf "$TEST_DIR/bundle.tar.gz" report.txt >"$TEST_DIR/report.txt"
 report_contents="$(<"$TEST_DIR/report.txt")"
-[[ "$report_contents" == *"CYBEROPS diagnostics"* &&
-    "$report_contents" == *"[anonymous_block_devices]"* ]]
-record_result "contains the documented anonymous report" "$?" 0
+if [[ "$report_contents" == *"CYBEROPS diagnostics"* &&
+    "$report_contents" == *"[anonymous_block_devices]"* ]]; then
+    report_result=complete
+else
+    report_result=incomplete
+fi
+record_result "contains the documented anonymous report" "$report_result" complete
 
 if [[ "$report_contents" == *"private-user-marker"* ||
     "$report_contents" == *"private-state-marker"* ||
@@ -63,8 +78,12 @@ overwrite_output="$(cyberops_main --no-color diagnostics export "$TEST_DIR/bundl
 overwrite_status=$?
 set -e
 record_result "refuses to overwrite an archive" "$overwrite_status" 1
-[[ "$overwrite_output" == *"already exists"* ]]
-record_result "explains overwrite refusal" "$?" 0
+if [[ "$overwrite_output" == *"already exists"* ]]; then
+    overwrite_guidance=present
+else
+    overwrite_guidance=missing
+fi
+record_result "explains overwrite refusal" "$overwrite_guidance" present
 
 printf '1..%d\n' "$tests_run"
 ((tests_failed == 0))

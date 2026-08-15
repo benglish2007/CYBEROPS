@@ -59,6 +59,7 @@ record_result "banner exposes the cyberpunk control-deck theme" "$banner_result"
 logo_frame_result=aligned
 logo_frame_active=0
 logo_frame_rows=0
+normalized_banner_line=""
 while IFS= read -r banner_line; do
     if [[ "$banner_line" == *"NEURAL COMMAND FABRIC"* ]]; then
         logo_frame_active=1
@@ -69,7 +70,8 @@ while IFS= read -r banner_line; do
     fi
     if ((logo_frame_active)); then
         ((logo_frame_rows += 1))
-        if [[ "$banner_line" != ║*║ || ${#banner_line} -ne 67 ]]; then
+        normalized_banner_line="$(printf '%s\n' "$banner_line" | normalize_box_borders)"
+        if [[ "$banner_line" != ║*║ || ${#normalized_banner_line} -ne 67 ]]; then
             logo_frame_result=broken
         fi
     fi
@@ -92,7 +94,7 @@ mapfile -t framed_logo_lines < <(render_overdrive_logo | strip_ansi)
 logo_center_result=centered
 for logo_index in "${!raw_logo_lines[@]}"; do
     expected_logo_row="║$(printf '%*s' "$expected_logo_margin" '')${raw_logo_lines[logo_index]}"
-    [[ "${framed_logo_lines[logo_index]}" == "$expected_logo_row"* ]] || \
+    [[ "${framed_logo_lines[logo_index]}" == "$expected_logo_row"* ]] ||
         logo_center_result=shifted
 done
 record_result "logo chamber centers the FIGlet block without distorting it" \
@@ -100,7 +102,7 @@ record_result "logo chamber centers the FIGlet block without distorting it" \
 
 last_framed_logo_index=$((${#framed_logo_lines[@]} - 1))
 if [[ "${framed_logo_lines[0]}" != "║$(printf '%65s' '')║" &&
-    "${framed_logo_lines[last_framed_logo_index]}" == "║$(printf '%65s' '')║" ]]; then
+"${framed_logo_lines[last_framed_logo_index]}" == "║$(printf '%65s' '')║" ]]; then
     logo_spacing_result=balanced
 else
     logo_spacing_result=uneven

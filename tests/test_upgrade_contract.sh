@@ -62,7 +62,7 @@ record_result "upgraded launcher reports the current source version" \
     "$installed_version" "CYBEROPS Terminal $VERSION"
 
 if [[ "$(<"$user_config")" == "CYBEROPS_THEME=classic" &&
-    "$(<"$user_log")" == "private-history" ]]; then
+"$(<"$user_log")" == "private-history" ]]; then
     user_data_result=preserved
 else
     user_data_result=changed

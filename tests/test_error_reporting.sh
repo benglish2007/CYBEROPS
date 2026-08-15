@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# CYBEROPS_THEME is intentionally changed to exercise sourced UI helpers.
+# shellcheck disable=SC2034
+
 set -uo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"

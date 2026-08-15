@@ -294,7 +294,7 @@ render_overdrive_header_telemetry() {
         render_signal_row "L2" "$mac_status" "$mac_color"
     fi
 
-    [[ -z "$HEADER_PUBLIC_IP" ]] || \
+    [[ -z "$HEADER_PUBLIC_IP" ]] ||
         render_signal_row "WAN" "PUBLIC $HEADER_PUBLIC_IP  //  EXTERNAL LOOKUP" "$ORANGE"
 }
 
@@ -383,11 +383,11 @@ render_overdrive_logo() {
     while ((${#plain_lines[@]} > 0)) &&
         [[ -z "${plain_lines[${#plain_lines[@]} - 1]//[[:space:]]/}" ]]; do
         unset 'plain_lines[${#plain_lines[@]} - 1]'
-        ((${#colored_lines[@]} == 0)) || \
+        ((${#colored_lines[@]} == 0)) ||
             unset 'colored_lines[${#colored_lines[@]} - 1]'
     done
     for index in "${!plain_lines[@]}"; do
-        ((${#plain_lines[index]} > block_width)) && \
+        ((${#plain_lines[index]} > block_width)) &&
             block_width=${#plain_lines[index]}
     done
     left_padding=$(((frame_inner_width - block_width) / 2))
