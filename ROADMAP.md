@@ -300,7 +300,7 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [x] Add an isolated in-place source-upgrade contract test covering legacy cleanup and user-data retention.
 - [x] Remove stale experimental wording from the released Neon Overdrive configuration guide.
 - [x] Remove the clean, fully merged Neon Overdrive experiment worktree and local branch.
-- [ ] Verify the complete GitHub Actions shell and five-distribution compatibility matrix.
+- [x] Verify the complete GitHub Actions shell and five-distribution compatibility matrix.
 - [ ] Upgrade an installed v2 package to the v3 release candidate without uninstalling it.
 - [ ] Verify command, desktop, icon, configuration, and operation-log continuity after upgrade.
 - [ ] Run the documented v3 manual release-candidate checks on disposable targets.

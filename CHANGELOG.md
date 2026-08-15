@@ -14,6 +14,7 @@ All notable changes to CYBEROPS are documented in this file.
 - Removed the clean, fully merged Neon Overdrive experiment worktree and local branch after preserving its complete history on `main`.
 - Made Unicode frame-width assertions locale-independent across the Ubuntu and Debian compatibility containers.
 - Cleared ShellCheck and shfmt findings in theme, diagnostics, UI, and upgrade-contract tests so the unified quality gate can run to completion.
+- Verified the complete shell-quality job and Ubuntu 22.04, 24.04, 26.04 plus Debian 12 and 13 compatibility matrix.
 
 ## 2.14 — 2026-08-15
 
