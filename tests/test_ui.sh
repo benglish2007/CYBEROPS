@@ -144,6 +144,27 @@ record_result "classic presentation remains available for comparison" \
     "$classic_result" available
 CYBEROPS_THEME=neon-overdrive
 
+HEADER_TIME='2088-08-15 23:59:59 AMM'
+HEADER_ROUTE_STATE=ROUTED
+HEADER_IFACE=enp7s0
+HEADER_ADDRESS=192.0.2.13
+HEADER_VPN=tailscale0
+HEADER_VPN_ADDRESS=100.64.0.13
+HEADER_MAC=02:13:37:aa:bb:cc
+HEADER_MAC_STATE=MODIFIED
+COLUMNS=80
+signal_output="$(render_header_telemetry | strip_ansi)"
+if [[ "$signal_output" == *"║ LOCAL │ TIME 2088-08-15"* &&
+    "$signal_output" == *"║ NET   │ IFACE enp7s0"* &&
+    "$signal_output" == *"║ VPN   │ STATUS [ON // tailscale0]"* &&
+    "$signal_output" == *"║ L2    │ [MODIFIED // 02:13:37:aa:bb:cc]"* ]]; then
+    signal_result=legible
+else
+    signal_result=unstructured
+fi
+record_result "overdrive signal matrix uses aligned instrument rows" \
+    "$signal_result" legible
+
 completed_path=""
 prompt_path completed_path "FILE PATH" <<<"$HOME/My\ File.iso" >/dev/null
 record_result "path completion escapes resolve to literal spaces" \

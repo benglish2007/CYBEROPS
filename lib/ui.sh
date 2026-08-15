@@ -212,10 +212,101 @@ render_mac_badge() {
     esac
 }
 
+render_signal_row() {
+    local label="$1"
+    local content="$2"
+    local value_color="${3:-$WHITE}"
+    local chunk
+    local row_label="$label"
+    local padding
+
+    while :; do
+        chunk="${content:0:56}"
+        content="${content:56}"
+        padding=$((56 - ${#chunk}))
+        printf '%b║%b %b%-5s%b %b│%b %b%s%b' \
+            "$MAGENTA" "$RESET" "$CYAN" "$row_label" "$RESET" \
+            "$PURPLE" "$RESET" "$value_color" "$chunk" "$RESET"
+        ui_repeat ' ' "$padding"
+        printf '%b║%b\n' "$MAGENTA" "$RESET"
+        [[ -n "$content" ]] || break
+        row_label=""
+    done
+}
+
+render_overdrive_header_telemetry() {
+    local width="${COLUMNS:-80}"
+    local local_status=""
+    local network_status=""
+    local vpn_status
+    local mac_status
+    local vpn_color="$GREEN"
+    local mac_color="$YELLOW"
+
+    [[ "$CYBEROPS_HEADER_TELEMETRY" == "1" ]] || return 0
+    [[ "$width" =~ ^[0-9]+$ ]] || width=80
+
+    if ((width < 70)); then
+        [[ "$CYBEROPS_HEADER_TIME" == "0" ]] || render_signal_row "TIME" "$HEADER_TIME"
+        [[ "$CYBEROPS_HEADER_LINK" == "0" ]] || render_signal_row "LINK" "$HEADER_ROUTE_STATE" "$GREEN"
+        [[ "$CYBEROPS_HEADER_IFACE" == "0" ]] || render_signal_row "NET" "IFACE $HEADER_IFACE"
+        [[ "$CYBEROPS_HEADER_LOCAL_IP" == "0" ]] || render_signal_row "IP" "$HEADER_ADDRESS"
+    else
+        if [[ "$CYBEROPS_HEADER_TIME" == "1" || "$CYBEROPS_HEADER_LINK" == "1" ]]; then
+            local_status=""
+            [[ "$CYBEROPS_HEADER_TIME" == "0" ]] || local_status="TIME $HEADER_TIME"
+            [[ "$CYBEROPS_HEADER_LINK" == "0" ]] || local_status+="${local_status:+  //  }LINK $HEADER_ROUTE_STATE"
+            render_signal_row "LOCAL" "$local_status"
+        fi
+        network_status=""
+        [[ "$CYBEROPS_HEADER_IFACE" == "0" ]] || network_status="IFACE $HEADER_IFACE"
+        [[ "$CYBEROPS_HEADER_LOCAL_IP" == "0" ]] || network_status+="${network_status:+  //  }LOCAL $HEADER_ADDRESS"
+        [[ -z "$network_status" ]] || render_signal_row "NET" "$network_status"
+    fi
+
+    if [[ "$CYBEROPS_HEADER_VPN" == "1" ]]; then
+        if [[ "$HEADER_VPN" == "NONE" || -z "$HEADER_VPN" ]]; then
+            vpn_status="STATUS [OFF]"
+            vpn_color="$RED"
+        else
+            vpn_status="STATUS [ON // $HEADER_VPN]"
+        fi
+        if ((width < 70)); then
+            render_signal_row "VPN" "$vpn_status" "$vpn_color"
+            render_signal_row "V-IP" "$HEADER_VPN_ADDRESS" "$vpn_color"
+        else
+            render_signal_row "VPN" "$vpn_status  //  LOCAL $HEADER_VPN_ADDRESS" "$vpn_color"
+        fi
+    fi
+
+    if [[ "$CYBEROPS_HEADER_MAC" == "1" ]]; then
+        case "$HEADER_MAC_STATE" in
+            PERMANENT)
+                mac_status="[PERMANENT // $HEADER_MAC]"
+                mac_color="$RED"
+                ;;
+            MODIFIED)
+                mac_status="[MODIFIED // $HEADER_MAC]"
+                mac_color="$GREEN"
+                ;;
+            *) mac_status="[UNKNOWN // $HEADER_MAC]" ;;
+        esac
+        render_signal_row "L2" "$mac_status" "$mac_color"
+    fi
+
+    [[ -z "$HEADER_PUBLIC_IP" ]] || \
+        render_signal_row "WAN" "PUBLIC $HEADER_PUBLIC_IP  //  EXTERNAL LOOKUP" "$ORANGE"
+}
+
 render_header_telemetry() {
     local width="${COLUMNS:-80}"
     local network_status=""
     local local_fields=0
+
+    if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
+        render_overdrive_header_telemetry
+        return
+    fi
 
     [[ "$CYBEROPS_HEADER_TELEMETRY" == "1" ]] || return 0
     [[ "$width" =~ ^[0-9]+$ ]] || width=80

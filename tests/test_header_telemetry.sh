@@ -3,6 +3,8 @@
 
 set -uo pipefail
 
+CYBEROPS_THEME=classic
+
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
 TEST_ROOT="$(mktemp -d)"
