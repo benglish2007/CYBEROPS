@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.4.1 — Milestone 4 complete.**
+Current release: **v2.5 — Milestone 5 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -98,12 +98,23 @@ tests/
 
 ## Milestone 5: Installation and Packaging
 
-- [ ] Replace hardcoded paths in `Quickhacks.desktop` with an installer-generated desktop entry.
-- [ ] Rename desktop-facing branding from Quickhacks to CYBEROPS.
-- [ ] Add an installer or Makefile for the executable, icon, and desktop entry.
-- [ ] Add uninstall and upgrade instructions.
-- [ ] Add an actual `LICENSE` file or remove the README's license reference.
-- [ ] Consider packaging for Debian/Ubuntu after the interface stabilizes.
+- [x] Replace hardcoded paths in `Quickhacks.desktop` with an installer-generated desktop entry.
+- [x] Rename desktop-facing branding from Quickhacks to CYBEROPS.
+- [x] Add an installer or Makefile for the executable, icon, and desktop entry.
+- [x] Add uninstall and upgrade instructions.
+- [x] Add an actual `LICENSE` file or remove the README's license reference.
+- [x] Consider packaging for Debian/Ubuntu after the interface stabilizes.
+
+Native Debian/Ubuntu package generation was evaluated and intentionally
+deferred until the command-line interface and documentation stabilize. The
+Makefile provides the supported Milestone 5 installation path in the meantime.
+
+### Manual verification — 2026-08-15
+
+- [x] Installed CYBEROPS under `/usr/local` with `sudo make install`.
+- [x] Launched the installed modular runtime with the `cyberops` command.
+- [x] Opened CYBEROPS Terminal from the GNOME application drawer.
+- [x] Verified the generated desktop entry displays the installed CYBEROPS artwork.
 
 ## Milestone 6: User Experience and Documentation
 

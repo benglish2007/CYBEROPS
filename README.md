@@ -1,11 +1,11 @@
 <div align="center">
-  <img src="quickhack.png" alt="CYBEROPS neon skull emblem" width="320">
+  <img src="cyberops.png" alt="CYBEROPS neon skull emblem" width="320">
 
   <h1>CYBEROPS TERMINAL</h1>
 
   <p><strong><code>NEON GRID // UNIFIED LINUX OPERATIONS CONSOLE</code></strong></p>
 
-  [![Release](https://img.shields.io/badge/RELEASE-v2.4.1-ff2d95?style=for-the-badge)](CHANGELOG.md)
+  [![Release](https://img.shields.io/badge/RELEASE-v2.5-ff2d95?style=for-the-badge)](CHANGELOG.md)
   [![Bash](https://img.shields.io/badge/SHELL-BASH_5+-00e5ff?style=for-the-badge&logo=gnubash&logoColor=050816)](cyberops.sh)
   [![Validate](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml)
   [![Platform](https://img.shields.io/badge/PLATFORM-UBUNTU_%2F_DEBIAN-8b5cf6?style=for-the-badge&logo=linux&logoColor=white)](COMPATIBILITY.md)
@@ -32,16 +32,15 @@ safety, reliability, packaging, and usability work is tracked in the
 
 ## `//` CURRENT BUILD
 
-### CYBEROPS Terminal v2.4.1
+### CYBEROPS Terminal v2.5
 
-Version 2.4.1 adds a fast USB Quick Reset that removes detected storage
-signatures while clearly warning that existing data may remain recoverable.
-Version 2.4 completed the Code Structure and Quality milestone with a thin,
-location-independent launcher; focused runtime, core, UI, and feature modules;
-documented contracts; expanded menu and failure-path tests; and enforced
-ShellCheck and `shfmt` quality gates. It builds on the Docker Operations work
-in version 2.3 and the earlier reliability and safety releases. Together,
-these releases:
+Version 2.5 completes the Installation and Packaging milestone with a tested
+system-wide Makefile workflow, generated CYBEROPS desktop integration,
+standardized application artwork, upgrade and uninstall instructions, and an
+MIT license. It builds on the USB Quick Reset in version 2.4.1, the modular
+Code Structure and Quality work in version 2.4, the Docker Operations work in
+version 2.3, and the earlier reliability and safety releases. Together, these
+releases:
 
 * Hardens destructive USB operations with device identity revalidation and protected-system-disk detection
 * Correctly handles whole-disk and partition-mounted filesystems
@@ -62,6 +61,9 @@ these releases:
 * Documents module contracts and validates menu dispatch and loader failures
 * Enforces consistent formatting with `shfmt` and explicit `printf` output
 * Offers a separately confirmed USB signature reset without misrepresenting it as a data wipe
+* Installs and removes the complete modular runtime through a tested Makefile
+* Generates a path-safe CYBEROPS desktop launcher with registered application artwork
+* Distributes the project and installed application under the MIT License
 
 Version 2.0 introduced the integrated Docker Maintenance and USB Operations
 modules. Consult the [transmission log](CHANGELOG.md) for the full release
@@ -687,13 +689,13 @@ This operation permanently destroys the existing filesystem and data on the sele
 
 ## `//` CONTROL DECK
 
-CYBEROPS v2.4.1 presents the following main interface:
+CYBEROPS v2.5 presents the following main interface:
 
 ```text
 ╔══[ CYBEROPS // NEON GRID ]══════════════════[ NODE ONLINE ]══╗
                          CYBEROPS
 ╚══════════════════════════════════════════════════════════════╝
-BUILD 2.4.1  //  UNIFIED LINUX OPERATIONS CONSOLE  //  SESSION ACTIVE
+BUILD 2.5  //  UNIFIED LINUX OPERATIONS CONSOLE  //  SESSION ACTIVE
 
 ╭─[ CONTROL DECK ]──────────────────────────────────────────────
 │ SELECT AN OPERATIONS NODE
@@ -756,8 +758,7 @@ cd /tmp
 ```
 
 Keep `cyberops.sh` and `lib/` together. Copying only the launcher will fail
-closed with a message identifying the missing module. The planned Milestone 5
-installer will provide a supported system-wide command and desktop entry.
+closed with a message identifying the missing module.
 
 Current source layout:
 
@@ -779,15 +780,66 @@ lib/menu.sh       Main control-deck dispatcher
 
 ---
 
-### `03 // UPDATE CHANNEL`
+### `03 // SYSTEM-WIDE INSTALL`
 
-After pulling a new version from GitHub:
+Install the command, modular runtime, icon, and CYBEROPS desktop entry under
+`/usr/local`:
+
+```bash
+sudo make install
+```
+
+The installation layout is:
+
+```text
+/usr/local/bin/cyberops
+/usr/local/lib/cyberops/cyberops.sh
+/usr/local/lib/cyberops/lib/*.sh
+/usr/local/share/applications/cyberops.desktop
+/usr/local/share/pixmaps/cyberops.png
+/usr/local/share/doc/cyberops/LICENSE
+```
+
+Launch from a terminal with `cyberops`, or open **CYBEROPS Terminal** from the
+desktop application menu. Override `PREFIX` when a different installation
+root is required:
+
+```bash
+sudo make install PREFIX=/opt/cyberops
+```
+
+---
+
+### `04 // UPDATE CHANNEL`
+
+Update the repository and reinstall the managed files:
 
 ```bash
 git pull
+sudo make install
 ```
 
-No reinstall is needed when launching from the cloned repository.
+`make install` safely replaces the files owned by the CYBEROPS installation.
+No reinstall is needed when launching directly from the cloned repository.
+
+---
+
+### `05 // UNINSTALL`
+
+Remove every file managed by the default installation:
+
+```bash
+sudo make uninstall
+```
+
+Use the same `PREFIX` supplied during installation when it was customized:
+
+```bash
+sudo make uninstall PREFIX=/opt/cyberops
+```
+
+Uninstalling CYBEROPS does not remove optional system packages previously
+installed through System Setup and does not remove the cloned repository.
 
 ---
 
@@ -985,13 +1037,13 @@ should be treated carefully.
 
 ## `//` LICENSE
 
-See the repository's `LICENSE` file for licensing information.
+CYBEROPS is released under the [MIT License](LICENSE).
 
 ---
 
 <div align="center">
 
-  **`CYBEROPS TERMINAL v2.4.1 // LINK STANDBY`**
+  **`CYBEROPS TERMINAL v2.5 // LINK STANDBY`**
 
   *One terminal. One toolkit. Linux operations under control.*
 

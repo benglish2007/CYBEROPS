@@ -2,6 +2,28 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 2.5 — 2026-08-15
+
+Version 2.5 completes **Roadmap Milestone 5: Installation and Packaging** with
+a tested system-wide installer, generated desktop integration, standardized
+artwork, upgrade and removal workflows, and an MIT license.
+
+### Installation and Packaging
+
+- Replaced the hardcoded Quickhacks desktop entry with an installer-generated CYBEROPS Terminal entry.
+- Standardized the application artwork source and installed filename as `cyberops.png`.
+- Installed the application artwork under the standard pixmaps directory, generated its absolute desktop-entry path, refreshed the desktop database when available, and removed the obsolete unindexed icon location during upgrades.
+- Added a Makefile that installs and uninstalls the command wrapper, modular runtime, application icon, and desktop entry under a configurable prefix.
+- Added isolated regression coverage for the complete install and uninstall layout.
+- Documented source launch, system-wide installation, upgrades, custom prefixes, and uninstallation.
+- Added the MIT License using a project-level CYBEROPS contributors copyright notice.
+- Evaluated native Debian/Ubuntu packaging and deferred it until the command-line interface and documentation stabilize.
+- Recorded successful command-line and GNOME application-launch verification of the system-wide installation.
+
+### Milestone
+
+- Completed all Roadmap Milestone 5 work and recorded successful manual verification of the installed command, desktop launcher, and application artwork.
+
 ## 2.4.1 — 2026-08-15
 
 Version 2.4.1 adds a fast, explicitly non-secure signature-reset workflow for

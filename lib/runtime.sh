@@ -15,7 +15,7 @@
 # Callers:
 #   This file must be sourced by cyberops.sh; it is not a standalone command.
 
-VERSION="2.4.1"
+VERSION="2.5"
 
 CYAN='\033[1;96m'
 MAGENTA='\033[1;95m'

@@ -18,13 +18,13 @@ jobs:
         run: sudo apt-get update && sudo apt-get install --yes shellcheck shfmt
 
       - name: Check Bash syntax
-        run: bash -n cyberops.sh lib/*.sh tests/*.sh
+        run: bash -n cyberops.sh lib/*.sh packaging/cyberops.in tests/*.sh
 
       - name: Run ShellCheck
-        run: shellcheck cyberops.sh lib/*.sh tests/*.sh
+        run: shellcheck cyberops.sh lib/*.sh packaging/cyberops.in tests/*.sh
 
       - name: Check shell formatting
-        run: shfmt -d -i 4 -ci cyberops.sh lib/*.sh tests/*.sh
+        run: shfmt -d -i 4 -ci cyberops.sh lib/*.sh packaging/cyberops.in tests/*.sh
 
       - name: Run regression tests
         run: |
@@ -55,7 +55,7 @@ jobs:
       - name: Install compatibility baseline
         run: |
           apt-get update
-          apt-get install --yes bash coreutils findutils gawk grep sed util-linux
+          apt-get install --yes bash coreutils findutils gawk grep make sed util-linux
 
       - name: Check out repository
         uses: actions/checkout@v4
@@ -69,7 +69,7 @@ jobs:
       - name: Run syntax and regression tests
         shell: bash
         run: |
-          bash -n cyberops.sh lib/*.sh tests/*.sh
+          bash -n cyberops.sh lib/*.sh packaging/cyberops.in tests/*.sh
           for test_script in tests/test_*.sh; do
             bash "$test_script"
           done

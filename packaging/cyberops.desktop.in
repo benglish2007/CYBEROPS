@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=CYBEROPS Terminal
+GenericName=Linux Operations Console
+Comment=Launch the CYBEROPS Linux operations console
+Exec=@CYBEROPS_EXEC@
+Icon=@CYBEROPS_ICON@
+Terminal=true
+Type=Application
+Categories=System;Network;Utility;
+StartupNotify=false
+Keywords=system;security;network;docker;usb;terminal;
