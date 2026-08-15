@@ -13,8 +13,21 @@ LEGACY_ICON_PATH := $(DATADIR)/icons/hicolor/1024x1024/apps/cyberops.png
 
 INSTALL ?= install
 SED ?= sed
+VERSION ?=
 
-.PHONY: install install-deps full-install uninstall
+.PHONY: install install-deps full-install uninstall release-check release-preview release
+
+release-check:
+	@test -n "$(VERSION)" || { echo "VERSION is required (example: make release-check VERSION=2.9)" >&2; exit 2; }
+	bash packaging/release.sh check "$(VERSION)"
+
+release-preview:
+	@test -n "$(VERSION)" || { echo "VERSION is required (example: make release-preview VERSION=2.9)" >&2; exit 2; }
+	bash packaging/release.sh preview "$(VERSION)"
+
+release:
+	@test -n "$(VERSION)" || { echo "VERSION is required (example: make release VERSION=2.9)" >&2; exit 2; }
+	bash packaging/release.sh publish "$(VERSION)"
 
 install-deps:
 	bash packaging/install-dependencies.sh
@@ -50,6 +63,7 @@ uninstall:
 	rm -f -- "$(DESTDIR)$(DOC_DIR)/DEMO.md" "$(DESTDIR)$(DOC_DIR)/DOCKER.md"
 	rm -f -- "$(DESTDIR)$(DOC_DIR)/OPERATIONS.md" "$(DESTDIR)$(DOC_DIR)/USB.md"
 	rm -f -- "$(DESTDIR)$(DOC_DIR)/CONFIGURATION.md" "$(DESTDIR)$(DOC_DIR)/cyberops.conf.example"
+	rm -f -- "$(DESTDIR)$(DOC_DIR)/RELEASING.md"
 	rm -f -- "$(DESTDIR)$(CYBEROPS_DIR)/cyberops.sh" "$(DESTDIR)$(CYBEROPS_DIR)/lib/"*.sh
 	rmdir --ignore-fail-on-non-empty -- "$(DESTDIR)$(CYBEROPS_DIR)/lib" "$(DESTDIR)$(CYBEROPS_DIR)"
 	rmdir --ignore-fail-on-non-empty -- "$(DESTDIR)$(DOC_DIR)"

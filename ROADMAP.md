@@ -166,9 +166,20 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [x] Confirmed diagnostics omit private identity, path, network, device, log, and workload data.
 - [x] Verified diagnostics export refuses to overwrite an existing archive.
 
-## Planned Milestone 9: Release Automation
+## Milestone 9: Release Automation
 
-- [ ] Establish annotated version tags and GitHub Releases with repeatable release notes.
+- [x] Validate a clean, synchronized `main` branch before publishing.
+- [x] Enforce consistent runtime, README, roadmap, and changelog versions.
+- [x] Run syntax and regression checks through a dedicated release gate.
+- [x] Preview the exact tag, commit, title, and changelog-derived release notes.
+- [x] Publish annotated version tags and verified GitHub Releases.
+- [x] Refuse to overwrite or move existing releases and conflicting tags.
+- [x] Support safe retry when tag publication succeeds but Release creation fails.
+- [x] Document release preparation, publishing, recovery, and rollback boundaries.
+- [x] Add mocked regression coverage that never changes GitHub.
+
+Manual verification and the v2.8 release backfill remain required before
+Milestone 9 is complete.
 
 ## Planned Milestone 10: Read-Only Command Expansion
 

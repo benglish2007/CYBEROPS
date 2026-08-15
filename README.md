@@ -177,6 +177,7 @@ USB unmount, image-write, signature-reset, zero-fill, and sync operations.
 | [USB Operations](docs/USB.md) | Target safety, ISO writing, Quick Reset, full zero-fill, and flash-storage limits |
 | [Privileges and Side Effects](docs/OPERATIONS.md) | Privileges, mutations, network disclosure, previews, and interruption behavior |
 | [Configuration, Logs, and Diagnostics](docs/CONFIGURATION.md) | Safe XDG configuration, private operation events, and privacy-filtered support bundles |
+| [Release Operations](docs/RELEASING.md) | Validation, preview, publishing, retry, and rollback boundaries |
 | [Terminal Demonstration](docs/DEMO.md) | Short CLI and non-interactive session |
 | [Compatibility](COMPATIBILITY.md) | Supported releases, dependencies, and CI boundaries |
 | [Module Contracts](lib/README.md) | Runtime loading order and source-safe module rules |
@@ -232,8 +233,9 @@ The Makefile keeps the installed runtime together under
 `/usr/local/lib/cyberops`.
 
 Validation includes Bash syntax, ShellCheck, `shfmt`, mocked regression tests,
-installer isolation, and a distribution compatibility matrix. Native `.deb`
-packaging is deferred until the command interface and documentation stabilize.
+installer isolation, and a distribution compatibility matrix. Releases use
+annotated tags, changelog-derived notes, and a guarded preview/publish workflow.
+Native `.deb` packaging is deferred until its dedicated milestone.
 
 ---
 
