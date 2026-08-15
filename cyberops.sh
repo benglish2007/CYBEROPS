@@ -1259,6 +1259,8 @@ select_compose_stacks() {
 
 show_docker_update_plan() {
     local selected_name="$1"
+    # selected_name is contractually the name of an indexed array.
+    # shellcheck disable=SC2178
     local -n selected_ref="$selected_name"
     local compose_file
     local stack_name
