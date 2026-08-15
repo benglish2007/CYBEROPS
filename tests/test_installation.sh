@@ -38,6 +38,7 @@ installed_wrapper="$TEST_ROOT$PREFIX/bin/cyberops"
 installed_desktop="$TEST_ROOT$PREFIX/share/applications/cyberops.desktop"
 installed_icon="$TEST_ROOT$PREFIX/share/pixmaps/cyberops.png"
 installed_license="$TEST_ROOT$PREFIX/share/doc/cyberops/LICENSE"
+installed_operations_guide="$TEST_ROOT$PREFIX/share/doc/cyberops/OPERATIONS.md"
 
 [[ -x "$installed_launcher" ]] && launcher_result=installed || launcher_result=missing
 record_result "installs the modular launcher as executable" "$launcher_result" installed
@@ -76,11 +77,19 @@ else
 fi
 record_result "installs the MIT license with the application" "$license_result" installed
 
+if [[ -f "$installed_operations_guide" ]] &&
+    grep -Fq "Operation Privileges and Side Effects" "$installed_operations_guide"; then
+    documentation_result=installed
+else
+    documentation_result=missing
+fi
+record_result "installs the operation documentation" "$documentation_result" installed
+
 make -s -C "$REPO_DIR" uninstall DESTDIR="$TEST_ROOT" PREFIX="$PREFIX"
 
 if [[ ! -e "$installed_launcher" && ! -e "$installed_wrapper" &&
     ! -e "$installed_desktop" && ! -e "$installed_icon" &&
-    ! -e "$installed_license" ]]; then
+    ! -e "$installed_license" && ! -e "$installed_operations_guide" ]]; then
     uninstall_result=removed
 else
     uninstall_result=remaining

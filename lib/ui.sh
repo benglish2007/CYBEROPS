@@ -17,6 +17,12 @@ typewrite() {
     local text="$1"
     local delay="${2:-0.008}"
     local i
+
+    if [[ ! -t 1 || "$delay" == "0" ]]; then
+        printf '%s\n' "$text"
+        return
+    fi
+
     for ((i = 0; i < ${#text}; i++)); do
         printf '%s' "${text:i:1}"
         sleep "$delay"
@@ -31,6 +37,7 @@ pause() {
 }
 
 clear_screen() {
+    [[ -t 1 ]] || return 0
     command -v clear >/dev/null 2>&1 && clear || printf '\033c'
 }
 

@@ -53,10 +53,102 @@ for cyberops_module in "${CYBEROPS_REQUIRED_MODULES[@]}"; do
 done
 unset cyberops_module
 
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+cyberops_usage() {
+    cat <<EOF
+CYBEROPS Terminal v$VERSION
+Unified Linux Operations Console
+
+Usage:
+  cyberops [OPTIONS]
+  cyberops [OPTIONS] info
+  cyberops [OPTIONS] docker status
+
+Options:
+  -h, --help       Show this help and exit.
+  -V, --version    Show the CYBEROPS version and exit.
+      --no-color   Disable ANSI color output for this invocation.
+
+Commands:
+  info             Print a read-only host summary.
+  docker status    Print container status and Docker disk usage.
+
+Run without options in an interactive terminal to open the control deck.
+EOF
+}
+
+cyberops_main() {
+    local argument
+    local action=menu
+    local -a command_arguments=()
+
+    while (($# > 0)); do
+        argument="$1"
+        case "$argument" in
+            -h | --help) action=help ;;
+            -V | --version) action=version ;;
+            --no-color) disable_color ;;
+            --)
+                shift
+                break
+                ;;
+            -*)
+                printf 'CYBEROPS: unknown option: %s\n' "$argument" >&2
+                printf "Try 'cyberops --help' for usage.\n" >&2
+                return 2
+                ;;
+            *)
+                command_arguments+=("$argument")
+                ;;
+        esac
+        shift
+    done
+
+    if (($# > 0)); then
+        command_arguments+=("$@")
+    fi
+
+    case "$action" in
+        help)
+            cyberops_usage
+            return 0
+            ;;
+        version)
+            printf 'CYBEROPS Terminal %s\n' "$VERSION"
+            return 0
+            ;;
+    esac
+
+    if ((${#command_arguments[@]} > 0)); then
+        case "${command_arguments[*]}" in
+            info)
+                show_system_summary
+                return
+                ;;
+            "docker status")
+                show_docker_status
+                return
+                ;;
+            *)
+                printf 'CYBEROPS: unknown command: %s\n' "${command_arguments[*]}" >&2
+                printf "Try 'cyberops --help' for usage.\n" >&2
+                return 2
+                ;;
+        esac
+    fi
+
+    if [[ ! -t 0 || ! -t 1 ]]; then
+        printf 'CYBEROPS: the control deck requires an interactive terminal.\n' >&2
+        printf "Use 'cyberops --help' to view non-interactive options.\n" >&2
+        return 2
+    fi
+
     if ! validate_configuration; then
-        exit 2
+        return 2
     fi
     install_signal_handlers
     main_menu
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    cyberops_main "$@"
 fi

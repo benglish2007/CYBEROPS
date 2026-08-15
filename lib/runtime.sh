@@ -15,15 +15,31 @@
 # Callers:
 #   This file must be sourced by cyberops.sh; it is not a standalone command.
 
-VERSION="2.5"
+VERSION="2.6"
 
-CYAN='\033[1;96m'
-MAGENTA='\033[1;95m'
-YELLOW='\033[1;93m'
-RED='\033[1;91m'
-GREEN='\033[1;92m'
-DIM='\033[2m'
-RESET='\033[0m'
+disable_color() {
+    CYAN=""
+    MAGENTA=""
+    YELLOW=""
+    RED=""
+    GREEN=""
+    DIM=""
+    RESET=""
+    CYBEROPS_NO_COLOR=1
+}
+
+CYBEROPS_NO_COLOR="${CYBEROPS_NO_COLOR:-0}"
+if [[ -v NO_COLOR ]] || [[ "$CYBEROPS_NO_COLOR" == "1" ]]; then
+    disable_color
+else
+    CYAN='\033[1;96m'
+    MAGENTA='\033[1;95m'
+    YELLOW='\033[1;93m'
+    RED='\033[1;91m'
+    GREEN='\033[1;92m'
+    DIM='\033[2m'
+    RESET='\033[0m'
+fi
 
 # Docker updater defaults
 STACK_ROOT="${STACK_ROOT:-/srv/stacks}"

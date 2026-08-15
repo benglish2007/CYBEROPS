@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.5 — Milestone 5 complete.**
+Current release: **v2.6 — Milestone 6 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -118,12 +118,20 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 
 ## Milestone 6: User Experience and Documentation
 
-- [ ] Add `--help`, `--version`, and `--no-color` options.
-- [ ] Consider non-interactive commands such as `cyberops info` and `cyberops docker status`.
-- [ ] Detect non-interactive terminals and degrade animation/color cleanly.
-- [ ] Shorten the README quick start and move detailed operational material into `docs/`.
-- [ ] Document privilege requirements and side effects per operation.
-- [ ] Add screenshots or a short terminal demonstration.
+- [x] Add `--help`, `--version`, and `--no-color` options.
+- [x] Consider non-interactive commands such as `cyberops info` and `cyberops docker status`.
+- [x] Detect non-interactive terminals and degrade animation/color cleanly.
+- [x] Shorten the README quick start and move detailed operational material into `docs/`.
+- [x] Document privilege requirements and side effects per operation.
+- [x] Add screenshots or a short terminal demonstration.
+
+### Manual verification — 2026-08-15
+
+- [x] Verified unsupported options return status 2 with help guidance.
+- [x] Verified a control-deck launch without interactive input refuses safely instead of looping.
+- [x] Verified help, version, no-color, host information, and Docker status command channels.
+- [x] Verified normal terminal and GNOME desktop launches still open the interactive control deck.
+- [x] Verified the focused documentation is included in the system-wide installation.
 
 ## Potential Future Features
 

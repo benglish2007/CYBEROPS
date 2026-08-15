@@ -564,25 +564,29 @@ docker_update_stacks() {
     pause
 }
 
-docker_status() {
-    banner
-    ui_section "DOCKER STATUS" "CONTAINER GRID // RUNTIME TELEMETRY"
-
+show_docker_status() {
     if ! require_commands docker; then
-        pause
-        return
+        return 1
     fi
 
-    if run_checked \
+    if ! run_checked \
         "Docker container status query" \
         "Verify the Docker daemon is running and your user has access." \
         docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'; then
-        echo
-        run_checked \
-            "Docker disk-usage query" \
-            "Verify the Docker daemon is running and your user has access." \
-            docker system df
+        return 1
     fi
+
+    echo
+    run_checked \
+        "Docker disk-usage query" \
+        "Verify the Docker daemon is running and your user has access." \
+        docker system df
+}
+
+docker_status() {
+    banner
+    ui_section "DOCKER STATUS" "CONTAINER GRID // RUNTIME TELEMETRY"
+    show_docker_status
     pause
 }
 

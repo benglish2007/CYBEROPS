@@ -2,6 +2,31 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 2.6 — 2026-08-15
+
+Version 2.6 completes **Roadmap Milestone 6: User Experience and
+Documentation** with a terminal-safe command interface, non-interactive
+behavior, focused operational guides, and an installed documentation set.
+
+### Command-Line Interface
+
+- Added `--help`, `--version`, and `--no-color`, including support for the standard `NO_COLOR` environment variable.
+- Added read-only `cyberops info` and `cyberops docker status` command channels.
+- Made non-interactive menu launches fail with actionable usage guidance instead of looping on end-of-input.
+- Disabled screen clearing and typewriter delays when output is not attached to a terminal.
+- Added regression coverage for options, command dispatch, unknown input, no-color state, and non-interactive refusal.
+
+### Documentation
+
+- Rebuilt the README as a concise project overview, quick start, command reference, documentation index, and safety gate.
+- Moved detailed Docker recovery, USB safety, and operation privilege/side-effect guidance into focused documents under `docs/`.
+- Added a short, privacy-safe terminal demonstration and included the documentation in system-wide installations.
+- Recorded successful manual verification of unknown-option and non-interactive refusal behavior.
+
+### Milestone
+
+- Completed all Roadmap Milestone 6 work and recorded successful manual verification of the command channels, color controls, terminal safeguards, interactive launchers, and installed documentation.
+
 ## 2.5 — 2026-08-15
 
 Version 2.5 completes **Roadmap Milestone 5: Installation and Packaging** with
