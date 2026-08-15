@@ -4,10 +4,33 @@ All notable changes to CYBEROPS are documented in this file.
 
 ## Unreleased
 
+## 2.3 — 2026-08-15
+
+Version 2.3 completes **Roadmap Milestone 3: Docker Operations** with selective
+Compose maintenance, more accurate health handling, durable recovery evidence,
+and stronger boundaries around rollback and image pruning.
+
+### Docker Operations
+
+- Added interactive selection for one, several, or all discovered Compose stacks.
+- Added an exact preflight plan showing each selected project, Compose file, update commands, verification steps, and separately confirmed image-pruning behavior before confirmation.
+- Expanded health polling to include stopped one-shot containers, accept successful exit-code-zero jobs, reject failed jobs, and follow replacement container IDs created while an update converges.
+- Added private per-run recovery reports with before/after container, service, image-reference, immutable image-ID, runtime, exit-code, and health state.
+- Documented manual image recovery and made clear that CYBEROPS never performs an automatic rollback.
+- Split unused-image pruning into an optional action with its own destructive confirmation after successful stack maintenance.
+
 ### Documentation
 
 - Restyled the README as a neon operations dossier using the existing CYBEROPS artwork, build badges, linked navigation, control-node labels, and high-visibility safety callouts.
 - Standardized clone instructions and workflow links on the renamed `benglish2007/CYBEROPS` repository.
+
+### Quality
+
+- Added mocked regression coverage for Compose selection, one-shot and replacement-container health handling, recovery-state reports, and separately confirmed image pruning.
+
+### Milestone
+
+- Completed all Roadmap Milestone 3: Docker Operations work and recorded successful disposable-stack manual verification.
 
 ## 2.2.3 — 2026-08-14
 

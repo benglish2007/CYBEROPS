@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.2.3 — Milestone 2 complete.**
+Current release: **v2.3 — Milestone 3 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -41,12 +41,22 @@ runtime capabilities and integration-testing boundaries.
 
 ## Milestone 3: Docker Operations
 
-- [ ] Allow users to select individual Compose stacks instead of only updating every stack.
-- [ ] Show the exact Compose projects and planned actions before confirmation.
-- [ ] Improve health-check handling for one-shot services and containers created during an update.
-- [ ] Preserve useful before/after state for failure recovery.
-- [ ] Document rollback procedures and avoid implying automatic rollback.
-- [ ] Make image pruning an explicit, separately confirmed action.
+- [x] Allow users to select individual Compose stacks instead of only updating every stack.
+- [x] Show the exact Compose projects and planned actions before confirmation.
+- [x] Improve health-check handling for one-shot services and containers created during an update.
+- [x] Preserve useful before/after state for failure recovery.
+- [x] Document rollback procedures and avoid implying automatic rollback.
+- [x] Make image pruning an explicit, separately confirmed action.
+
+### Manual verification — 2026-08-15
+
+- [x] Verified numbered, multi-stack, all-stack, invalid-selection, cancellation, and deduplication paths.
+- [x] Verified the dry-run preflight lists only selected projects and exact planned actions.
+- [x] Updated a healthy long-running service and a successful one-shot service on disposable Compose stacks.
+- [x] Verified a nonzero one-shot exit is reported as a failed stack with recovery guidance.
+- [x] Verified recovery reports use mode `600` and contain useful before/after container and image state.
+- [x] Verified replacement containers created during an update are health-checked.
+- [x] Verified image pruning is separately confirmed, safely previewed, and can be declined.
 
 ## Milestone 4: Code Structure and Quality
 

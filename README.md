@@ -5,7 +5,7 @@
 
   <p><strong><code>NEON GRID // UNIFIED LINUX OPERATIONS CONSOLE</code></strong></p>
 
-  [![Release](https://img.shields.io/badge/RELEASE-v2.2.3-ff2d95?style=for-the-badge)](CHANGELOG.md)
+  [![Release](https://img.shields.io/badge/RELEASE-v2.3-ff2d95?style=for-the-badge)](CHANGELOG.md)
   [![Bash](https://img.shields.io/badge/SHELL-BASH_5+-00e5ff?style=for-the-badge&logo=gnubash&logoColor=050816)](cyberops.sh)
   [![Validate](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml)
   [![Platform](https://img.shields.io/badge/PLATFORM-UBUNTU_%2F_DEBIAN-8b5cf6?style=for-the-badge&logo=linux&logoColor=white)](COMPATIBILITY.md)
@@ -32,13 +32,15 @@ safety, reliability, packaging, and usability work is tracked in the
 
 ## `//` CURRENT BUILD
 
-### CYBEROPS Terminal v2.2.3
+### CYBEROPS Terminal v2.3
 
-Version 2.2.3 improves zero-fill portability across the supported Ubuntu and
-Debian matrix. It builds on the native path completion delivered in version
-2.2.2, the neon control deck in version 2.2.1, the Milestone 2 reliability work
-in version 2.2, and the safety foundation in version 2.1. Together, these
-releases:
+Version 2.3 completes the Docker Operations milestone with selective Compose
+maintenance, exact preflight plans, one-shot and replacement-container health
+handling, private recovery reports, documented manual rollback boundaries, and
+separately confirmed image pruning. It builds on the compatibility fixes in
+version 2.2.3, native path completion in version 2.2.2, the neon control deck in
+version 2.2.1, the Milestone 2 reliability work in version 2.2, and the safety
+foundation in version 2.1. Together, these releases:
 
 * Hardens destructive USB operations with device identity revalidation and protected-system-disk detection
 * Correctly handles whole-disk and partition-mounted filesystems
@@ -50,6 +52,11 @@ releases:
 * Adds consistent failure guidance and interruption cleanup
 * Adds a safe preview mode for state-changing operations
 * Tests the supported Ubuntu and Debian baseline in CI
+* Selects one, several, or all discovered Compose stacks for maintenance
+* Shows exact Compose files and planned actions before confirmation
+* Handles successful one-shot jobs and replacement containers during health checks
+* Preserves private before/after container and image state for manual recovery
+* Keeps rollback manual and makes image pruning a separate confirmed action
 
 Version 2.0 introduced the integrated Docker Maintenance and USB Operations
 modules. Consult the [transmission log](CHANGELOG.md) for the full release
@@ -289,18 +296,37 @@ Check Docker health status
 Display stack status
 ```
 
+After discovery, CYBEROPS lets you select one stack, several numbered stacks,
+or every stack. Before confirmation, it prints the exact Compose files and the
+`pull` and `up -d --remove-orphans` commands planned for each selection.
+
 The updater:
 
 1. Discovers Docker Compose stacks.
-2. Pulls current container images.
-3. Recreates or starts the stack.
-4. Removes orphaned containers.
-5. Retries a failed startup once.
-6. Checks container runtime state.
-7. Waits for Docker health checks.
-8. Displays recent logs when a stack fails.
-9. Tracks successful and failed stacks.
-10. Produces a final maintenance summary.
+2. Prompts for one, several, or all discovered stacks.
+3. Displays the selected projects and exact planned actions.
+4. Pulls current container images.
+5. Recreates or starts each selected stack.
+6. Removes orphaned containers.
+7. Retries a failed startup once.
+8. Checks container runtime state.
+9. Waits for Docker health checks.
+10. Displays recent logs when a stack fails.
+11. Tracks successful and failed stacks.
+12. Produces a final maintenance summary.
+
+Health verification examines all containers in each selected Compose project,
+including stopped containers. A completed one-shot container is accepted only
+when it exits with status `0`; a nonzero exit is a stack failure. Container IDs
+are refreshed during polling so a replacement created while Compose converges
+is checked instead of the superseded container.
+
+For real updates, CYBEROPS writes a mode-`600` recovery report under
+`${XDG_STATE_HOME:-$HOME/.local/state}/cyberops/docker/`. The report captures
+before/after Compose file, service, container, image reference, immutable image
+ID, runtime state, exit code, and health information. It intentionally excludes
+container environment values and is evidence for manual recovery—not an
+automatic rollback mechanism.
 
 ---
 
@@ -330,7 +356,9 @@ Recent Compose logs are displayed when startup or health checks fail.
 
 ### `04 // IMAGE PRUNING`
 
-Unused Docker images are pruned only when **all discovered stacks update successfully**.
+Unused Docker images are never pruned as an automatic consequence of updating
+stacks. When every selected stack succeeds, CYBEROPS offers pruning as a
+separate optional action and requires another explicit `YES` confirmation.
 
 If any stack fails:
 
@@ -342,7 +370,43 @@ This reduces the chance of removing an image that may be useful while troublesho
 
 ---
 
-### `05 // GRID STATUS`
+### `05 // MANUAL RECOVERY`
+
+CYBEROPS does **not** automatically roll back a failed Compose update. Container
+images can include migrations or state changes that cannot be reversed safely
+without application-specific knowledge.
+
+When a stack fails:
+
+1. Do not prune images.
+2. Open the recovery report path printed in the maintenance summary.
+3. Compare the stack's `BEFORE` and `AFTER` entries, especially `image_ref`,
+   `image_id`, state, exit code, and health.
+4. Inspect the current project without changing it:
+
+   ```bash
+   docker compose -f /path/to/compose.yml ps --all
+   docker compose -f /path/to/compose.yml logs --tail 80 --no-color
+   ```
+
+5. If the previous image ID is still present and application documentation says
+   an image-only rollback is safe, retag it to the recorded image reference and
+   recreate without pulling:
+
+   ```bash
+   docker image tag <before-image-id> <recorded-image-reference>
+   docker compose -f /path/to/compose.yml up -d --no-build --pull never --remove-orphans
+   ```
+
+6. Recheck container state, health, logs, and application data.
+
+Restoring an image does not restore volumes, databases, bind-mounted files,
+Compose configuration, secrets, or schema changes. Use the application's own
+backup and recovery procedure whenever persistent data may have changed.
+
+---
+
+### `06 // GRID STATUS`
 
 CYBEROPS can also display a quick Docker overview including:
 
@@ -354,7 +418,7 @@ CYBEROPS can also display a quick Docker overview including:
 
 ---
 
-### `06 // CONFIGURATION CHANNELS`
+### `07 // CONFIGURATION CHANNELS`
 
 The following environment variables can adjust updater behavior:
 
@@ -592,13 +656,13 @@ This operation permanently destroys the existing filesystem and data on the sele
 
 ## `//` CONTROL DECK
 
-CYBEROPS v2.2.3 presents the following main interface:
+CYBEROPS v2.3 presents the following main interface:
 
 ```text
 ╔══[ CYBEROPS // NEON GRID ]══════════════════[ NODE ONLINE ]══╗
                          CYBEROPS
 ╚══════════════════════════════════════════════════════════════╝
-BUILD 2.2.3  //  UNIFIED LINUX OPERATIONS CONSOLE  //  SESSION ACTIVE
+BUILD 2.3  //  UNIFIED LINUX OPERATIONS CONSOLE  //  SESSION ACTIVE
 
 ╭─[ CONTROL DECK ]──────────────────────────────────────────────
 │ SELECT AN OPERATIONS NODE
@@ -882,7 +946,7 @@ See the repository's `LICENSE` file for licensing information.
 
 <div align="center">
 
-  **`CYBEROPS TERMINAL v2.2.3 // LINK STANDBY`**
+  **`CYBEROPS TERMINAL v2.3 // LINK STANDBY`**
 
   *One terminal. One toolkit. Linux operations under control.*
 
