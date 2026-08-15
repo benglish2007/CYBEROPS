@@ -27,7 +27,7 @@ fields are read-only and do not contact an internet service:
 | --- | --- | --- |
 | `CYBEROPS_HEADER_TIME` | `1` | Local date, time, and timezone |
 | `CYBEROPS_HEADER_LINK` | `1` | Local default-route and interface state |
-| `CYBEROPS_HEADER_VPN` | `1` | Red `[OFF]` or green `[ON // interface]` VPN badge |
+| `CYBEROPS_HEADER_VPN` | `1` | Dedicated VPN state, interface, and local VPN IP row |
 | `CYBEROPS_HEADER_IFACE` | `1` | Primary default-route interface |
 | `CYBEROPS_HEADER_LOCAL_IP` | `1` | Primary IPv4 address, with IPv6 fallback |
 | `CYBEROPS_HEADER_MAC` | `1` | Current MAC and permanent-address comparison badge |
@@ -46,7 +46,9 @@ or filtered network cannot block the control deck.
 Tailscale status is verified through a timeout-bounded local backend query;
 the persistent `tailscale0` interface alone is not treated as connected after
 `tailscale down`. Other supported VPN-style interfaces are detected from their
-active local link state.
+active local link state. When connected, the dedicated VPN row shows the
+interface's local IPv4 address with IPv6 fallback; it never performs an
+external lookup.
 
 The MAC badge is red and labeled `[PERMANENT // address]` when the current
 address matches the hardware address. It is green and labeled

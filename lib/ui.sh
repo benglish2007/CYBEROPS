@@ -175,16 +175,10 @@ render_header_telemetry() {
     if ((width < 70)); then
         [[ "$CYBEROPS_HEADER_TIME" == "0" ]] || printf '%bTIME%b // %s\n' "$MAGENTA" "$RESET" "$HEADER_TIME"
         [[ "$CYBEROPS_HEADER_LINK" == "0" ]] || printf '%bLINK%b // %s\n' "$MAGENTA" "$RESET" "$HEADER_ROUTE_STATE"
-        if [[ "$CYBEROPS_HEADER_VPN" == "1" ]]; then
-            printf '%bVPN%b  // ' "$MAGENTA" "$RESET"
-            render_vpn_badge
-            printf '\n'
-        fi
         [[ "$CYBEROPS_HEADER_IFACE" == "0" ]] || printf '%bNET%b  // IFACE %s\n' "$MAGENTA" "$RESET" "$HEADER_IFACE"
         [[ "$CYBEROPS_HEADER_LOCAL_IP" == "0" ]] || printf '%bIP%b   // %s\n' "$MAGENTA" "$RESET" "$HEADER_ADDRESS"
     else
-        if [[ "$CYBEROPS_HEADER_TIME" == "1" || "$CYBEROPS_HEADER_LINK" == "1" ||
-            "$CYBEROPS_HEADER_VPN" == "1" ]]; then
+        if [[ "$CYBEROPS_HEADER_TIME" == "1" || "$CYBEROPS_HEADER_LINK" == "1" ]]; then
             printf '%bLOCAL%b // ' "$MAGENTA" "$RESET"
             if [[ "$CYBEROPS_HEADER_TIME" == "1" ]]; then
                 printf 'TIME %s' "$HEADER_TIME"
@@ -195,16 +189,20 @@ render_header_telemetry() {
                 printf 'LINK %s' "$HEADER_ROUTE_STATE"
                 ((local_fields += 1))
             fi
-            if [[ "$CYBEROPS_HEADER_VPN" == "1" ]]; then
-                ((local_fields == 0)) || printf ' // '
-                printf 'VPN '
-                render_vpn_badge
-            fi
             printf '\n'
         fi
         [[ "$CYBEROPS_HEADER_IFACE" == "0" ]] || network_status="IFACE $HEADER_IFACE"
         [[ "$CYBEROPS_HEADER_LOCAL_IP" == "0" ]] || network_status+="${network_status:+ // }IP $HEADER_ADDRESS"
         [[ -z "$network_status" ]] || printf '%bNET%b   // %s\n' "$MAGENTA" "$RESET" "$network_status"
+    fi
+    if [[ "$CYBEROPS_HEADER_VPN" == "1" ]]; then
+        printf '%bVPN%b   // STATUS ' "$MAGENTA" "$RESET"
+        render_vpn_badge
+        if ((width < 70)); then
+            printf '\n%bVPN-IP%b // %s\n' "$MAGENTA" "$RESET" "$HEADER_VPN_ADDRESS"
+        else
+            printf ' // LOCAL IP %s\n' "$HEADER_VPN_ADDRESS"
+        fi
     fi
     if [[ "$CYBEROPS_HEADER_MAC" == "1" ]]; then
         printf '%bL2%b    // CURRENT MAC ' "$MAGENTA" "$RESET"

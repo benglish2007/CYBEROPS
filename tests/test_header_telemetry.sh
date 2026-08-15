@@ -59,6 +59,9 @@ ip() {
         '-o -4 address show dev eth0 scope global')
             printf '%s\n' '2: eth0    inet 192.0.2.25/24 brd 192.0.2.255 scope global eth0'
             ;;
+        '-o -4 address show dev tailscale0 scope global')
+            printf '%s\n' '7: tailscale0    inet 100.64.0.25/32 scope global tailscale0'
+            ;;
         '-o -6 address show dev eth0 scope global') return 0 ;;
         '-o link show up')
             printf '%s\n' '2: eth0: <UP> mtu 1500' '7: tailscale0: <UP> mtu 1280'
@@ -104,9 +107,11 @@ record_result "shows the current interface MAC address" "$HEADER_MAC" 02:42:ac:1
 record_result "identifies a current permanent MAC address" "$HEADER_MAC_STATE" PERMANENT
 record_result "reports local route availability without an external probe" "$HEADER_ROUTE_STATE" ROUTED
 record_result "detects the running Tailscale backend" "$HEADER_VPN" tailscale0
+record_result "shows the VPN interface local address" "$HEADER_VPN_ADDRESS" 100.64.0.25
 TAILSCALE_STATE=Stopped
 collect_header_telemetry
 record_result "ignores a stale Tailscale interface after tailscale down" "$HEADER_VPN" NONE
+record_result "clears the VPN address when disconnected" "$HEADER_VPN_ADDRESS" UNAVAILABLE
 TAILSCALE_STATE=Running
 record_result "keeps public-IP lookup disabled by default" "$(wc -c <"$CURL_LOG")" 0
 
@@ -151,6 +156,7 @@ record_result "offline collection reports no detected VPN" "$HEADER_VPN" NONE
 HEADER_TIME='2033-05-18 03:33:20 UTC'
 HEADER_ROUTE_STATE=ROUTED
 HEADER_VPN=tailscale0
+HEADER_VPN_ADDRESS=100.64.0.25
 HEADER_IFACE=eth0
 HEADER_ADDRESS=192.0.2.25
 HEADER_MAC=02:42:ac:11:00:02
@@ -160,6 +166,7 @@ COLUMNS=50
 narrow_output="$(render_header_telemetry | strip_ansi)"
 if [[ "$narrow_output" == *'TIME // 2033-05-18'* &&
     "$narrow_output" == *'IP   // 192.0.2.25'* &&
+    "$narrow_output" == *'VPN-IP // 100.64.0.25'* &&
     "$narrow_output" == *'CURRENT MAC'* &&
     "$narrow_output" == *'[PERMANENT // 02:42:ac:11:00:02]'* ]]; then
     narrow_result=readable
@@ -167,6 +174,18 @@ else
     narrow_result=broken
 fi
 record_result "narrow terminals receive split telemetry rows" "$narrow_result" readable
+
+COLUMNS=80
+vpn_row_output="$(render_header_telemetry | strip_ansi)"
+local_row="$(printf '%s\n' "$vpn_row_output" | awk '/^LOCAL / { print; exit }')"
+if [[ "$vpn_row_output" == *'VPN   // STATUS [ON // tailscale0] // LOCAL IP 100.64.0.25'* &&
+    "$local_row" != *'VPN'* ]]; then
+    vpn_row_result=dedicated
+else
+    vpn_row_result=embedded
+fi
+record_result "VPN status and local address use a dedicated row" "$vpn_row_result" dedicated
+COLUMNS=50
 
 saved_red="$RED"
 saved_green="$GREEN"

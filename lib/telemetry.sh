@@ -162,6 +162,7 @@ collect_header_telemetry() {
     HEADER_TIME=""
     HEADER_ROUTE_STATE=""
     HEADER_VPN=""
+    HEADER_VPN_ADDRESS=""
     HEADER_IFACE=""
     HEADER_ADDRESS=""
     HEADER_MAC=""
@@ -194,6 +195,11 @@ collect_header_telemetry() {
     HEADER_ROUTE_STATE="$(telemetry_route_state "$detected_iface")"
     if [[ "$CYBEROPS_HEADER_VPN" == "1" ]]; then
         HEADER_VPN="$(telemetry_vpn_interface 2>/dev/null || printf 'NONE')"
+        if [[ "$HEADER_VPN" == "NONE" ]]; then
+            HEADER_VPN_ADDRESS="UNAVAILABLE"
+        else
+            HEADER_VPN_ADDRESS="$(telemetry_interface_address "$HEADER_VPN" 2>/dev/null || printf 'UNAVAILABLE')"
+        fi
     fi
     if telemetry_public_ip 2>/dev/null; then
         HEADER_PUBLIC_IP="$TELEMETRY_PUBLIC_IP_RESULT"

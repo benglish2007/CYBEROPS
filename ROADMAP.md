@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.12 — Milestone 12 complete.**
+Current release: **v2.12.1 — Milestone 12 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -246,6 +246,7 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [x] Display the current MAC address of the primary routed interface.
 - [x] Compare the current MAC with the permanent hardware address and render explicit permanent, modified, or unknown state badges.
 - [x] Detect common active VPN-style interfaces without invoking vendor clients or contacting external services.
+- [x] Give VPN state a dedicated status row with the active interface's local VPN address.
 - [x] Render bracketed red VPN-off/permanent-MAC states and green VPN-on/modified-MAC states without relying on color alone.
 - [x] Keep public-IP discovery disabled by default, bounded by a short timeout, and cached between menu redraws when enabled.
 - [x] Allow the entire status area and every individual field to be disabled through configuration.

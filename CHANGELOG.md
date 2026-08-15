@@ -2,6 +2,16 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 2.12.1 — 2026-08-15
+
+Version 2.12.1 refines the live header with a dedicated VPN status and address
+line that matches the existing network and link-layer presentation.
+
+### Live Header Layout
+
+- Moved VPN state from the combined local-status row to a dedicated `VPN` row matching the `NET` and `L2` presentation.
+- Added the active VPN interface's local IPv4 address with IPv6 fallback while retaining accurate Tailscale backend detection.
+
 ## 2.12 — 2026-08-15
 
 Version 2.12 completes **Roadmap Milestone 12: Live Header Telemetry** with
