@@ -2,6 +2,17 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 2.9.1 — 2026-08-15
+
+Version 2.9.1 refreshes CYBEROPS desktop artwork for clearer recognition in
+compact docks and application drawers.
+
+### Application Icon
+
+- Reworked the original cyan cyber-skull and magenta warning-triangle artwork into a bold rounded-square application tile.
+- Enlarged the central skull, strengthened neon strokes, reduced background circuit noise, and improved edge contrast for 32–64 pixel display sizes.
+- Preserved the existing `cyberops.png` asset path so installed desktop entries and upgrade behavior remain compatible.
+
 ## 2.9 — 2026-08-15
 
 Version 2.9 completes **Roadmap Milestone 9: Release Automation** with guarded,

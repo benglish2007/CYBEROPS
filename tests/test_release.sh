@@ -41,13 +41,13 @@ set -e
 record_result "rejects a version with a v prefix" "$invalid_version_status" 1
 
 set +e
-verify_release_metadata 2.9 >/dev/null 2>&1
+verify_release_metadata 2.9.1 >/dev/null 2>&1
 metadata_status=$?
 set -e
 record_result "accepts synchronized release metadata" "$metadata_status" 0
-notes="$(extract_release_notes 2.9)"
-[[ "$notes" == *"Release Engineering"* &&
-    "$notes" != *"## 2.8"* ]]
+notes="$(extract_release_notes 2.9.1)"
+[[ "$notes" == *"Application Icon"* &&
+    "$notes" != *"## 2.9"* ]]
 record_result "extracts only the prepared release notes" "$?" 0
 
 if grep -Fq 'release-check:' "$REPO_DIR/Makefile" &&
@@ -78,13 +78,13 @@ gh() {
     return 0
 }
 
-publish_release 2.9 >/dev/null
+publish_release 2.9.1 >/dev/null
 record_result "publishes a validated release" "$?" 0
-grep -Fq 'tag -a v2.9' "$MOCK_LOG"
+grep -Fq 'tag -a v2.9.1' "$MOCK_LOG"
 record_result "creates an annotated version tag" "$?" 0
-grep -Fq 'push origin v2.9' "$MOCK_LOG"
+grep -Fq 'push origin v2.9.1' "$MOCK_LOG"
 record_result "pushes only the version tag" "$?" 0
-grep -Fq 'release create v2.9 --verify-tag' "$MOCK_LOG"
+grep -Fq 'release create v2.9.1 --verify-tag' "$MOCK_LOG"
 record_result "creates a release from the verified tag" "$?" 0
 
 : >"$MOCK_LOG"
@@ -96,7 +96,7 @@ gh() {
     return 0
 }
 set +e
-publish_release 2.9 >/dev/null 2>&1
+publish_release 2.9.1 >/dev/null 2>&1
 existing_release_status=$?
 set -e
 record_result "refuses to overwrite an existing GitHub Release" \
