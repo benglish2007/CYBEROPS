@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.13 — Milestone 13 complete.**
+Current release: **v2.14 — Milestone 14 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -281,6 +281,16 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [x] Verified persistent randomization enablement and the resulting modified-MAC header state after reconnection.
 - [x] Verified persistent randomization disablement and immediate permanent-MAC restoration with successful reconnection.
 - [x] Downloaded and installed the released v2.13 `.deb` on a separate Wi-Fi laptop and verified the Wi-Fi MAC-control workflow successfully.
+
+## Milestone 14: Neon Overdrive Interface
+
+- [x] Add an optional, configuration-backed interface theme with a classic fallback.
+- [x] Introduce the Night City Relay banner, framed signal matrix, rail menus, and command-deck vocabulary.
+- [x] Preserve explicit operation names, privilege markers, destructive warnings, and recovery guidance.
+- [x] Preserve accessible no-color behavior and adapt telemetry for narrow terminals.
+- [x] Frame and center the rainbow CYBEROPS logo without distorting its FIGlet geometry.
+- [x] Add regression coverage for theme selection, layout, feedback signals, narrow terminals, and no-color rendering.
+- [x] Manually verify standard-width, narrow-width, full-color, and no-color presentation.
 
 ## Deferred: Controlled Extensibility and Portability
 

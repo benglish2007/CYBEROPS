@@ -1,18 +1,18 @@
-# Neon Overdrive UI Experiment
+# Neon Overdrive Interface
 
-This branch isolates a heavier cyberpunk presentation from stable `main`.
-Operational commands, privilege boundaries, safety checks, and recovery paths
-remain unchanged.
+Neon Overdrive is the default CYBEROPS v2.14 presentation. Operational
+commands, privilege boundaries, safety checks, and recovery paths remain
+unchanged from the classic interface.
 
 ## Theme selection
 
-The lab defaults to:
+CYBEROPS defaults to:
 
 ```text
 CYBEROPS_THEME=neon-overdrive
 ```
 
-Set `CYBEROPS_THEME=classic` to compare against the v2.13 presentation. Both
+Set `CYBEROPS_THEME=classic` to use the pre-v2.14 presentation. Both
 themes preserve `NO_COLOR`, `--no-color`, narrow-terminal, and explicit text
 status behavior.
 

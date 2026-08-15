@@ -21,7 +21,7 @@ documented below. Unknown keys and malformed lines fail validation.
 ## Interface theme
 
 `CYBEROPS_THEME=neon-overdrive` enables the experimental high-intensity command
-deck. Set `CYBEROPS_THEME=classic` to retain the stable v2.13 presentation.
+deck. Set `CYBEROPS_THEME=classic` to retain the pre-v2.14 presentation.
 Both themes honor `CYBEROPS_NO_COLOR`, `NO_COLOR`, and `--no-color`.
 
 ## Live header telemetry

@@ -84,7 +84,7 @@ verify_release_metadata() {
     fi
     if ! grep -Fq "CYBEROPS Terminal $version\"" "$REPO_DIR/tests/test_cli.sh" ||
         ! grep -Fq "$module_version_assertion" "$REPO_DIR/tests/test_modules.sh" ||
-        ! grep -Fq "BUILD $version" "$REPO_DIR/tests/test_ui.sh"; then
+        ! grep -Eq "BUILD( |://)$version" "$REPO_DIR/tests/test_ui.sh"; then
         release_error "Version assertions under tests/ are not synchronized with v$version."
         failure=1
     fi

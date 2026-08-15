@@ -2,11 +2,27 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
-## Unreleased
+## 2.14 — 2026-08-15
 
-### Post-release Verification
+Version 2.14 completes **Roadmap Milestone 14: Neon Overdrive Interface** with
+a denser cyberpunk command deck that retains accessible text, narrow-terminal,
+classic-theme, and no-color behavior.
 
-- Verified the released v2.13 Debian package on a separate Wi-Fi laptop, including the Wi-Fi MAC-control workflow.
+### Neon Overdrive Interface
+
+- Added the Night City Relay banner, Neural Command Fabric logo chamber, rail-style control deck, and framed Live Signal Matrix.
+- Added a true-color cyan, magenta, green, red, orange, purple, blue, and muted palette while preserving `NO_COLOR` and `--no-color` output.
+- Added theme-aware `[ ACK ]`, `[ CAUTION ]`, `[ FAULT ]`, `RECOVERY::`, `[ SIMULATION ]`, and `[ AUTH GATE ]` feedback signals.
+- Added explicit Black Ice destructive-protocol language without changing confirmations, privilege boundaries, or safety behavior.
+- Centered the rainbow FIGlet logo inside continuous 67-character rails with stable fallback artwork when optional visual tools are absent.
+- Added split narrow-terminal telemetry rows and aligned wide-terminal instrumentation for local, network, VPN, and link-layer state.
+- Retained the previous presentation through `CYBEROPS_THEME=classic` for compatibility and comparison.
+- Added regression coverage for theme validation, frame alignment, logo centering, rainbow retention, feedback vocabulary, classic fallback, narrow terminals, and no-color output.
+
+### Verification
+
+- Completed manual full-color, no-color, standard-width, and narrow-terminal interface verification.
+- Verified the released v2.13 Debian package on a separate Wi-Fi laptop, including the Wi-Fi MAC-control workflow carried into v2.14.
 
 ## 2.13 — 2026-08-15
 
