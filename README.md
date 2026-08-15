@@ -33,7 +33,37 @@ release history and planned work.
 
 ## `//` QUICK START
 
-Clone and launch from the source tree:
+Choose the workflow that matches how you use CYBEROPS.
+
+### Option 1: Normal installation
+
+New users should download `cyberops_2.11_all.deb` from the
+[latest GitHub Release](https://github.com/benglish2007/CYBEROPS/releases/latest),
+then install it through APT so required dependencies are resolved:
+
+```bash
+cd /tmp
+wget https://github.com/benglish2007/CYBEROPS/releases/download/v2.11/cyberops_2.11_all.deb
+sudo apt install ./cyberops_2.11_all.deb
+cyberops
+```
+
+The installed desktop application is named **CYBEROPS Terminal**. To upgrade,
+download the newer release package and install it over the existing version:
+
+```bash
+sudo apt install ./cyberops_<new-version>_all.deb
+```
+
+APT upgrades CYBEROPS in place; uninstalling first is unnecessary, and
+user-owned configuration and operation logs remain intact. CYBEROPS does not
+yet provide an APT repository, so new releases must currently be downloaded
+from GitHub rather than discovered by `apt upgrade`.
+
+### Option 2: Development and testing
+
+Contributors and testers can run the latest source directly without changing
+the installed package:
 
 ```bash
 git clone https://github.com/benglish2007/CYBEROPS.git
@@ -42,62 +72,47 @@ chmod +x cyberops.sh
 ./cyberops.sh
 ```
 
-Install the command, modular runtime, icon, desktop entry, and license:
+After the initial clone, update and test subsequent revisions with:
+
+```bash
+git pull
+./cyberops.sh
+```
+
+No uninstall or package reinstall is needed for ordinary source testing. When
+testing package installation or desktop integration, build and reinstall the
+current development package:
+
+```bash
+make deb
+make deb-inspect
+sudo apt install --reinstall ./dist/cyberops_2.11_all.deb
+hash -r
+cyberops --version
+```
+
+When the development version has increased, the normal `apt install` command
+can be used without `--reinstall`.
+
+### Source-install fallback
+
+The original Makefile installation remains available under `/usr/local`:
 
 ```bash
 sudo make install
 cyberops
 ```
 
-Optional utilities are installed separately and explicitly through the
-installer rather than from the CYBEROPS runtime:
+Optional utilities can be installed explicitly with:
 
 ```bash
 sudo make install-deps
 ```
 
-Install optional dependencies and CYBEROPS together with:
-
-```bash
-sudo make full-install
-```
-
-Build and inspect the native Debian package without installing it:
-
-```bash
-make deb
-make deb-inspect
-```
-
-Install the resulting package through APT with
-`sudo apt install ./dist/cyberops_<version>_all.deb`. The default Makefile
-installation remains available as the `/usr/local` fallback. Remove that
-source installation once before migrating so `/usr/local/bin/cyberops` does
-not shadow the packaged command. See the [packaging guide](docs/PACKAGING.md)
-for upgrade, removal, and coexistence boundaries.
-
-The installed desktop application is named **CYBEROPS Terminal**.
-
-Upgrade without uninstalling:
-
-```bash
-git pull
-sudo make install
-```
-
-Remove every CYBEROPS-managed file:
-
-```bash
-sudo make uninstall
-```
-
-A custom root can be selected with `PREFIX`, provided the same value is used
-for uninstall:
-
-```bash
-sudo make install PREFIX=/opt/cyberops
-sudo make uninstall PREFIX=/opt/cyberops
-```
+Remove a Makefile installation once before migrating to the `.deb`; otherwise
+`/usr/local/bin/cyberops` may shadow the packaged `/usr/bin/cyberops` command.
+See the [packaging guide](docs/PACKAGING.md) for package inspection, removal,
+upgrade, and coexistence details.
 
 ---
 
