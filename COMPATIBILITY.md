@@ -24,6 +24,7 @@ The core script requires:
   `iflag=count_bytes`), plus `sort -z`
 - GNU Findutils with `find -print0`
 - util-linux with `lsblk`, `findmnt`, and the `lsblk` `MOUNTPOINTS` column
+- iproute2 and `ethtool` for local route, interface, current-MAC, and permanent-MAC telemetry
 - GNU `grep`, `sed`, and `awk`
 - `readlink -f` canonical-path support
 - APT and systemd for the package-management and service-management modules

@@ -56,6 +56,18 @@ set_valid_configuration() {
     HEALTH_INTERVAL=5
     FAILURE_LOG_LINES=80
     DRY_RUN=0
+    CYBEROPS_NO_COLOR=0
+    CYBEROPS_LOGGING=1
+    CYBEROPS_HEADER_TELEMETRY=1
+    CYBEROPS_HEADER_TIME=1
+    CYBEROPS_HEADER_LINK=1
+    CYBEROPS_HEADER_VPN=1
+    CYBEROPS_HEADER_IFACE=1
+    CYBEROPS_HEADER_LOCAL_IP=1
+    CYBEROPS_HEADER_MAC=1
+    CYBEROPS_HEADER_PUBLIC_IP=0
+    CYBEROPS_HEADER_TIMEOUT=2
+    CYBEROPS_PUBLIC_IP_CACHE_TTL=300
 }
 
 set_valid_configuration
@@ -103,6 +115,22 @@ expect_config_failure "rejects an interval longer than the timeout"
 set_valid_configuration
 FAILURE_LOG_LINES=many
 expect_config_failure "rejects a nonnumeric log-line limit"
+
+set_valid_configuration
+CYBEROPS_HEADER_TELEMETRY=yes
+expect_config_failure "rejects an invalid header telemetry toggle"
+
+set_valid_configuration
+CYBEROPS_HEADER_PUBLIC_IP=yes
+expect_config_failure "rejects an invalid public-IP toggle"
+
+set_valid_configuration
+CYBEROPS_HEADER_TIMEOUT=0
+expect_config_failure "rejects an unbounded header timeout"
+
+set_valid_configuration
+CYBEROPS_PUBLIC_IP_CACHE_TTL=10
+expect_config_failure "rejects an undersized public-IP cache interval"
 
 have() {
     local candidate

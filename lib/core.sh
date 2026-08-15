@@ -140,6 +140,7 @@ integer_in_range() {
 validate_configuration() {
     local errors=0
     local config_error
+    local header_toggle
 
     for config_error in "${CYBEROPS_CONFIG_ERRORS[@]}"; do
         printf '%b[!] %s%b\n' "$RED" "$config_error" "$RESET"
@@ -187,6 +188,27 @@ validate_configuration() {
         ((errors += 1))
     fi
 
+    for header_toggle in \
+        CYBEROPS_HEADER_TELEMETRY CYBEROPS_HEADER_TIME CYBEROPS_HEADER_LINK \
+        CYBEROPS_HEADER_VPN CYBEROPS_HEADER_IFACE CYBEROPS_HEADER_LOCAL_IP \
+        CYBEROPS_HEADER_MAC CYBEROPS_HEADER_PUBLIC_IP; do
+        if [[ "${!header_toggle}" != "0" && "${!header_toggle}" != "1" ]]; then
+            printf '%b[!] %s must be either 0 or 1.%b\n' \
+                "$RED" "$header_toggle" "$RESET"
+            ((errors += 1))
+        fi
+    done
+
+    if ! integer_in_range "$CYBEROPS_HEADER_TIMEOUT" 1 10; then
+        printf '%b[!] CYBEROPS_HEADER_TIMEOUT must be an integer from 1 to 10 seconds.%b\n' "$RED" "$RESET"
+        ((errors += 1))
+    fi
+
+    if ! integer_in_range "$CYBEROPS_PUBLIC_IP_CACHE_TTL" 30 86400; then
+        printf '%b[!] CYBEROPS_PUBLIC_IP_CACHE_TTL must be an integer from 30 to 86400 seconds.%b\n' "$RED" "$RESET"
+        ((errors += 1))
+    fi
+
     if integer_in_range "$HEALTH_TIMEOUT" 1 86400 &&
         integer_in_range "$HEALTH_INTERVAL" 1 3600 &&
         ((10#$HEALTH_INTERVAL > 10#$HEALTH_TIMEOUT)); then
@@ -217,6 +239,16 @@ show_configuration() {
     printf 'DRY_RUN=%s\n' "$DRY_RUN"
     printf 'CYBEROPS_NO_COLOR=%s\n' "$CYBEROPS_NO_COLOR"
     printf 'CYBEROPS_LOGGING=%s\n' "$CYBEROPS_LOGGING"
+    printf 'CYBEROPS_HEADER_TELEMETRY=%s\n' "$CYBEROPS_HEADER_TELEMETRY"
+    printf 'CYBEROPS_HEADER_TIME=%s\n' "$CYBEROPS_HEADER_TIME"
+    printf 'CYBEROPS_HEADER_LINK=%s\n' "$CYBEROPS_HEADER_LINK"
+    printf 'CYBEROPS_HEADER_VPN=%s\n' "$CYBEROPS_HEADER_VPN"
+    printf 'CYBEROPS_HEADER_IFACE=%s\n' "$CYBEROPS_HEADER_IFACE"
+    printf 'CYBEROPS_HEADER_LOCAL_IP=%s\n' "$CYBEROPS_HEADER_LOCAL_IP"
+    printf 'CYBEROPS_HEADER_MAC=%s\n' "$CYBEROPS_HEADER_MAC"
+    printf 'CYBEROPS_HEADER_PUBLIC_IP=%s\n' "$CYBEROPS_HEADER_PUBLIC_IP"
+    printf 'CYBEROPS_HEADER_TIMEOUT=%s\n' "$CYBEROPS_HEADER_TIMEOUT"
+    printf 'CYBEROPS_PUBLIC_IP_CACHE_TTL=%s\n' "$CYBEROPS_PUBLIC_IP_CACHE_TTL"
     printf 'CYBEROPS_STATE_DIR=%s\n' "$CYBEROPS_STATE_DIR"
     printf 'CYBEROPS_LOG_FILE=%s\n' "$CYBEROPS_LOG_FILE"
 }

@@ -10,6 +10,7 @@ dependency_setup_main() {
     local -a packages=(
         clamav
         curl
+        ethtool
         figlet
         htop
         lm-sensors

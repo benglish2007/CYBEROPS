@@ -27,7 +27,7 @@ record_result() {
 
 record_result "resolves the launcher directory" "$CYBEROPS_SOURCE_DIR" "$REPO_DIR"
 record_result "resolves the default module directory" "$CYBEROPS_LIB_DIR" "$REPO_DIR/lib"
-record_result "loads the version from runtime.sh" "$VERSION" 2.11
+record_result "loads the version from runtime.sh" "$VERSION" 2.12
 
 if declare -F docker_menu >/dev/null && declare -F usb_zero_fill >/dev/null; then
     functions_result=available
@@ -47,14 +47,18 @@ shopt -s extdebug
 docker_function_details="$(declare -F docker_menu)"
 core_function_details="$(declare -F validate_configuration)"
 ui_function_details="$(declare -F banner)"
+telemetry_function_details="$(declare -F collect_header_telemetry)"
 shopt -u extdebug
 docker_function_source="${docker_function_details##* }"
 core_function_source="${core_function_details##* }"
 ui_function_source="${ui_function_details##* }"
+telemetry_function_source="${telemetry_function_details##* }"
 record_result "loads validation functions from lib/core.sh" \
     "$core_function_source" "$REPO_DIR/lib/core.sh"
 record_result "loads interface functions from lib/ui.sh" \
     "$ui_function_source" "$REPO_DIR/lib/ui.sh"
+record_result "loads header telemetry from lib/telemetry.sh" \
+    "$telemetry_function_source" "$REPO_DIR/lib/telemetry.sh"
 record_result "loads Docker functions from lib/docker.sh" \
     "$docker_function_source" "$REPO_DIR/lib/docker.sh"
 
@@ -98,6 +102,7 @@ record_result "identifies the missing required module" "$missing_message" clear
 missing_docker_dir="$(mktemp -d)"
 ln -s -- "$REPO_DIR/lib/runtime.sh" "$missing_docker_dir/runtime.sh"
 ln -s -- "$REPO_DIR/lib/core.sh" "$missing_docker_dir/core.sh"
+ln -s -- "$REPO_DIR/lib/telemetry.sh" "$missing_docker_dir/telemetry.sh"
 ln -s -- "$REPO_DIR/lib/ui.sh" "$missing_docker_dir/ui.sh"
 ln -s -- "$REPO_DIR/lib/diagnostics.sh" "$missing_docker_dir/diagnostics.sh"
 set +e
@@ -117,7 +122,8 @@ else
 fi
 record_result "identifies a missing Docker module" "$missing_docker_message" clear
 rm -- "$missing_docker_dir/runtime.sh" "$missing_docker_dir/core.sh" \
-    "$missing_docker_dir/ui.sh" "$missing_docker_dir/diagnostics.sh"
+    "$missing_docker_dir/telemetry.sh" "$missing_docker_dir/ui.sh" \
+    "$missing_docker_dir/diagnostics.sh"
 rmdir -- "$missing_docker_dir"
 
 printf '1..%d\n' "$tests_run"

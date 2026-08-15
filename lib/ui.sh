@@ -149,6 +149,74 @@ invalid_selection() {
     sleep 1
 }
 
+render_vpn_badge() {
+    if [[ "$HEADER_VPN" == "NONE" || -z "$HEADER_VPN" ]]; then
+        printf '%b[OFF]%b' "$RED" "$RESET"
+    else
+        printf '%b[ON // %s]%b' "$GREEN" "$HEADER_VPN" "$RESET"
+    fi
+}
+
+render_mac_badge() {
+    case "$HEADER_MAC_STATE" in
+        PERMANENT) printf '%b[PERMANENT // %s]%b' "$RED" "$HEADER_MAC" "$RESET" ;;
+        MODIFIED) printf '%b[MODIFIED // %s]%b' "$GREEN" "$HEADER_MAC" "$RESET" ;;
+        *) printf '%b[UNKNOWN // %s]%b' "$YELLOW" "$HEADER_MAC" "$RESET" ;;
+    esac
+}
+
+render_header_telemetry() {
+    local width="${COLUMNS:-80}"
+    local network_status=""
+    local local_fields=0
+
+    [[ "$CYBEROPS_HEADER_TELEMETRY" == "1" ]] || return 0
+    [[ "$width" =~ ^[0-9]+$ ]] || width=80
+    if ((width < 70)); then
+        [[ "$CYBEROPS_HEADER_TIME" == "0" ]] || printf '%bTIME%b // %s\n' "$MAGENTA" "$RESET" "$HEADER_TIME"
+        [[ "$CYBEROPS_HEADER_LINK" == "0" ]] || printf '%bLINK%b // %s\n' "$MAGENTA" "$RESET" "$HEADER_ROUTE_STATE"
+        if [[ "$CYBEROPS_HEADER_VPN" == "1" ]]; then
+            printf '%bVPN%b  // ' "$MAGENTA" "$RESET"
+            render_vpn_badge
+            printf '\n'
+        fi
+        [[ "$CYBEROPS_HEADER_IFACE" == "0" ]] || printf '%bNET%b  // IFACE %s\n' "$MAGENTA" "$RESET" "$HEADER_IFACE"
+        [[ "$CYBEROPS_HEADER_LOCAL_IP" == "0" ]] || printf '%bIP%b   // %s\n' "$MAGENTA" "$RESET" "$HEADER_ADDRESS"
+    else
+        if [[ "$CYBEROPS_HEADER_TIME" == "1" || "$CYBEROPS_HEADER_LINK" == "1" ||
+            "$CYBEROPS_HEADER_VPN" == "1" ]]; then
+            printf '%bLOCAL%b // ' "$MAGENTA" "$RESET"
+            if [[ "$CYBEROPS_HEADER_TIME" == "1" ]]; then
+                printf 'TIME %s' "$HEADER_TIME"
+                ((local_fields += 1))
+            fi
+            if [[ "$CYBEROPS_HEADER_LINK" == "1" ]]; then
+                ((local_fields == 0)) || printf ' // '
+                printf 'LINK %s' "$HEADER_ROUTE_STATE"
+                ((local_fields += 1))
+            fi
+            if [[ "$CYBEROPS_HEADER_VPN" == "1" ]]; then
+                ((local_fields == 0)) || printf ' // '
+                printf 'VPN '
+                render_vpn_badge
+            fi
+            printf '\n'
+        fi
+        [[ "$CYBEROPS_HEADER_IFACE" == "0" ]] || network_status="IFACE $HEADER_IFACE"
+        [[ "$CYBEROPS_HEADER_LOCAL_IP" == "0" ]] || network_status+="${network_status:+ // }IP $HEADER_ADDRESS"
+        [[ -z "$network_status" ]] || printf '%bNET%b   // %s\n' "$MAGENTA" "$RESET" "$network_status"
+    fi
+    if [[ "$CYBEROPS_HEADER_MAC" == "1" ]]; then
+        printf '%bL2%b    // CURRENT MAC ' "$MAGENTA" "$RESET"
+        render_mac_badge
+        printf '\n'
+    fi
+    if [[ -n "$HEADER_PUBLIC_IP" ]]; then
+        printf '%bWAN%b   // PUBLIC IP %s // EXTERNAL LOOKUP ENABLED\n' \
+            "$MAGENTA" "$RESET" "$HEADER_PUBLIC_IP"
+    fi
+}
+
 banner() {
     clear_screen
 
@@ -179,6 +247,8 @@ EOF
         "$MAGENTA" "$RESET"
     printf '%bBUILD %s%b  //  UNIFIED LINUX OPERATIONS CONSOLE  //  SESSION ACTIVE\n' \
         "$CYAN" "$VERSION" "$RESET"
+    collect_header_telemetry
+    render_header_telemetry
     if is_dry_run; then
         printf '%b[ PREVIEW PROTOCOL ]%b State-changing commands are simulation-only.\n' \
             "$YELLOW" "$RESET"

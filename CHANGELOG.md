@@ -2,6 +2,23 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 2.12 — 2026-08-15
+
+Version 2.12 completes **Roadmap Milestone 12: Live Header Telemetry** with
+fast, configurable local status and accessible network-state badges.
+
+### Live Header Telemetry
+
+- Added configurable local time, route state, VPN-interface, primary-interface, local-IP, and current-MAC fields to the interactive header.
+- Added bold bracketed VPN and MAC state badges: red for VPN off or the permanent MAC, green for an active named VPN interface or modified MAC, and a safe unknown-MAC fallback.
+- Verify Tailscale's local backend state so `tailscale down` reports VPN `[OFF]` even while the persistent `tailscale0` interface remains present.
+- Kept public-IP discovery disabled by default with explicit privacy documentation, strict timeouts, and in-memory caching when enabled.
+- Added narrow-terminal rendering plus mocked routed, offline, VPN, MAC, public-IP, cache, configuration, and disabled-state coverage.
+
+### Milestone
+
+- Recorded successful manual verification of current/permanent MAC comparison, MAC randomization state changes, VPN on/off reporting, and the persistent-Tailscale-interface correction.
+
 ## 2.11 — 2026-08-15
 
 Version 2.11 completes **Roadmap Milestone 11: Native Debian Packaging** with

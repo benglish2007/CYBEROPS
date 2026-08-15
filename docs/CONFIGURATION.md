@@ -15,9 +15,45 @@ cyberops config check
 cyberops config show
 ```
 
-Supported keys are `STACK_ROOT`, `RETRY_DELAY`, `HEALTH_TIMEOUT`,
-`HEALTH_INTERVAL`, `FAILURE_LOG_LINES`, `DRY_RUN`, `CYBEROPS_NO_COLOR`, and
-`CYBEROPS_LOGGING`. Unknown keys and malformed lines fail validation.
+Supported keys include the operational settings above plus the header controls
+documented below. Unknown keys and malformed lines fail validation.
+
+## Live header telemetry
+
+`CYBEROPS_HEADER_TELEMETRY=1` enables the interactive status header. Its local
+fields are read-only and do not contact an internet service:
+
+| Setting | Default | Header field |
+| --- | --- | --- |
+| `CYBEROPS_HEADER_TIME` | `1` | Local date, time, and timezone |
+| `CYBEROPS_HEADER_LINK` | `1` | Local default-route and interface state |
+| `CYBEROPS_HEADER_VPN` | `1` | Red `[OFF]` or green `[ON // interface]` VPN badge |
+| `CYBEROPS_HEADER_IFACE` | `1` | Primary default-route interface |
+| `CYBEROPS_HEADER_LOCAL_IP` | `1` | Primary IPv4 address, with IPv6 fallback |
+| `CYBEROPS_HEADER_MAC` | `1` | Current MAC and permanent-address comparison badge |
+
+Set any field to `0` to hide it, or set `CYBEROPS_HEADER_TELEMETRY=0` to disable
+the entire status area. `ROUTED` means a usable local default route and link
+were detected; it does not guarantee that the internet is reachable.
+
+Public-IP lookup is separately controlled by `CYBEROPS_HEADER_PUBLIC_IP` and is
+disabled by default. Enabling it sends a request to `api.ipify.org`. The request
+uses `CYBEROPS_HEADER_TIMEOUT` seconds (default `2`, allowed `1`–`10`) and a
+result or failure is cached in memory for `CYBEROPS_PUBLIC_IP_CACHE_TTL`
+seconds (default `300`, allowed `30`–`86400`). Failures are silent so an offline
+or filtered network cannot block the control deck.
+
+Tailscale status is verified through a timeout-bounded local backend query;
+the persistent `tailscale0` interface alone is not treated as connected after
+`tailscale down`. Other supported VPN-style interfaces are detected from their
+active local link state.
+
+The MAC badge is red and labeled `[PERMANENT // address]` when the current
+address matches the hardware address. It is green and labeled
+`[MODIFIED // address]` when they differ. CYBEROPS checks kernel link metadata
+and `ethtool`; if the permanent address cannot be established reliably, it
+shows a yellow `[UNKNOWN // address]` badge instead of guessing. Color is an
+additional cue—the bracketed text remains meaningful in no-color mode.
 
 ## Private operation events
 

@@ -40,7 +40,9 @@ printf '%s\n' \
     'HEALTH_INTERVAL=8' \
     'FAILURE_LOG_LINES=120' \
     'DRY_RUN=1' \
-    'CYBEROPS_NO_COLOR=1' >"$CONFIG_FILE"
+    'CYBEROPS_NO_COLOR=1' \
+    'CYBEROPS_HEADER_MAC=0' \
+    'CYBEROPS_HEADER_PUBLIC_IP=0' >"$CONFIG_FILE"
 
 config_path_output="$(CYBEROPS_CONFIG_FILE="$CONFIG_FILE" bash "$LAUNCHER" config path)"
 record_result "config path prints the active file" "$config_path_output" "$CONFIG_FILE"
@@ -49,7 +51,8 @@ config_show_output="$(CYBEROPS_CONFIG_FILE="$CONFIG_FILE" bash "$LAUNCHER" confi
 if [[ "$config_show_output" == *"Configuration state: loaded"* &&
     "$config_show_output" == *"STACK_ROOT=/config/stacks"* &&
     "$config_show_output" == *"RETRY_DELAY=9"* &&
-    "$config_show_output" == *"DRY_RUN=1"* ]]; then
+    "$config_show_output" == *"DRY_RUN=1"* &&
+    "$config_show_output" == *"CYBEROPS_HEADER_MAC=0"* ]]; then
     config_show_result=loaded
 else
     config_show_result=missing

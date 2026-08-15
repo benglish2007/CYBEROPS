@@ -3,7 +3,7 @@
   <h1>CYBEROPS TERMINAL</h1>
   <p><strong><code>NEON GRID // UNIFIED LINUX OPERATIONS CONSOLE</code></strong></p>
 
-  [![Release](https://img.shields.io/badge/RELEASE-v2.11-ff2d95?style=for-the-badge)](CHANGELOG.md)
+  [![Release](https://img.shields.io/badge/RELEASE-v2.12-ff2d95?style=for-the-badge)](CHANGELOG.md)
   [![Bash](https://img.shields.io/badge/SHELL-BASH_5+-00e5ff?style=for-the-badge&logo=gnubash&logoColor=050816)](cyberops.sh)
   [![Validate](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml)
   [![Platform](https://img.shields.io/badge/PLATFORM-UBUNTU_%2F_DEBIAN-8b5cf6?style=for-the-badge&logo=linux&logoColor=white)](COMPATIBILITY.md)
@@ -22,12 +22,16 @@
 
 ## `//` CURRENT BUILD
 
-### CYBEROPS Terminal v2.11
+### CYBEROPS Terminal v2.12
 
-Version 2.11 adds native Debian packaging with tracked `/usr` installation,
-declared dependencies, isolated package validation, and a release-ready `.deb`
-artifact. See the [changelog](CHANGELOG.md) and [roadmap](ROADMAP.md) for
-release history and planned work.
+Version 2.12 adds a configurable live header with local time, route state, VPN
+indication, primary interface, local IP address, and current/permanent MAC
+comparison. Public-IP discovery remains explicitly opt-in. See the
+[changelog](CHANGELOG.md) and [roadmap](ROADMAP.md) for release history and
+planned work.
+The VPN and MAC fields use accessible bracketed state badges: inactive VPN and
+permanent MAC states are red, while active VPN and modified MAC states are
+green; the text remains explicit when color is disabled.
 
 ---
 
@@ -37,14 +41,14 @@ Choose the workflow that matches how you use CYBEROPS.
 
 ### Option 1: Normal installation
 
-New users should download `cyberops_2.11_all.deb` from the
+New users should download `cyberops_2.12_all.deb` from the
 [latest GitHub Release](https://github.com/benglish2007/CYBEROPS/releases/latest),
 then install it through APT so required dependencies are resolved:
 
 ```bash
 cd /tmp
-wget https://github.com/benglish2007/CYBEROPS/releases/download/v2.11/cyberops_2.11_all.deb
-sudo apt install ./cyberops_2.11_all.deb
+wget https://github.com/benglish2007/CYBEROPS/releases/download/v2.12/cyberops_2.12_all.deb
+sudo apt install ./cyberops_2.12_all.deb
 cyberops
 ```
 
@@ -86,7 +90,7 @@ current development package:
 ```bash
 make deb
 make deb-inspect
-sudo apt install --reinstall ./dist/cyberops_2.11_all.deb
+sudo apt install --reinstall ./dist/cyberops_2.12_all.deb
 hash -r
 cyberops --version
 ```
@@ -293,7 +297,7 @@ CYBEROPS is released under the [MIT License](LICENSE).
 
 <div align="center">
 
-  **`CYBEROPS TERMINAL v2.11 // LINK STANDBY`**
+  **`CYBEROPS TERMINAL v2.12 // LINK STANDBY`**
 
   *One terminal. One toolkit. Linux operations under control.*
 

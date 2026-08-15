@@ -84,6 +84,10 @@ write_diagnostics_report() {
         printf 'DRY_RUN=%s\n' "$DRY_RUN"
         printf 'CYBEROPS_NO_COLOR=%s\n' "$CYBEROPS_NO_COLOR"
         printf 'CYBEROPS_LOGGING=%s\n' "$CYBEROPS_LOGGING"
+        printf 'CYBEROPS_HEADER_TELEMETRY=%s\n' "$CYBEROPS_HEADER_TELEMETRY"
+        printf 'CYBEROPS_HEADER_PUBLIC_IP=%s\n' "$CYBEROPS_HEADER_PUBLIC_IP"
+        printf 'CYBEROPS_HEADER_TIMEOUT=%s\n' "$CYBEROPS_HEADER_TIMEOUT"
+        printf 'CYBEROPS_PUBLIC_IP_CACHE_TTL=%s\n' "$CYBEROPS_PUBLIC_IP_CACHE_TTL"
         printf '\n[anonymous_block_devices]\n'
         if have lsblk; then
             lsblk -dn -o SIZE,TYPE,FSTYPE,TRAN,RM 2>/dev/null || printf 'unavailable\n'

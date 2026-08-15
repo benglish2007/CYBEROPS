@@ -9,6 +9,14 @@ path. The marker is always printed as text, with color used only as an
 additional cue. Operations without the marker may still depend on user,
 device, Docker-socket, or client-specific permissions documented below.
 
+The live header reads time, routes, interface addresses, current MAC address,
+link state, and VPN-style interface names locally without `sudo`. Its `ROUTED`
+label describes local routing, not verified internet access. Optional public-IP
+display is disabled by default and contacts `api.ipify.org` only when enabled.
+VPN and MAC status use bracketed text as well as color: VPN off and a permanent
+MAC are red; an identified VPN interface and a modified MAC are green. Unknown
+permanent-address state is yellow rather than being misreported as modified.
+
 | Area | Operation | Privilege | Primary side effect |
 | --- | --- | --- | --- |
 | Installer | `make install-deps` | Root (`sudo`) | Updates APT metadata and installs optional packages before runtime use |

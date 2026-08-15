@@ -5,7 +5,7 @@ Priority: optional
 Architecture: all
 Maintainer: CYBEROPS Contributors
 Homepage: https://github.com/benglish2007/CYBEROPS
-Depends: apt, bash (>= 5), coreutils, file, findutils, gawk, grep, hostname, iproute2, procps, sed, sudo, systemd, util-linux
+Depends: apt, bash (>= 5), coreutils, ethtool, file, findutils, gawk, grep, hostname, iproute2, procps, sed, sudo, systemd, util-linux
 Suggests: clamav, curl, docker.io, figlet, htop, lm-sensors, lolcat, macchanger, nmap, rkhunter, ufw, wavemon
 Description: modular Linux operations console
  CYBEROPS is a menu-driven administration and security toolkit for supported

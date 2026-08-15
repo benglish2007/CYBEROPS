@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.11 — Milestone 11 complete.**
+Current release: **v2.12 — Milestone 12 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -240,6 +240,26 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [x] Verified distinct `[00]` navigation styling across the control deck.
 - [x] Verified `[SUDO]` indicators, row alignment, and no-color readability.
 
+## Milestone 12: Live Header Telemetry
+
+- [x] Add local time, default-route state, primary interface, and local address to the interactive header.
+- [x] Display the current MAC address of the primary routed interface.
+- [x] Compare the current MAC with the permanent hardware address and render explicit permanent, modified, or unknown state badges.
+- [x] Detect common active VPN-style interfaces without invoking vendor clients or contacting external services.
+- [x] Render bracketed red VPN-off/permanent-MAC states and green VPN-on/modified-MAC states without relying on color alone.
+- [x] Keep public-IP discovery disabled by default, bounded by a short timeout, and cached between menu redraws when enabled.
+- [x] Allow the entire status area and every individual field to be disabled through configuration.
+- [x] Distinguish local route availability from verified internet reachability.
+- [x] Preserve readable output in narrow terminals and when color is disabled.
+- [x] Add mocked coverage for routed, offline, VPN, MAC, public-IP, cache, narrow-terminal, and disabled states.
+- [x] Manually verify live values, MAC state transitions, and accurate Tailscale on/off behavior.
+
+### Manual verification — 2026-08-15
+
+- [x] Verified the current MAC and its permanent/modified badge state.
+- [x] Verified MAC randomization updates the header state correctly.
+- [x] Verified Tailscale on/off badges and removal of the stale-interface false positive after `tailscale down`.
+
 ## Deferred: Controlled Extensibility and Portability
 
 Plugin discovery is intentionally postponed. CYBEROPS will retain its explicit,
@@ -265,17 +285,6 @@ implementation schedule.
 - [ ] Detect unsupported network managers and interfaces, fail safely, and preserve connectivity on configuration errors.
 - [ ] Document the difference between a temporary current-session change, connection-level randomization, and restoration of the permanent address.
 - [ ] Add mocked lifecycle and rollback tests before enabling persistent network configuration changes.
-
-### Live Header Telemetry
-
-- [ ] Add a compact header status area for useful session data such as local time, primary interface, local address, and connectivity state.
-- [ ] Keep local telemetry fast, bounded, and non-blocking so menus remain responsive when networking or system services are unavailable.
-- [ ] Make external/public IP lookup explicitly opt-in because it requires contacting an internet service and discloses network activity.
-- [ ] Cache external results for a documented interval and apply a short timeout rather than querying on every menu redraw.
-- [ ] Clearly distinguish local and public addresses and handle VPN, multiple-interface, IPv4, and IPv6 environments without implying a single address is authoritative.
-- [ ] Allow individual header fields or the entire live-telemetry area to be disabled through configuration.
-- [ ] Preserve a clean layout in narrow terminals and when color is disabled.
-- [ ] Add mocked tests for offline, timeout, VPN, multiple-interface, cached, and disabled states.
 
 ## Release Gate
 
