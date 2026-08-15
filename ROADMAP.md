@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.7 — Milestone 7 complete.**
+Current release: **v2.7.1 — Milestone 7 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 

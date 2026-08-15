@@ -3,7 +3,7 @@
   <h1>CYBEROPS TERMINAL</h1>
   <p><strong><code>NEON GRID // UNIFIED LINUX OPERATIONS CONSOLE</code></strong></p>
 
-  [![Release](https://img.shields.io/badge/RELEASE-v2.7-ff2d95?style=for-the-badge)](CHANGELOG.md)
+  [![Release](https://img.shields.io/badge/RELEASE-v2.7.1-ff2d95?style=for-the-badge)](CHANGELOG.md)
   [![Bash](https://img.shields.io/badge/SHELL-BASH_5+-00e5ff?style=for-the-badge&logo=gnubash&logoColor=050816)](cyberops.sh)
   [![Validate](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml)
   [![Platform](https://img.shields.io/badge/PLATFORM-UBUNTU_%2F_DEBIAN-8b5cf6?style=for-the-badge&logo=linux&logoColor=white)](COMPATIBILITY.md)
@@ -22,14 +22,12 @@
 
 ## `//` CURRENT BUILD
 
-### CYBEROPS Terminal v2.7
+### CYBEROPS Terminal v2.7.1
 
-Version 2.7 completes the Installer and Navigation Consistency milestone.
-Optional dependency bootstrap now lives in explicit installer targets rather
-than the interactive runtime, option `[00]` consistently exits or returns, and
-navigation rows are visually separated from operational choices. See the
-[changelog](CHANGELOG.md) and [roadmap](ROADMAP.md) for release history and
-planned work.
+Version 2.7.1 keeps Admin Ops disk telemetry responsive by excluding remote
+filesystems from the default Disk Usage query. It builds on the Installer and
+Navigation Consistency work in version 2.7. See the [changelog](CHANGELOG.md)
+and [roadmap](ROADMAP.md) for release history and planned work.
 
 ---
 
@@ -237,7 +235,7 @@ CYBEROPS is released under the [MIT License](LICENSE).
 
 <div align="center">
 
-  **`CYBEROPS TERMINAL v2.7 // LINK STANDBY`**
+  **`CYBEROPS TERMINAL v2.7.1 // LINK STANDBY`**
 
   *One terminal. One toolkit. Linux operations under control.*
 

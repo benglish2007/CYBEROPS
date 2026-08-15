@@ -16,6 +16,14 @@
 # Admin Ops
 # ------------------------------------------------------------------------------
 
+show_local_disk_usage() {
+    require_commands df || return 1
+    run_checked \
+        "Local filesystem usage query" \
+        "Verify local mounted filesystems are accessible." \
+        df -lhT
+}
+
 admin_menu() {
     local choice=""
 
@@ -58,12 +66,7 @@ admin_menu() {
                 pause
                 ;;
             3)
-                if require_commands df; then
-                    run_checked \
-                        "Filesystem usage query" \
-                        "Verify mounted filesystems are accessible." \
-                        df -hT
-                fi
+                show_local_disk_usage
                 pause
                 ;;
             4)

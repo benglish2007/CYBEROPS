@@ -2,6 +2,16 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 2.7.1 — 2026-08-15
+
+Version 2.7.1 prevents an unavailable remote mount from delaying or failing the
+Admin Ops disk-usage display.
+
+### Admin Operations
+
+- Changed Disk Usage from `df -hT` to local-filesystem-only `df -lhT`, avoiding waits and exit-status failures caused by unreachable network mounts.
+- Added regression coverage that preserves local-only disk telemetry.
+
 ## 2.7 — 2026-08-15
 
 Version 2.7 completes **Roadmap Milestone 7: Installer and Navigation

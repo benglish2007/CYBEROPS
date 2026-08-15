@@ -15,7 +15,7 @@
 # Callers:
 #   This file must be sourced by cyberops.sh; it is not a standalone command.
 
-VERSION="2.7"
+VERSION="2.7.1"
 
 disable_color() {
     CYAN=""

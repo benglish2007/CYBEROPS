@@ -8,7 +8,7 @@ approving any state change.
 | --- | --- | --- | --- |
 | Installer | `make install-deps` | Root (`sudo`) | Updates APT metadata and installs optional packages before runtime use |
 | Admin | Update or upgrade packages | `sudo` | Changes package metadata or installed packages |
-| Admin | Filesystem, memory, and service status | User; some details may be restricted | Read-only telemetry |
+| Admin | Local filesystem, memory, and service status | User; some details may be restricted | Read-only telemetry; Disk Usage excludes remote mounts |
 | Admin | Reboot | `sudo` | Terminates the session and restarts the host |
 | Info | Host, CPU, memory, storage, network, route, socket status | User | Read-only local telemetry |
 | Info | Public IP lookup | User and network access | Sends a request to `api.ipify.org` |
