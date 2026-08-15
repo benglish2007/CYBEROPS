@@ -7,6 +7,8 @@ approving any state change.
 | Area | Operation | Privilege | Primary side effect |
 | --- | --- | --- | --- |
 | Installer | `make install-deps` | Root (`sudo`) | Updates APT metadata and installs optional packages before runtime use |
+| Support | Configuration and operation-log inspection | User | Reads CYBEROPS-owned settings or private structured events |
+| Support | Diagnostics export | User | Creates a new mode-`600`, privacy-filtered archive; never overwrites |
 | Admin | Update or upgrade packages | `sudo` | Changes package metadata or installed packages |
 | Admin | Local filesystem, memory, and service status | User; some details may be restricted | Read-only telemetry; Disk Usage excludes remote mounts |
 | Admin | Reboot | `sudo` | Terminates the session and restarts the host |
@@ -46,3 +48,6 @@ read-only queries still run so previews describe real targets.
 - CYBEROPS attempts to restore a network interface it temporarily brought down.
 - Interrupted USB and Docker operations report that manual inspection may be required.
 - CYBEROPS never remounts written USB media or automatically rolls back Docker updates.
+
+See [Configuration, Logs, and Diagnostics](CONFIGURATION.md) for the exact
+support-bundle privacy boundary.

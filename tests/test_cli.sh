@@ -24,11 +24,13 @@ record_result() {
 }
 
 version_output="$(bash "$LAUNCHER" --version)"
-record_result "version option prints the release" "$version_output" "CYBEROPS Terminal 2.7.1"
+record_result "version option prints the release" "$version_output" "CYBEROPS Terminal 2.8"
 
 help_output="$(bash "$LAUNCHER" --help)"
 if [[ "$help_output" == *"Usage:"* && "$help_output" == *"--no-color"* &&
-    "$help_output" == *"docker status"* && "$help_output" == *"interactive terminal"* ]]; then
+    "$help_output" == *"docker status"* && "$help_output" == *"config check"* &&
+    "$help_output" == *"diagnostics export"* &&
+    "$help_output" == *"interactive terminal"* ]]; then
     help_result=complete
 else
     help_result=incomplete

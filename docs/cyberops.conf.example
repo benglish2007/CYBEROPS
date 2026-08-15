@@ -1,0 +1,12 @@
+# CYBEROPS configuration example
+# Copy to ${XDG_CONFIG_HOME:-$HOME/.config}/cyberops/config.
+# Environment variables override values in this file.
+
+STACK_ROOT=/srv/stacks
+RETRY_DELAY=5
+HEALTH_TIMEOUT=120
+HEALTH_INTERVAL=5
+FAILURE_LOG_LINES=80
+DRY_RUN=0
+CYBEROPS_NO_COLOR=0
+CYBEROPS_LOGGING=1

@@ -3,7 +3,7 @@
   <h1>CYBEROPS TERMINAL</h1>
   <p><strong><code>NEON GRID // UNIFIED LINUX OPERATIONS CONSOLE</code></strong></p>
 
-  [![Release](https://img.shields.io/badge/RELEASE-v2.7.1-ff2d95?style=for-the-badge)](CHANGELOG.md)
+  [![Release](https://img.shields.io/badge/RELEASE-v2.8-ff2d95?style=for-the-badge)](CHANGELOG.md)
   [![Bash](https://img.shields.io/badge/SHELL-BASH_5+-00e5ff?style=for-the-badge&logo=gnubash&logoColor=050816)](cyberops.sh)
   [![Validate](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml)
   [![Platform](https://img.shields.io/badge/PLATFORM-UBUNTU_%2F_DEBIAN-8b5cf6?style=for-the-badge&logo=linux&logoColor=white)](COMPATIBILITY.md)
@@ -22,12 +22,12 @@
 
 ## `//` CURRENT BUILD
 
-### CYBEROPS Terminal v2.7.1
+### CYBEROPS Terminal v2.8
 
-Version 2.7.1 keeps Admin Ops disk telemetry responsive by excluding remote
-filesystems from the default Disk Usage query. It builds on the Installer and
-Navigation Consistency work in version 2.7. See the [changelog](CHANGELOG.md)
-and [roadmap](ROADMAP.md) for release history and planned work.
+Version 2.8 completes Configuration and Supportability with safe XDG settings,
+private structured operation events, and privacy-filtered diagnostics exports.
+See the [changelog](CHANGELOG.md) and [roadmap](ROADMAP.md) for release history
+and planned work.
 
 ---
 
@@ -118,6 +118,9 @@ Usage:
   cyberops [OPTIONS]
   cyberops [OPTIONS] info
   cyberops [OPTIONS] docker status
+  cyberops [OPTIONS] config <path|show|check>
+  cyberops [OPTIONS] logs <path|tail>
+  cyberops [OPTIONS] diagnostics <preview|export> [OUTPUT]
 
 Options:
   -h, --help       Show help and exit
@@ -134,9 +137,15 @@ cyberops --no-color
 NO_COLOR=1 cyberops
 cyberops info
 cyberops docker status
+cyberops config check
+cyberops logs tail
+cyberops diagnostics preview
+cyberops diagnostics export
 ```
 
-`info` and `docker status` are read-only. The interactive control deck
+These command channels are read-only except for diagnostics export, which only
+creates a new private archive and refuses to overwrite an existing file. The
+interactive control deck
 requires terminal input and output; a redirected invocation without a command
 exits with usage guidance instead of waiting indefinitely.
 
@@ -167,6 +176,7 @@ USB unmount, image-write, signature-reset, zero-fill, and sync operations.
 | [Docker Operations](docs/DOCKER.md) | Discovery, selective updates, health handling, recovery evidence, configuration, and rollback boundaries |
 | [USB Operations](docs/USB.md) | Target safety, ISO writing, Quick Reset, full zero-fill, and flash-storage limits |
 | [Privileges and Side Effects](docs/OPERATIONS.md) | Privileges, mutations, network disclosure, previews, and interruption behavior |
+| [Configuration, Logs, and Diagnostics](docs/CONFIGURATION.md) | Safe XDG configuration, private operation events, and privacy-filtered support bundles |
 | [Terminal Demonstration](docs/DEMO.md) | Short CLI and non-interactive session |
 | [Compatibility](COMPATIBILITY.md) | Supported releases, dependencies, and CI boundaries |
 | [Module Contracts](lib/README.md) | Runtime loading order and source-safe module rules |
@@ -235,7 +245,7 @@ CYBEROPS is released under the [MIT License](LICENSE).
 
 <div align="center">
 
-  **`CYBEROPS TERMINAL v2.7.1 // LINK STANDBY`**
+  **`CYBEROPS TERMINAL v2.8 // LINK STANDBY`**
 
   *One terminal. One toolkit. Linux operations under control.*
 

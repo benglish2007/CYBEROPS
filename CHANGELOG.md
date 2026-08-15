@@ -2,6 +2,24 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 2.8 — 2026-08-15
+
+Version 2.8 completes **Roadmap Milestone 8: Configuration and
+Supportability** with safe user configuration, private operation events, and
+privacy-controlled support diagnostics.
+
+### Configuration and Supportability
+
+- Added a strict XDG configuration file parser that never executes configuration as shell code and preserves environment-variable precedence.
+- Added `config path`, `config show`, and `config check` command channels with validation and an installable example configuration.
+- Added private structured operation events under the XDG state directory, mode-`700`/`600` protections, action-only logging, and `logs path`/`logs tail` commands.
+- Added previewable, non-overwriting diagnostics exports with an explicit privacy boundary and mode-`600` archives.
+- Added regression coverage for configuration precedence and rejection, log privacy and permissions, diagnostics filtering, and archive overwrite refusal.
+
+### Milestone
+
+- Completed all Roadmap Milestone 8 work and recorded successful manual verification of configuration precedence, operation logging, diagnostics privacy, archive permissions, and overwrite refusal.
+
 ## 2.7.1 — 2026-08-15
 
 Version 2.7.1 prevents an unavailable remote mount from delaying or failing the

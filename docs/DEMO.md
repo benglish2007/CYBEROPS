@@ -2,10 +2,10 @@
 
 ```console
 $ cyberops --version
-CYBEROPS Terminal 2.7.1
+CYBEROPS Terminal 2.8
 
 $ cyberops --help
-CYBEROPS Terminal v2.7.1
+CYBEROPS Terminal v2.8
 Unified Linux Operations Console
 
 Usage:

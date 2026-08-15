@@ -54,6 +54,29 @@ report_error() {
     fi
 }
 
+write_operation_log() {
+    local level="$1"
+    local action="$2"
+    local status="$3"
+    local timestamp_value
+
+    [[ "$CYBEROPS_LOGGING" == "1" && "$CYBEROPS_LOG_ACTIVE" == "1" ]] || return 0
+    action="${action//$'\t'/ }"
+    action="${action//$'\n'/ }"
+    timestamp_value="$(date -u '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null)" || return 0
+
+    if ! mkdir -p -- "$CYBEROPS_STATE_DIR" 2>/dev/null; then
+        return 0
+    fi
+    chmod 700 -- "$CYBEROPS_STATE_DIR" 2>/dev/null || true
+    if ! touch -- "$CYBEROPS_LOG_FILE" 2>/dev/null; then
+        return 0
+    fi
+    chmod 600 -- "$CYBEROPS_LOG_FILE" 2>/dev/null || true
+    printf '%s\tpid=%s\tlevel=%s\tstatus=%s\taction=%s\n' \
+        "$timestamp_value" "$$" "$level" "$status" "$action" >>"$CYBEROPS_LOG_FILE" 2>/dev/null || true
+}
+
 run_checked() {
     local action="$1"
     local recovery="$2"
@@ -64,9 +87,12 @@ run_checked() {
     status=$?
 
     if ((status != 0)); then
+        write_operation_log error "$action" "$status"
         report_error "$action failed (exit status $status)." "$recovery"
         return "$status"
     fi
+
+    write_operation_log info "$action" 0
 
     return 0
 }
@@ -83,6 +109,7 @@ preview_command() {
     printf 'Command:'
     printf ' %q' "$@"
     printf '\n'
+    write_operation_log preview "$action" 0
 }
 
 run_mutating_checked() {
@@ -112,6 +139,12 @@ integer_in_range() {
 
 validate_configuration() {
     local errors=0
+    local config_error
+
+    for config_error in "${CYBEROPS_CONFIG_ERRORS[@]}"; do
+        printf '%b[!] %s%b\n' "$RED" "$config_error" "$RESET"
+        ((errors += 1))
+    done
 
     if [[ "$STACK_ROOT" != /* || -z "${STACK_ROOT//\//}" ||
         "$STACK_ROOT" =~ (^|/)\.\.?(/|$) ]]; then
@@ -144,6 +177,16 @@ validate_configuration() {
         ((errors += 1))
     fi
 
+    if [[ "$CYBEROPS_NO_COLOR" != "0" && "$CYBEROPS_NO_COLOR" != "1" ]]; then
+        printf '%b[!] CYBEROPS_NO_COLOR must be either 0 or 1.%b\n' "$RED" "$RESET"
+        ((errors += 1))
+    fi
+
+    if [[ "$CYBEROPS_LOGGING" != "0" && "$CYBEROPS_LOGGING" != "1" ]]; then
+        printf '%b[!] CYBEROPS_LOGGING must be either 0 or 1.%b\n' "$RED" "$RESET"
+        ((errors += 1))
+    fi
+
     if integer_in_range "$HEALTH_TIMEOUT" 1 86400 &&
         integer_in_range "$HEALTH_INTERVAL" 1 3600 &&
         ((10#$HEALTH_INTERVAL > 10#$HEALTH_TIMEOUT)); then
@@ -157,6 +200,33 @@ validate_configuration() {
     fi
 
     return 0
+}
+
+show_configuration() {
+    printf 'Configuration file: %s\n' "$CYBEROPS_CONFIG_FILE"
+    if ((CYBEROPS_CONFIG_LOADED == 1)); then
+        printf 'Configuration state: loaded\n'
+    else
+        printf 'Configuration state: defaults/environment only\n'
+    fi
+    printf 'STACK_ROOT=%s\n' "$STACK_ROOT"
+    printf 'RETRY_DELAY=%s\n' "$RETRY_DELAY"
+    printf 'HEALTH_TIMEOUT=%s\n' "$HEALTH_TIMEOUT"
+    printf 'HEALTH_INTERVAL=%s\n' "$HEALTH_INTERVAL"
+    printf 'FAILURE_LOG_LINES=%s\n' "$FAILURE_LOG_LINES"
+    printf 'DRY_RUN=%s\n' "$DRY_RUN"
+    printf 'CYBEROPS_NO_COLOR=%s\n' "$CYBEROPS_NO_COLOR"
+    printf 'CYBEROPS_LOGGING=%s\n' "$CYBEROPS_LOGGING"
+    printf 'CYBEROPS_STATE_DIR=%s\n' "$CYBEROPS_STATE_DIR"
+    printf 'CYBEROPS_LOG_FILE=%s\n' "$CYBEROPS_LOG_FILE"
+}
+
+show_operation_log_tail() {
+    if [[ ! -f "$CYBEROPS_LOG_FILE" ]]; then
+        report_warning "No CYBEROPS operation log exists yet."
+        return 0
+    fi
+    tail -n 50 -- "$CYBEROPS_LOG_FILE"
 }
 
 begin_operation() {

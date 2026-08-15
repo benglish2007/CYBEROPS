@@ -23,9 +23,10 @@ required module cannot be read.
    shared operation state.
 2. `core.sh` and `ui.sh` provide shared validation, operation, and terminal
    helpers.
-3. `docker.sh`, `admin.sh`, `info.sh`, `vpn.sh`, `security.sh`,
+3. `diagnostics.sh` provides privacy-filtered support bundle generation.
+4. `docker.sh`, `admin.sh`, `info.sh`, `vpn.sh`, `security.sh`,
    `quickhacks.sh`, and `usb.sh` provide focused feature modules.
-4. `menu.sh` loads last and dispatches the feature menus.
+5. `menu.sh` loads last and dispatches the feature menus.
 
 Dependencies between feature modules should be avoided. Shared behavior belongs
 in a focused common module instead.

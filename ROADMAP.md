@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.7.1 — Milestone 7 complete.**
+Current release: **v2.8 — Milestone 8 complete.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -148,13 +148,40 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [x] Verified submenu option `[00]` returns to the control deck across all modules.
 - [x] Verified blank-line separation visually distinguishes navigation from operations.
 
-## Potential Future Features
+## Milestone 8: Configuration and Supportability
 
-- [ ] Configuration file support with environment-variable overrides.
-- [ ] Structured logs for maintenance operations.
-- [ ] Exportable system diagnostics bundle with explicit privacy controls.
-- [ ] Plugin/module discovery for experimental tools.
-- [ ] Support additional package managers only when portability can be tested.
+- [x] Add safe XDG configuration-file support with environment-variable overrides.
+- [x] Add validation and effective-configuration command channels.
+- [x] Record private structured maintenance events without raw command arguments.
+- [x] Add operation-log path and tail command channels.
+- [x] Export a privacy-filtered diagnostics bundle only after previewing its explicit boundary.
+- [x] Protect state directories, logs, and diagnostics archives with private permissions.
+
+### Manual verification — 2026-08-15
+
+- [x] Verified configuration path, effective settings, and validation commands.
+- [x] Verified configuration-file loading and environment-variable precedence.
+- [x] Verified private structured operation-log creation and inspection.
+- [x] Previewed, exported, inspected, and permission-checked a diagnostics bundle.
+- [x] Confirmed diagnostics omit private identity, path, network, device, log, and workload data.
+- [x] Verified diagnostics export refuses to overwrite an existing archive.
+
+## Planned Milestone 9: Release Automation
+
+- [ ] Establish annotated version tags and GitHub Releases with repeatable release notes.
+
+## Planned Milestone 10: Read-Only Command Expansion
+
+- [ ] Expose additional safe control-deck telemetry through non-interactive commands.
+
+## Planned Milestone 11: Native Debian Packaging
+
+- [ ] Build and validate a native `.deb` without replacing the supported Makefile path prematurely.
+
+## Planned Milestone 12: Controlled Extensibility
+
+- [ ] Design constrained plugin discovery for experimental modules.
+- [ ] Evaluate additional package managers only where CI can enforce portability.
 
 ## Release Gate
 

@@ -27,7 +27,7 @@ record_result() {
 
 record_result "resolves the launcher directory" "$CYBEROPS_SOURCE_DIR" "$REPO_DIR"
 record_result "resolves the default module directory" "$CYBEROPS_LIB_DIR" "$REPO_DIR/lib"
-record_result "loads the version from runtime.sh" "$VERSION" 2.7.1
+record_result "loads the version from runtime.sh" "$VERSION" 2.8
 
 if declare -F docker_menu >/dev/null && declare -F usb_zero_fill >/dev/null; then
     functions_result=available
@@ -59,6 +59,7 @@ record_result "loads Docker functions from lib/docker.sh" \
     "$docker_function_source" "$REPO_DIR/lib/docker.sh"
 
 module_function_pairs=(
+    "diagnostics_preview:diagnostics.sh"
     "admin_menu:admin.sh"
     "info_menu:info.sh"
     "vpn_menu:vpn.sh"
@@ -98,6 +99,7 @@ missing_docker_dir="$(mktemp -d)"
 ln -s -- "$REPO_DIR/lib/runtime.sh" "$missing_docker_dir/runtime.sh"
 ln -s -- "$REPO_DIR/lib/core.sh" "$missing_docker_dir/core.sh"
 ln -s -- "$REPO_DIR/lib/ui.sh" "$missing_docker_dir/ui.sh"
+ln -s -- "$REPO_DIR/lib/diagnostics.sh" "$missing_docker_dir/diagnostics.sh"
 set +e
 missing_docker_output="$(
     CYBEROPS_LIB_DIR="$missing_docker_dir" \
@@ -114,7 +116,8 @@ else
     missing_docker_message=unclear
 fi
 record_result "identifies a missing Docker module" "$missing_docker_message" clear
-rm -- "$missing_docker_dir/runtime.sh" "$missing_docker_dir/core.sh" "$missing_docker_dir/ui.sh"
+rm -- "$missing_docker_dir/runtime.sh" "$missing_docker_dir/core.sh" \
+    "$missing_docker_dir/ui.sh" "$missing_docker_dir/diagnostics.sh"
 rmdir -- "$missing_docker_dir"
 
 printf '1..%d\n' "$tests_run"

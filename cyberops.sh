@@ -21,7 +21,7 @@ set -o pipefail
 CYBEROPS_SOURCE_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 CYBEROPS_LIB_DIR="${CYBEROPS_LIB_DIR:-$CYBEROPS_SOURCE_DIR/lib}"
 CYBEROPS_REQUIRED_MODULES=(
-    runtime core ui docker admin info vpn security quickhacks usb menu
+    runtime core ui diagnostics docker admin info vpn security quickhacks usb menu
 )
 
 load_cyberops_module() {
@@ -61,6 +61,9 @@ Usage:
   cyberops [OPTIONS]
   cyberops [OPTIONS] info
   cyberops [OPTIONS] docker status
+  cyberops [OPTIONS] config <path|show|check>
+  cyberops [OPTIONS] logs <path|tail>
+  cyberops [OPTIONS] diagnostics <preview|export> [OUTPUT]
 
 Options:
   -h, --help       Show this help and exit.
@@ -70,6 +73,15 @@ Options:
 Commands:
   info             Print a read-only host summary.
   docker status    Print container status and Docker disk usage.
+  config path      Print the active configuration-file path.
+  config show      Print the effective non-secret configuration.
+  config check     Validate the effective configuration.
+  logs path        Print the private operation-log path.
+  logs tail        Print the latest structured operation events.
+  diagnostics preview
+                   Show exactly what a diagnostics bundle includes and excludes.
+  diagnostics export [OUTPUT]
+                   Create a privacy-filtered diagnostics archive.
 
 Run without options in an interactive terminal to open the control deck.
 EOF
@@ -79,6 +91,8 @@ cyberops_main() {
     local argument
     local action=menu
     local -a command_arguments=()
+
+    CYBEROPS_LOG_ACTIVE=0
 
     while (($# > 0)); do
         argument="$1"
@@ -117,7 +131,18 @@ cyberops_main() {
             ;;
     esac
 
+    CYBEROPS_LOG_ACTIVE=1
+
     if ((${#command_arguments[@]} > 0)); then
+        if [[ "${command_arguments[0]}" == "diagnostics" &&
+            "${command_arguments[1]:-}" == "export" ]]; then
+            if ((${#command_arguments[@]} > 3)); then
+                printf 'CYBEROPS: diagnostics export accepts at most one output path.\n' >&2
+                return 2
+            fi
+            export_diagnostics_bundle "${command_arguments[2]:-}"
+            return
+        fi
         case "${command_arguments[*]}" in
             info)
                 show_system_summary
@@ -125,6 +150,33 @@ cyberops_main() {
                 ;;
             "docker status")
                 show_docker_status
+                return
+                ;;
+            "config path")
+                printf '%s\n' "$CYBEROPS_CONFIG_FILE"
+                return 0
+                ;;
+            "config show")
+                show_configuration
+                return
+                ;;
+            "config check")
+                if validate_configuration; then
+                    report_success "CYBEROPS configuration is valid."
+                    return 0
+                fi
+                return 2
+                ;;
+            "logs path")
+                printf '%s\n' "$CYBEROPS_LOG_FILE"
+                return 0
+                ;;
+            "logs tail")
+                show_operation_log_tail
+                return
+                ;;
+            "diagnostics preview")
+                diagnostics_preview
                 return
                 ;;
             *)
