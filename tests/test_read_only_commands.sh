@@ -53,14 +53,20 @@ show_listening_sockets
 record_result "socket telemetry limits output to listening sockets" "$checked_command" "ss -tulpn"
 
 vpn_commands=()
-have() { [[ "$1" == "tailscale" || "$1" == "expressvpn" ]]; }
+have() { [[ "$1" == "tailscale" || "$1" == "expressvpnctl" || "$1" == "expressvpn" ]]; }
 run_checked() {
     shift 2
     vpn_commands+=("$*")
 }
 show_vpn_status >/dev/null
 record_result "combined VPN status queries each installed supported client" \
-    "${vpn_commands[*]}" "tailscale status expressvpn status"
+    "${vpn_commands[*]}" "tailscale status expressvpnctl status"
+
+vpn_commands=()
+have() { [[ "$1" == "expressvpn" ]]; }
+show_vpn_status >/dev/null
+record_result "combined VPN status retains legacy ExpressVPN CLI fallback" \
+    "${vpn_commands[*]}" "expressvpn status"
 
 have() { return 1; }
 set +e

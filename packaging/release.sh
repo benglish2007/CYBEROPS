@@ -125,24 +125,18 @@ verify_repository_state() {
 }
 
 run_release_suite() {
-    local test_script
-
     if [[ "${CYBEROPS_RELEASE_SKIP_TESTS:-0}" == "1" ]]; then
         printf '[TEST MODE] Full validation suite skipped.\n'
         return 0
     fi
-    bash -n "$REPO_DIR/cyberops.sh" "$REPO_DIR"/lib/*.sh \
-        "$REPO_DIR"/packaging/*.sh "$REPO_DIR/packaging/cyberops.in" \
-        "$REPO_DIR"/tests/*.sh
-    for test_script in "$REPO_DIR"/tests/test_*.sh; do
-        bash "$test_script" >/dev/null
-    done
+
+    make -s -C "$REPO_DIR" check
 }
 
 release_check() {
     local version="$1"
 
-    require_release_command git awk grep bash || return 1
+    require_release_command git awk grep bash make || return 1
     validate_release_version "$version" || return 1
     verify_repository_state || return 1
     verify_release_metadata "$version" || return 1

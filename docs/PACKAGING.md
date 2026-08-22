@@ -53,7 +53,11 @@ and logs are not removed.
 The package declares the non-optional command baseline as dependencies.
 Feature-specific tools such as ClamAV, `nmap`, `macchanger`, and `wavemon` are
 suggestions because CYBEROPS checks them only when their operation is used.
-Docker and vendor VPN clients remain separate integrations.
+Persistent MAC controls also require NetworkManager's `nmcli`; `network-manager`
+is suggested rather than installed automatically because changing a host's
+network-management stack can be disruptive, especially on servers. Install it
+deliberately when the host does not already use NetworkManager. Docker and
+vendor VPN clients remain separate integrations.
 
 ## Manual validation checklist
 

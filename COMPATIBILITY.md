@@ -31,7 +31,7 @@ The core script requires:
 
 Individual operations check their own command dependencies before starting.
 Optional features require their corresponding tools, such as Docker Compose,
-Tailscale, ExpressVPN, UFW, ClamAV, `rkhunter`, `nmap`, `wavemon`, or
+Tailscale, ExpressVPN (`expressvpnctl`, with legacy `expressvpn` fallback), UFW, ClamAV, `rkhunter`, `nmap`, `wavemon`, or
 `macchanger`.
 
 ## Automated Coverage

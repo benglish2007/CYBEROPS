@@ -137,6 +137,16 @@ else
     record_result "selector returns only the chosen device through state" failure /dev/sdz
 fi
 
+if select_usb_device <<<"01" >/dev/null 2>&1; then
+    record_result "selector accepts leading-zero input as base ten" \
+        "$SELECTED_USB_DEVICE" /dev/sdz
+else
+    record_result "selector accepts leading-zero input as base ten" failure /dev/sdz
+fi
+
+expect_failure "selector rejects oversized numeric input without arithmetic errors" \
+    select_usb_device <<<"999999999999999999999999"
+
 printf '1..%d\n' "$tests_run"
 
 if ((tests_failed > 0)); then

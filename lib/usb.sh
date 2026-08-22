@@ -274,13 +274,12 @@ select_usb_device() {
     echo
     read -r -p "Select target disk number: " selection
 
-    if ! [[ "$selection" =~ ^[0-9]+$ ]] ||
-        ((selection < 1 || selection > ${#candidates[@]})); then
+    if ! integer_in_range "$selection" 1 "${#candidates[@]}"; then
         report_error "Invalid disk selection." "Choose one of the displayed disk numbers."
         return 1
     fi
 
-    dev="${candidates[$((selection - 1))]}"
+    dev="${candidates[$((10#$selection - 1))]}"
     SELECTED_USB_IDENTITY="$(usb_device_identity "$dev")" || {
         report_error \
             "Unable to record the selected device identity." \

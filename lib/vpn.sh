@@ -16,6 +16,22 @@
 # VPN Control
 # ------------------------------------------------------------------------------
 
+EXPRESSVPN_CLI=""
+
+select_expressvpn_cli() {
+    EXPRESSVPN_CLI=""
+    if have expressvpnctl; then
+        EXPRESSVPN_CLI="expressvpnctl"
+    elif have expressvpn; then
+        EXPRESSVPN_CLI="expressvpn"
+    else
+        report_error \
+            "ExpressVPN command-line controls are unavailable." \
+            "Install the current ExpressVPN client with expressvpnctl, then retry."
+        return 1
+    fi
+}
+
 show_vpn_status() {
     local clients_found=0
     local failures=0
@@ -28,14 +44,15 @@ show_vpn_status() {
             "Verify the Tailscale daemon is running." \
             tailscale status || ((failures += 1))
     fi
-    if have expressvpn; then
+    if have expressvpnctl || have expressvpn; then
         ((clients_found == 0)) || printf '\n'
         clients_found=1
         printf '%s\n' '[EXPRESSVPN]'
+        select_expressvpn_cli || return 1
         run_checked \
             "ExpressVPN status query" \
-            "Verify the ExpressVPN daemon is running." \
-            expressvpn status || ((failures += 1))
+            "Open the ExpressVPN GUI or enable background mode, then verify the daemon is running." \
+            "$EXPRESSVPN_CLI" status || ((failures += 1))
     fi
     if ((clients_found == 0)); then
         report_error \
@@ -56,8 +73,10 @@ vpn_menu() {
         menu_privileged_item 2 "Tailscale up" "TAILNET // CONNECT"
         menu_privileged_item 3 "Tailscale down" "TAILNET // DISCONNECT"
         menu_item 4 "ExpressVPN status" "VPN // STATUS"
-        menu_item 5 "ExpressVPN connect" "VPN // CONNECT"
+        menu_item 5 "ExpressVPN connect" "VPN // SELECTED REGION"
         menu_item 6 "ExpressVPN disconnect" "VPN // DISCONNECT"
+        menu_item 7 "ExpressVPN background mode on" "VPN // HEADLESS ENABLE"
+        menu_item 8 "ExpressVPN background mode off" "VPN // HEADLESS DISABLE"
         menu_navigation_item 0 "Return to control deck" "NAV // BACK"
 
         prompt_choice choice "VPN"
@@ -82,20 +101,45 @@ vpn_menu() {
                 pause
                 ;;
             4)
-                if require_commands expressvpn; then
-                    run_checked "ExpressVPN status query" "Verify the ExpressVPN daemon is running." expressvpn status
+                if select_expressvpn_cli; then
+                    run_checked "ExpressVPN status query" \
+                        "Open the ExpressVPN GUI or enable background mode, then verify the daemon is running." \
+                        "$EXPRESSVPN_CLI" status
                 fi
                 pause
                 ;;
             5)
-                if require_commands expressvpn; then
-                    run_mutating_checked "ExpressVPN connection" "Review ExpressVPN sign-in and daemon status." expressvpn connect
+                if select_expressvpn_cli; then
+                    run_mutating_checked \
+                        "ExpressVPN connection" \
+                        "Open the ExpressVPN GUI or enable background mode, then verify login and daemon status." \
+                        "$EXPRESSVPN_CLI" connect
                 fi
                 pause
                 ;;
             6)
-                if require_commands expressvpn; then
-                    run_mutating_checked "ExpressVPN disconnection" "Verify the ExpressVPN daemon is running." expressvpn disconnect
+                if select_expressvpn_cli; then
+                    run_mutating_checked "ExpressVPN disconnection" \
+                        "Verify the ExpressVPN daemon is running." \
+                        "$EXPRESSVPN_CLI" disconnect
+                fi
+                pause
+                ;;
+            7)
+                if require_commands expressvpnctl; then
+                    run_mutating_checked \
+                        "ExpressVPN background-mode enablement" \
+                        "Verify the current ExpressVPN GUI client is installed and logged in." \
+                        expressvpnctl background enable
+                fi
+                pause
+                ;;
+            8)
+                if require_commands expressvpnctl; then
+                    run_mutating_checked \
+                        "ExpressVPN background-mode disablement" \
+                        "Open the ExpressVPN GUI before reconnecting; disabling background mode may disconnect the VPN." \
+                        expressvpnctl background disable
                 fi
                 pause
                 ;;

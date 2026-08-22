@@ -34,8 +34,9 @@ permanent-address state is yellow rather than being misreported as modified.
 | Admin | Reboot | `sudo` | Terminates the session and restarts the host |
 | Info | Host, CPU, memory, storage, network, route, socket status | User | Read-only local telemetry |
 | Info | Public IP lookup | User and network access | Sends a request to `api.ipify.org` |
-| VPN | Status | User | Read-only client telemetry |
+| VPN | Status | User | Read-only Tailscale or ExpressVPN client telemetry |
 | VPN | Connect, disconnect, up, or down | Client-dependent | Changes VPN or overlay-network connectivity |
+| VPN | ExpressVPN background mode | User | Allows or prevents the ExpressVPN daemon from remaining active without its GUI; disabling it may disconnect an active VPN |
 | Security | UFW status | `sudo` | Read-only firewall telemetry |
 | Security | Enable or disable UFW | `sudo` | Changes host firewall state |
 | Security | ClamAV home scan | User | Reads files beneath the current home directory |
@@ -44,7 +45,7 @@ permanent-address state is yellow rather than being misreported as modified.
 | Quickhacks | Sensors, ping sweep, and Wi-Fi analysis | Tool-dependent | Reads hardware/network state; scans the selected local subnet |
 | Quickhacks | Kill process | User or `sudo` depending on owner | Terminates the selected process |
 | Quickhacks | Flush DNS cache | `sudo` | Clears local resolver caches |
-| Quickhacks | Shred file | File permissions; may request `sudo` | Overwrites and removes the selected file; storage behavior may limit guarantees |
+| Quickhacks | Shred file | Current-user file permissions | Overwrites and removes the selected file; storage behavior may limit guarantees |
 | Quickhacks | Show active MAC policies | User | Reads active NetworkManager profile and cloned-MAC settings |
 | Quickhacks | Randomize MAC for this session | `sudo` | Temporarily drops a network link and changes its MAC address |
 | Quickhacks | Enable automatic MAC randomization | `sudo` | Sets only the selected wired or wireless profile to use a random MAC on activation |
@@ -64,7 +65,10 @@ The Quickhacks MAC control panel separates temporary interface changes from
 persistent connection policy. Its policy view is read-only and queries active
 NetworkManager profiles by UUID. An empty cloned-MAC value is reported as
 `default`; connection types without a supported wired or wireless cloned-MAC
-setting are reported as `not applicable`.
+setting are reported as `not applicable`. These controls require `nmcli` from
+the suggested `network-manager` package. CYBEROPS does not install NetworkManager
+automatically because replacing a host's network-management stack can interrupt
+connectivity.
 
 The existing session randomizer remains temporary. It uses the same numbered
 active-profile selector as immediate restoration, resolves the selected
@@ -118,3 +122,18 @@ details; review it before sharing.
 
 See [Configuration, Logs, and Diagnostics](CONFIGURATION.md) for the exact
 support-bundle privacy boundary.
+
+## ExpressVPN control boundary
+
+CYBEROPS prefers the current `expressvpnctl` client and retains the retired
+`expressvpn` executable only as a v2 compatibility fallback for status,
+connection, and disconnection. A normal connection uses the region already
+selected in ExpressVPN. The GUI must be running unless background mode has been
+enabled.
+
+The background-mode menu entries call `expressvpnctl background enable` and
+`expressvpnctl background disable`. Enabling it allows the daemon and VPN link
+to remain active without the GUI and is required for command-line autoconnect.
+Disabling it may disconnect the VPN and deactivate Split Tunnel when the GUI is
+not running. These controls do not change Network Lock, protocol, selected
+region, advanced protection, or account state.

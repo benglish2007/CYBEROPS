@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.14 — Milestone 14 complete.**
+Current release: **v2.14.1 — ExpressVPN maintenance complete; Milestone 15 resumed.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -294,6 +294,21 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 
 ## Milestone 15: v3 Readiness and Contract Freeze
 
+The v2.14.1 maintenance interruption is complete. Milestone 15 resumes with the
+ExpressVPN integration verified against the current `expressvpnctl` interface.
+
+- [x] Replace retired ExpressVPN commands with `expressvpnctl` while retaining a legacy v2 fallback.
+- [x] Add ExpressVPN background-mode controls required for headless CLI connections.
+- [x] Add mocked status, connection, disconnection, background-mode, fallback, and missing-client coverage.
+- [x] Manually verify ExpressVPN status, connection, disconnection, and background-mode behavior.
+
+### v2.14.1 manual verification — 2026-08-22
+
+- [x] Verified ExpressVPN status through the current client.
+- [x] Verified connection and disconnection through `expressvpnctl`.
+- [x] Verified background-mode enablement supports CLI operation without the GUI.
+- [x] Verified background-mode disablement and return to normal client behavior.
+
 - [x] Define the stable CLI, configuration, safety, privacy, packaging, and interface contracts proposed for v3.
 - [x] Add a single local validation target matching syntax, ShellCheck, formatting, and regression expectations.
 - [x] Audit package-managed files and ensure uninstall removes every installed v2.14 guide.
@@ -304,7 +319,7 @@ Makefile provides the supported Milestone 5 installation path in the meantime.
 - [ ] Upgrade an installed v2 package to the v3 release candidate without uninstalling it.
 - [ ] Verify command, desktop, icon, configuration, and operation-log continuity after upgrade.
 - [ ] Run the documented v3 manual release-candidate checks on disposable targets.
-- [ ] Prepare an untagged v3.0 candidate, complete the real v2-to-v3 upgrade test, then tag and publish only after every gate passes.
+- [ ] Complete the real v2-to-v3 upgrade test, then tag and publish only after every gate passes.
 
 See [docs/V3-READINESS.md](docs/V3-READINESS.md) for the contract and exact
 automated versus manual verification boundaries.

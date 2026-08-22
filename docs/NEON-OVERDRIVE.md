@@ -25,5 +25,5 @@ status behavior.
 - Yellow and orange identify privilege or caution states.
 - Purple identifies build, protocol, and system metadata.
 
-The experiment favors rail-style menus, dense status framing, and consistent
+The interface uses rail-style menus, dense status framing, and consistent
 command-deck vocabulary without obscuring the underlying operation names.

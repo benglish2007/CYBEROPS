@@ -4,6 +4,10 @@ CYBEROPS v3.0 will promote the proven v2 operational surface into a stable
 major-version contract. Milestone 15 is a stabilization gate, not a feature
 expansion milestone.
 
+The v2.14.1 maintenance release repaired and verified the ExpressVPN integration.
+The v3 readiness gate has resumed with the updated VPN controls included in its
+stable-interface baseline.
+
 ## Stable contracts
 
 The v3 release candidate must preserve these public behaviors unless a change

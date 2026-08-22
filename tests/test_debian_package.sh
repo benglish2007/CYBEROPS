@@ -42,6 +42,7 @@ package_name="$(dpkg-deb -f "$PACKAGE_FILE" Package)"
 package_version="$(dpkg-deb -f "$PACKAGE_FILE" Version)"
 package_architecture="$(dpkg-deb -f "$PACKAGE_FILE" Architecture)"
 package_dependencies="$(dpkg-deb -f "$PACKAGE_FILE" Depends)"
+package_suggestions="$(dpkg-deb -f "$PACKAGE_FILE" Suggests)"
 record_result "declares the CYBEROPS package name" "$package_name" cyberops
 record_result "uses the runtime version as package version" "$package_version" "$VERSION"
 record_result "declares architecture-independent content" "$package_architecture" all
@@ -51,6 +52,14 @@ else
     telemetry_dependencies=missing
 fi
 record_result "declares network telemetry dependencies" "$telemetry_dependencies" declared
+if [[ "$package_suggestions" == *network-manager* &&
+    "$package_suggestions" == *macchanger* ]]; then
+    mac_dependencies=suggested
+else
+    mac_dependencies=missing
+fi
+record_result "suggests dependencies for optional MAC controls" \
+    "$mac_dependencies" suggested
 
 mkdir -p -- "$EXTRACT_DIR"
 dpkg-deb -x "$PACKAGE_FILE" "$EXTRACT_DIR"

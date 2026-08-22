@@ -2,7 +2,27 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
-## Unreleased
+## 2.14.1 — 2026-08-22
+
+Version 2.14.1 repairs the ExpressVPN integration for the current Linux client,
+records verified headless operation, and retains the v2 release line while v3
+readiness work continues.
+
+### ExpressVPN Maintenance
+
+- Replaced retired ExpressVPN control calls with the current `expressvpnctl status`, `connect`, and `disconnect` commands while retaining legacy `expressvpn` fallback support.
+- Added ExpressVPN background-mode enable and disable controls for command-line connections when the GUI is not running.
+- Added mocked ExpressVPN control, preferred-client, legacy-fallback, and missing-client regression coverage.
+- Kept the runtime on v2 and paused v3 candidate preparation until the ExpressVPN repair was manually verified.
+- Made release validation delegate to the complete `make check` gate so publishing cannot bypass ShellCheck or `shfmt`.
+- Hardened removable-disk number parsing against leading zeroes, oversized input, and Bash arithmetic-base errors.
+- Documented NetworkManager as a suggested MAC-control dependency without installing or replacing a host network stack automatically.
+- Corrected released-interface and file-shredding documentation wording.
+
+### Verification
+
+- Verified ExpressVPN status, connection, disconnection, and background-mode controls against `expressvpnctl` 14.0.1.
+- Passed the complete Bash syntax, ShellCheck, `shfmt`, regression, and Debian-package validation gate.
 
 ### Milestone 15: v3 Readiness and Contract Freeze
 

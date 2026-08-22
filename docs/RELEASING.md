@@ -14,15 +14,24 @@ from being accidentally attached to an older version tag.
 
 ## Validate and preview
 
+Install the development-only quality tools once on an Ubuntu or Debian release
+host if they are not already available:
+
+```bash
+sudo apt install shellcheck shfmt
+```
+
 ```bash
 make release-check VERSION=2.9
 make release-preview VERSION=2.9
 ```
 
 The check requires a clean `main` branch synchronized with its configured
-upstream, consistent version metadata, Bash syntax, and every regression test.
-Preview prints the exact annotated tag, commit, title, and release notes without
-changing local or remote state.
+upstream, consistent version metadata, and the complete `make check` gate:
+Bash syntax, ShellCheck, `shfmt`, and every regression test. Preview prints the
+exact annotated tag, commit, title, and release notes without changing local or
+remote state. Release validation fails when either shell-quality tool is absent;
+it never silently publishes using only the partial local test layers.
 
 ## Publish
 

@@ -29,7 +29,7 @@ require_commands() {
     if ((${#missing[@]} > 0)); then
         report_error \
             "Missing required command(s): ${missing[*]}" \
-            "Install the missing tools or run 'sudo make install-deps' from the CYBEROPS repository."
+            "Install the missing tools with your system package manager; 'sudo make install-deps' covers the optional CYBEROPS baseline."
         return 1
     fi
 
