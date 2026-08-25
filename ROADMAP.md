@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v2.14.1 — ExpressVPN maintenance complete; Milestone 15 resumed.**
+Current release: **v3.0 — VPN plugin architecture candidate.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -316,6 +316,10 @@ ExpressVPN integration verified against the current `expressvpnctl` interface.
 - [x] Remove stale experimental wording from the released Neon Overdrive configuration guide.
 - [x] Remove the clean, fully merged Neon Overdrive experiment worktree and local branch.
 - [x] Verify the complete GitHub Actions shell and five-distribution compatibility matrix.
+- [x] Add deterministic plugin discovery from built-in and user plugin roots.
+- [x] Move Tailscale and ExpressVPN VPN controls into built-in provider plugins.
+- [x] Add plugin list, validation, and provider-specific VPN status command channels.
+- [x] Add plugin documentation, VPN plugin authoring guidance, and package coverage.
 - [ ] Upgrade an installed v2 package to the v3 release candidate without uninstalling it.
 - [ ] Verify command, desktop, icon, configuration, and operation-log continuity after upgrade.
 - [ ] Run the documented v3 manual release-candidate checks on disposable targets.
@@ -324,13 +328,13 @@ ExpressVPN integration verified against the current `expressvpnctl` interface.
 See [docs/V3-READINESS.md](docs/V3-READINESS.md) for the contract and exact
 automated versus manual verification boundaries.
 
-## Deferred: Controlled Extensibility and Portability
+## Deferred: Additional Portability
 
-Plugin discovery is intentionally postponed. CYBEROPS will retain its explicit,
-reviewed module list until there is a concrete need for third-party or optional
-feature packages and an appropriate trust model.
+The initial v3 plugin system is intentionally scoped to VPN provider plugins.
+Broader module marketplaces, remote plugin installation, signatures, and
+additional package-manager or distribution support remain future evaluations.
 
-- [ ] Reconsider constrained plugin discovery only when a real extension use case exists.
+- [ ] Reconsider broader plugin categories after the VPN contract proves stable.
 - [ ] Treat additional package-manager and distribution support as a separate future evaluation.
 - [ ] Claim portability only where CI can enforce the complete runtime and installer contract.
 

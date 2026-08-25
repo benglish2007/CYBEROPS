@@ -27,7 +27,7 @@ record_result() {
 
 record_result "resolves the launcher directory" "$CYBEROPS_SOURCE_DIR" "$REPO_DIR"
 record_result "resolves the default module directory" "$CYBEROPS_LIB_DIR" "$REPO_DIR/lib"
-record_result "loads the version from runtime.sh" "$VERSION" 2.14.1
+record_result "loads the version from runtime.sh" "$VERSION" 3.0
 
 if declare -F docker_menu >/dev/null && declare -F usb_zero_fill >/dev/null; then
     functions_result=available
@@ -45,11 +45,13 @@ record_result "keeps optional dependency setup out of the runtime" "$setup_resul
 
 shopt -s extdebug
 docker_function_details="$(declare -F docker_menu)"
+plugin_function_details="$(declare -F discover_plugins)"
 core_function_details="$(declare -F validate_configuration)"
 ui_function_details="$(declare -F banner)"
 telemetry_function_details="$(declare -F collect_header_telemetry)"
 shopt -u extdebug
 docker_function_source="${docker_function_details##* }"
+plugin_function_source="${plugin_function_details##* }"
 core_function_source="${core_function_details##* }"
 ui_function_source="${ui_function_details##* }"
 telemetry_function_source="${telemetry_function_details##* }"
@@ -61,6 +63,8 @@ record_result "loads header telemetry from lib/telemetry.sh" \
     "$telemetry_function_source" "$REPO_DIR/lib/telemetry.sh"
 record_result "loads Docker functions from lib/docker.sh" \
     "$docker_function_source" "$REPO_DIR/lib/docker.sh"
+record_result "loads plugin discovery from lib/plugins.sh" \
+    "$plugin_function_source" "$REPO_DIR/lib/plugins.sh"
 
 module_function_pairs=(
     "diagnostics_preview:diagnostics.sh"
@@ -105,6 +109,7 @@ ln -s -- "$REPO_DIR/lib/runtime.sh" "$missing_docker_dir/runtime.sh"
 ln -s -- "$REPO_DIR/lib/core.sh" "$missing_docker_dir/core.sh"
 ln -s -- "$REPO_DIR/lib/telemetry.sh" "$missing_docker_dir/telemetry.sh"
 ln -s -- "$REPO_DIR/lib/ui.sh" "$missing_docker_dir/ui.sh"
+ln -s -- "$REPO_DIR/lib/plugins.sh" "$missing_docker_dir/plugins.sh"
 ln -s -- "$REPO_DIR/lib/diagnostics.sh" "$missing_docker_dir/diagnostics.sh"
 set +e
 missing_docker_output="$(
@@ -124,7 +129,7 @@ fi
 record_result "identifies a missing Docker module" "$missing_docker_message" clear
 rm -- "$missing_docker_dir/runtime.sh" "$missing_docker_dir/core.sh" \
     "$missing_docker_dir/telemetry.sh" "$missing_docker_dir/ui.sh" \
-    "$missing_docker_dir/diagnostics.sh"
+    "$missing_docker_dir/plugins.sh" "$missing_docker_dir/diagnostics.sh"
 rmdir -- "$missing_docker_dir"
 
 printf '1..%d\n' "$tests_run"

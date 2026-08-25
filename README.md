@@ -3,7 +3,7 @@
   <h1>CYBEROPS TERMINAL</h1>
   <p><strong><code>NEON GRID // UNIFIED LINUX OPERATIONS CONSOLE</code></strong></p>
 
-  [![Release](https://img.shields.io/badge/RELEASE-v2.14.1-ff2d95?style=for-the-badge)](CHANGELOG.md)
+  [![Release](https://img.shields.io/badge/RELEASE-v3.0-ff2d95?style=for-the-badge)](CHANGELOG.md)
   [![Bash](https://img.shields.io/badge/SHELL-BASH_5+-00e5ff?style=for-the-badge&logo=gnubash&logoColor=050816)](cyberops.sh)
   [![Validate](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml)
   [![Platform](https://img.shields.io/badge/PLATFORM-UBUNTU_%2F_DEBIAN-8b5cf6?style=for-the-badge&logo=linux&logoColor=white)](COMPATIBILITY.md)
@@ -22,13 +22,14 @@
 
 ## `//` CURRENT BUILD
 
-### CYBEROPS Terminal v2.14.1
+### CYBEROPS Terminal v3.0
 
-Version 2.14.1 keeps CYBEROPS on v2 while the ExpressVPN
-integration moves to the current `expressvpnctl` command set. The legacy
-`expressvpn` executable remains a compatibility fallback, and background-mode
-controls support command-line connections without the GUI. See the
-[changelog](CHANGELOG.md), [roadmap](ROADMAP.md), and
+Version 3.0 introduces the CYBEROPS plugin framework. VPN controls now run
+through provider plugins, with Tailscale and ExpressVPN shipped as built-in VPN
+plugins and user-installed provider plugins supported from the user plugin root.
+The existing safety model, dry-run previews, operation logging, command channel,
+and Debian package layout remain intact. See the [plugin guide](docs/PLUGINS.md),
+[VPN plugin guide](docs/VPN-PLUGINS.md), [changelog](CHANGELOG.md), and
 [operation guide](docs/OPERATIONS.md) for details.
 
 ---
@@ -39,14 +40,14 @@ Choose the workflow that matches how you use CYBEROPS.
 
 ### Option 1: Normal installation
 
-New users should download `cyberops_2.14.1_all.deb` from the
+New users should download `cyberops_3.0_all.deb` from the
 [latest GitHub Release](https://github.com/benglish2007/CYBEROPS/releases/latest),
 then install it through APT so required dependencies are resolved:
 
 ```bash
 cd /tmp
-wget https://github.com/benglish2007/CYBEROPS/releases/download/v2.14.1/cyberops_2.14.1_all.deb
-sudo apt install ./cyberops_2.14.1_all.deb
+wget https://github.com/benglish2007/CYBEROPS/releases/download/v3.0/cyberops_3.0_all.deb
+sudo apt install ./cyberops_3.0_all.deb
 cyberops
 ```
 
@@ -88,7 +89,7 @@ current development package:
 ```bash
 make deb
 make deb-inspect
-sudo apt install ./dist/cyberops_2.14.1_all.deb
+sudo apt install ./dist/cyberops_3.0_all.deb
 hash -r
 cyberops --version
 ```
@@ -154,7 +155,8 @@ Usage:
   cyberops [OPTIONS] system <disk|memory|services|failures>
   cyberops [OPTIONS] storage devices
   cyberops [OPTIONS] network <interfaces|routes|sockets>
-  cyberops [OPTIONS] vpn status
+  cyberops [OPTIONS] vpn status [PLUGIN_ID]
+  cyberops [OPTIONS] plugins <list|validate> [CATEGORY]
   cyberops [OPTIONS] docker status
   cyberops [OPTIONS] config <path|show|check>
   cyberops [OPTIONS] logs <path|tail>
@@ -183,6 +185,9 @@ cyberops network interfaces
 cyberops network routes
 cyberops network sockets
 cyberops vpn status
+cyberops vpn status expressvpn
+cyberops plugins list vpn
+cyberops plugins validate vpn
 cyberops docker status
 cyberops config check
 cyberops logs tail
@@ -190,8 +195,8 @@ cyberops diagnostics preview
 cyberops diagnostics export
 ```
 
-The system, storage, network, VPN, info, and Docker status channels are
-read-only. Network telemetry remains local; none of the new Milestone 10
+The system, storage, network, VPN, info, plugin-listing, and Docker status channels are
+read-only. Network telemetry remains local; none of the new command channels
 commands performs a public-IP lookup. Diagnostics export only creates a new
 private archive and refuses to overwrite an existing file. The interactive control deck
 requires terminal input and output; a redirected invocation without a command
@@ -297,7 +302,7 @@ CYBEROPS is released under the [MIT License](LICENSE).
 
 <div align="center">
 
-  **`CYBEROPS TERMINAL v2.14.1 // LINK STANDBY`**
+  **`CYBEROPS TERMINAL v3.0 // LINK STANDBY`**
 
   *One terminal. One toolkit. Linux operations under control.*
 

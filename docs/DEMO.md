@@ -2,15 +2,17 @@
 
 ```console
 $ cyberops --version
-CYBEROPS Terminal 2.14.1
+CYBEROPS Terminal 3.0
 
 $ cyberops --help
-CYBEROPS Terminal v2.14.1
+CYBEROPS Terminal v3.0
 Unified Linux Operations Console
 
 Usage:
   cyberops [OPTIONS]
   cyberops [OPTIONS] info
+  cyberops [OPTIONS] vpn status [PLUGIN_ID]
+  cyberops [OPTIONS] plugins <list|validate> [CATEGORY]
   cyberops [OPTIONS] docker status
 
 $ cyberops info

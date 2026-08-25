@@ -33,7 +33,7 @@ else
 fi
 record_result "README remains a concise project entry point" "$readme_result" concise
 
-required_guides=(DOCKER.md USB.md OPERATIONS.md DEMO.md CONFIGURATION.md RELEASING.md PACKAGING.md NEON-OVERDRIVE.md V3-READINESS.md)
+required_guides=(DOCKER.md USB.md OPERATIONS.md DEMO.md CONFIGURATION.md RELEASING.md PACKAGING.md PLUGINS.md VPN-PLUGINS.md NEON-OVERDRIVE.md V3-READINESS.md)
 for required_guide in "${required_guides[@]}"; do
     [[ -s "$REPO_DIR/docs/$required_guide" ]] && guide_result=present || guide_result=missing
     record_result "provides docs/$required_guide" "$guide_result" present

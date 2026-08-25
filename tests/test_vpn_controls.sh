@@ -2,7 +2,6 @@
 # shellcheck disable=SC2034,SC2317,SC2329 # Mocks are invoked by sourced menu code.
 
 set -uo pipefail
-
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
 # shellcheck source=cyberops.sh
@@ -10,9 +9,10 @@ source "$REPO_DIR/cyberops.sh"
 
 tests_run=0
 tests_failed=0
-choice_index=0
-choices=(4 5 6 7 8 0)
 commands=()
+menu_rows=()
+choice_index=0
+choices=(1 1 0 0)
 
 record_result() {
     local name="$1"
@@ -31,18 +31,17 @@ record_result() {
 
 banner() { :; }
 ui_section() { :; }
-menu_item() { :; }
-menu_navigation_item() { :; }
+menu_item() { menu_rows+=("item:$1:$2:$3"); }
+menu_privileged_item() { menu_rows+=("sudo:$1:$2:$3"); }
+menu_navigation_item() { menu_rows+=("nav:$1:$2:$3"); }
 pause() { :; }
 prompt_choice() {
     local -n destination="$1"
     destination="${choices[$choice_index]}"
     ((choice_index += 1))
 }
-have() { [[ "$1" == "expressvpnctl" ]]; }
-require_commands() {
-    [[ "$1" == "expressvpnctl" ]]
-}
+have() { [[ "$1" == "expressvpnctl" || "$1" == "tailscale" || "$1" == "sudo" ]]; }
+require_commands() { have "$1"; }
 run_checked() {
     shift 2
     commands+=("$*")
@@ -53,26 +52,35 @@ run_mutating_checked() {
 }
 
 vpn_menu >/dev/null
-record_result "ExpressVPN menu uses the current expressvpnctl command set" \
-    "${commands[*]}" \
-    "expressvpnctl status expressvpnctl connect expressvpnctl disconnect expressvpnctl background enable expressvpnctl background disable"
+case "${menu_rows[*]}" in
+    *"item:1:ExpressVPN:VPN // ExpressVPN"*"item:2:Tailscale:VPN // Tailscale"*) provider_menu=dynamic ;;
+    *) provider_menu=static ;;
+esac
+record_result "VPN menu lists discovered provider plugins" "$provider_menu" dynamic
+case "${menu_rows[*]}" in
+    *"item:1:Status:VPN // STATUS"*"item:2:Connect:VPN // CONNECT"*"item:3:Disconnect:VPN // DISCONNECT"*"item:4:Background mode on:VPN // HEADLESS ENABLE"*"item:5:Background mode off:VPN // HEADLESS DISABLE"*) action_menu=plugin ;;
+    *) action_menu=missing ;;
+esac
+record_result "VPN provider menu lists plugin-supported actions" "$action_menu" plugin
+record_result "VPN provider menu keeps sudo markers action-specific" \
+    "${commands[*]}" "expressvpnctl status"
 
+commands=()
 EXPRESSVPN_CLI=""
 have() { [[ "$1" == "expressvpn" ]]; }
-select_expressvpn_cli >/dev/null
+run_vpn_plugin_action expressvpn status >/dev/null
 record_result "ExpressVPN selection retains the legacy v2 client fallback" \
-    "$EXPRESSVPN_CLI" expressvpn
+    "${commands[*]}" "expressvpn status"
 
 EXPRESSVPN_CLI="stale"
 have() { return 1; }
 set +e
-select_expressvpn_cli >/dev/null 2>&1
+missing_output="$(run_vpn_plugin_action expressvpn status 2>&1)"
 missing_status=$?
 set -e
 record_result "ExpressVPN selection fails when neither CLI is installed" \
     "$missing_status" 1
-missing_output="$(select_expressvpn_cli 2>&1 || true)"
-if [[ "$missing_output" == *"expressvpnctl"* && -z "$EXPRESSVPN_CLI" ]]; then
+if [[ "$missing_output" == *"expressvpnctl"* ]]; then
     missing_guidance=clear
 else
     missing_guidance=unclear

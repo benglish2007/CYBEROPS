@@ -60,7 +60,7 @@ run_checked() {
 }
 show_vpn_status >/dev/null
 record_result "combined VPN status queries each installed supported client" \
-    "${vpn_commands[*]}" "tailscale status expressvpnctl status"
+    "${vpn_commands[*]}" "expressvpnctl status tailscale status"
 
 vpn_commands=()
 have() { [[ "$1" == "expressvpn" ]]; }

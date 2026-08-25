@@ -1,150 +1,165 @@
 #!/usr/bin/env bash
 
-# VPN operations contract
-# -----------------------
+# VPN plugin dispatcher contract
+# ------------------------------
 # Inputs:
-#   Runtime state plus shared core and UI helpers loaded by cyberops.sh.
+#   VPN plugins discovered by lib/plugins.sh plus shared core/UI helpers.
 # Outputs:
-#   Tailscale and ExpressVPN status and control results.
+#   Provider status, dynamic provider menus, and action results.
 # Return statuses:
-#   Menu functions contain operation failures and return control to their caller.
+#   Returns nonzero when no usable provider exists or a selected action fails.
 # Side effects:
-#   May connect or disconnect VPN clients through dry-run-aware helpers.
+#   May connect or disconnect VPN clients through dry-run-aware plugin actions.
 #   Loading this module itself produces no output and performs no mutation.
 
-# ------------------------------------------------------------------------------
-# VPN Control
-# ------------------------------------------------------------------------------
+vpn_plugin_label() {
+    local provider="$1"
+    printf '%s' "${provider^^}"
+}
 
-EXPRESSVPN_CLI=""
+run_vpn_plugin_action() {
+    local plugin_id="$1"
+    local action="$2"
+    local plugin_path
+    local function_name
 
-select_expressvpn_cli() {
-    EXPRESSVPN_CLI=""
-    if have expressvpnctl; then
-        EXPRESSVPN_CLI="expressvpnctl"
-    elif have expressvpn; then
-        EXPRESSVPN_CLI="expressvpn"
-    else
-        report_error \
-            "ExpressVPN command-line controls are unavailable." \
-            "Install the current ExpressVPN client with expressvpnctl, then retry."
+    plugin_path="$(plugin_path_for vpn "$plugin_id")" || return 1
+    load_plugin vpn "$plugin_path" || return 1
+    if ! plugin_action_supported "$action"; then
+        report_error "VPN plugin $plugin_id does not support action: $action"
         return 1
     fi
+    plugin_dependencies_available || return 1
+    function_name="cyberops_plugin_$action"
+    "$function_name"
 }
 
 show_vpn_status() {
+    local descriptor
+    local plugin_path
     local clients_found=0
     local failures=0
 
-    if have tailscale; then
-        clients_found=1
-        printf '%s\n' '[TAILSCALE]'
-        run_checked \
-            "Tailscale status query" \
-            "Verify the Tailscale daemon is running." \
-            tailscale status || ((failures += 1))
-    fi
-    if have expressvpnctl || have expressvpn; then
+    while IFS= read -r descriptor; do
+        plugin_path="${descriptor#*:*:}"
+        load_plugin vpn "$plugin_path" >/dev/null || continue
+        plugin_action_supported status || continue
+        if ! plugin_dependencies_available >/dev/null 2>&1; then
+            continue
+        fi
         ((clients_found == 0)) || printf '\n'
         clients_found=1
-        printf '%s\n' '[EXPRESSVPN]'
-        select_expressvpn_cli || return 1
-        run_checked \
-            "ExpressVPN status query" \
-            "Open the ExpressVPN GUI or enable background mode, then verify the daemon is running." \
-            "$EXPRESSVPN_CLI" status || ((failures += 1))
-    fi
+        printf '[%s]\n' "$(vpn_plugin_label "$CYBEROPS_PLUGIN_PROVIDER")"
+        cyberops_plugin_status || ((failures += 1))
+    done < <(discover_plugins vpn)
+
     if ((clients_found == 0)); then
         report_error \
             "No supported VPN client is installed." \
-            "Install Tailscale or ExpressVPN, then retry."
+            "Install a VPN provider plugin dependency such as tailscale or expressvpnctl, then retry."
         return 1
     fi
     ((failures == 0))
 }
 
+vpn_action_label() {
+    local action="$1"
+
+    case "$action" in
+        status) printf 'Status' ;;
+        connect) printf 'Connect' ;;
+        disconnect) printf 'Disconnect' ;;
+        background_on) printf 'Background mode on' ;;
+        background_off) printf 'Background mode off' ;;
+        *) printf '%s' "$action" ;;
+    esac
+}
+
+vpn_action_hint() {
+    local action="$1"
+
+    case "$action" in
+        status) printf 'VPN // STATUS' ;;
+        connect) printf 'VPN // CONNECT' ;;
+        disconnect) printf 'VPN // DISCONNECT' ;;
+        background_on) printf 'VPN // HEADLESS ENABLE' ;;
+        background_off) printf 'VPN // HEADLESS DISABLE' ;;
+        *) printf 'VPN // PLUGIN ACTION' ;;
+    esac
+}
+
+vpn_plugin_menu() {
+    local plugin_id="$1"
+    local plugin_path
+    local choice=""
+    local action
+    local index
+    local selected_action
+    local -a actions=()
+
+    plugin_path="$(plugin_path_for vpn "$plugin_id")" || return 1
+    while true; do
+        load_plugin vpn "$plugin_path" >/dev/null || return 1
+        actions=("${CYBEROPS_PLUGIN_ACTIONS[@]}")
+        banner
+        ui_section "VPN CONTROL" "$CYBEROPS_PLUGIN_NAME // PLUGIN ACTIONS"
+        index=1
+        for action in "${actions[@]}"; do
+            if plugin_action_requires_sudo "$action"; then
+                menu_privileged_item "$index" "$(vpn_action_label "$action")" "$(vpn_action_hint "$action")"
+            else
+                menu_item "$index" "$(vpn_action_label "$action")" "$(vpn_action_hint "$action")"
+            fi
+            ((index += 1))
+        done
+        menu_navigation_item 0 "Return to VPN providers" "NAV // BACK"
+
+        prompt_choice choice "VPN"
+        if [[ "$choice" == "0" ]]; then
+            return
+        fi
+        if integer_in_range "$choice" 1 "${#actions[@]}"; then
+            selected_action="${actions[$((10#$choice - 1))]}"
+            run_vpn_plugin_action "$plugin_id" "$selected_action"
+            pause
+        else
+            invalid_selection
+        fi
+    done
+}
+
 vpn_menu() {
     local choice=""
+    local descriptor
+    local plugin_id
+    local plugin_path
+    local index
+    local -a plugin_ids=()
 
     while true; do
+        plugin_ids=()
         banner
-        ui_section "VPN CONTROL" "ENCRYPTED LINKS // TUNNEL CONTROL"
-        menu_item 1 "Tailscale status" "TAILNET // STATUS"
-        menu_privileged_item 2 "Tailscale up" "TAILNET // CONNECT"
-        menu_privileged_item 3 "Tailscale down" "TAILNET // DISCONNECT"
-        menu_item 4 "ExpressVPN status" "VPN // STATUS"
-        menu_item 5 "ExpressVPN connect" "VPN // SELECTED REGION"
-        menu_item 6 "ExpressVPN disconnect" "VPN // DISCONNECT"
-        menu_item 7 "ExpressVPN background mode on" "VPN // HEADLESS ENABLE"
-        menu_item 8 "ExpressVPN background mode off" "VPN // HEADLESS DISABLE"
+        ui_section "VPN CONTROL" "ENCRYPTED LINKS // PROVIDER PLUGINS"
+        index=1
+        while IFS= read -r descriptor; do
+            plugin_id="${descriptor#*:}"
+            plugin_id="${plugin_id%%:*}"
+            plugin_path="${descriptor#*:*:}"
+            load_plugin vpn "$plugin_path" >/dev/null || continue
+            menu_item "$index" "$CYBEROPS_PLUGIN_NAME" "VPN // $CYBEROPS_PLUGIN_PROVIDER"
+            plugin_ids+=("$plugin_id")
+            ((index += 1))
+        done < <(discover_plugins vpn)
         menu_navigation_item 0 "Return to control deck" "NAV // BACK"
 
         prompt_choice choice "VPN"
-
-        case "$choice" in
-            1)
-                if require_commands tailscale; then
-                    run_checked "Tailscale status query" "Verify the Tailscale daemon is running." tailscale status
-                fi
-                pause
-                ;;
-            2)
-                if require_commands sudo tailscale; then
-                    run_mutating_checked "Tailscale connection" "Review Tailscale authentication and daemon status." sudo tailscale up
-                fi
-                pause
-                ;;
-            3)
-                if require_commands sudo tailscale; then
-                    run_mutating_checked "Tailscale disconnection" "Verify the Tailscale daemon is running." sudo tailscale down
-                fi
-                pause
-                ;;
-            4)
-                if select_expressvpn_cli; then
-                    run_checked "ExpressVPN status query" \
-                        "Open the ExpressVPN GUI or enable background mode, then verify the daemon is running." \
-                        "$EXPRESSVPN_CLI" status
-                fi
-                pause
-                ;;
-            5)
-                if select_expressvpn_cli; then
-                    run_mutating_checked \
-                        "ExpressVPN connection" \
-                        "Open the ExpressVPN GUI or enable background mode, then verify login and daemon status." \
-                        "$EXPRESSVPN_CLI" connect
-                fi
-                pause
-                ;;
-            6)
-                if select_expressvpn_cli; then
-                    run_mutating_checked "ExpressVPN disconnection" \
-                        "Verify the ExpressVPN daemon is running." \
-                        "$EXPRESSVPN_CLI" disconnect
-                fi
-                pause
-                ;;
-            7)
-                if require_commands expressvpnctl; then
-                    run_mutating_checked \
-                        "ExpressVPN background-mode enablement" \
-                        "Verify the current ExpressVPN GUI client is installed and logged in." \
-                        expressvpnctl background enable
-                fi
-                pause
-                ;;
-            8)
-                if require_commands expressvpnctl; then
-                    run_mutating_checked \
-                        "ExpressVPN background-mode disablement" \
-                        "Open the ExpressVPN GUI before reconnecting; disabling background mode may disconnect the VPN." \
-                        expressvpnctl background disable
-                fi
-                pause
-                ;;
-            0) return ;;
-            *) invalid_selection ;;
-        esac
+        if [[ "$choice" == "0" ]]; then
+            return
+        fi
+        if integer_in_range "$choice" 1 "${#plugin_ids[@]}"; then
+            vpn_plugin_menu "${plugin_ids[$((10#$choice - 1))]}"
+        else
+            invalid_selection
+        fi
     done
 }

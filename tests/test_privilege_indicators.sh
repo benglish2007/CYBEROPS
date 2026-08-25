@@ -44,6 +44,7 @@ current_menu="admin"
 admin_menu >/dev/null
 current_menu="vpn"
 vpn_menu >/dev/null
+vpn_plugin_menu tailscale >/dev/null
 current_menu="security"
 cyber_defense_menu >/dev/null
 current_menu="quickhacks"
@@ -61,8 +62,8 @@ expected_rows=(
     "admin:1:Update package lists"
     "admin:2:Upgrade installed packages"
     "admin:7:Reboot system"
-    "vpn:2:Tailscale up"
-    "vpn:3:Tailscale down"
+    "vpn:2:Connect"
+    "vpn:3:Disconnect"
     "security:1:UFW status"
     "security:2:Enable UFW"
     "security:3:Disable UFW"

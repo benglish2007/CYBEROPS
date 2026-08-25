@@ -65,6 +65,8 @@ mkdir -p -- "$EXTRACT_DIR"
 dpkg-deb -x "$PACKAGE_FILE" "$EXTRACT_DIR"
 if [[ -x "$EXTRACT_DIR/usr/bin/cyberops" &&
     -x "$EXTRACT_DIR/usr/lib/cyberops/cyberops.sh" &&
+    -f "$EXTRACT_DIR/usr/lib/cyberops/plugins/vpn/tailscale/plugin.sh" &&
+    -f "$EXTRACT_DIR/usr/lib/cyberops/plugins/vpn/expressvpn/plugin.sh" &&
     -f "$EXTRACT_DIR/usr/share/applications/cyberops.desktop" &&
     -f "$EXTRACT_DIR/usr/share/pixmaps/cyberops.png" ]]; then
     layout_result=complete

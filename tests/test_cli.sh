@@ -24,8 +24,9 @@ record_result() {
     fi
 }
 
+VERSION="$(sed -n 's/^VERSION="\([^"]*\)"$/\1/p' "$REPO_DIR/lib/runtime.sh")"
 version_output="$(bash "$LAUNCHER" --version)"
-record_result "version option prints the maintenance candidate" "$version_output" "CYBEROPS Terminal 2.14.1"
+record_result "version option prints the current release candidate" "$version_output" "CYBEROPS Terminal 3.0"
 
 help_output="$(bash "$LAUNCHER" --help)"
 if [[ "$help_output" == *"Usage:"* && "$help_output" == *"--no-color"* &&
@@ -92,6 +93,9 @@ show_network_interfaces() { printf 'INTERFACE_STATUS\n'; }
 show_routing_table() { printf 'ROUTE_STATUS\n'; }
 show_listening_sockets() { printf 'SOCKET_STATUS\n'; }
 show_vpn_status() { printf 'VPN_STATUS\n'; }
+list_plugins() { printf 'PLUGIN_LIST:%s\n' "${1:-all}"; }
+validate_all_plugins() { printf 'PLUGIN_VALIDATE:%s\n' "${1:-all}"; }
+run_vpn_plugin_action() { printf 'VPN_PLUGIN:%s:%s\n' "$1" "$2"; }
 
 command_cases=(
     "system disk|DISK_STATUS"
@@ -103,6 +107,11 @@ command_cases=(
     "network routes|ROUTE_STATUS"
     "network sockets|SOCKET_STATUS"
     "vpn status|VPN_STATUS"
+    "plugins list|PLUGIN_LIST:all"
+    "plugins list vpn|PLUGIN_LIST:vpn"
+    "plugins validate|PLUGIN_VALIDATE:all"
+    "plugins validate vpn|PLUGIN_VALIDATE:vpn"
+    "vpn status expressvpn|VPN_PLUGIN:expressvpn:status"
 )
 for command_case in "${command_cases[@]}"; do
     command_text="${command_case%%|*}"
