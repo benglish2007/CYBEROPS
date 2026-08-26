@@ -33,7 +33,7 @@ strip_ansi() {
 
 normalize_box_borders() {
     sed -e 's/╔/+/g' -e 's/╗/+/g' -e 's/╚/+/g' -e 's/╝/+/g' \
-        -e 's/═/-/g' -e 's/║/|/g'
+        -e 's/╠/+/g' -e 's/╣/+/g' -e 's/═/-/g' -e 's/║/|/g'
 }
 
 clear_screen() {
@@ -55,6 +55,19 @@ else
     banner_result=missing
 fi
 record_result "banner exposes the cyberpunk control-deck theme" "$banner_result" themed
+
+header_frame_result=aligned
+header_frame_rows=0
+while IFS= read -r banner_line; do
+    if [[ "$banner_line" == [╔╠╚║]* ]]; then
+        ((header_frame_rows += 1))
+        normalized_banner_line="$(printf '%s\n' "$banner_line" | normalize_box_borders)"
+        ((${#normalized_banner_line} == 67)) || header_frame_result=broken
+    fi
+done <<<"$banner_output"
+((header_frame_rows > 8)) || header_frame_result=missing
+record_result "every full-width header frame row keeps aligned side rails" \
+    "$header_frame_result" aligned
 
 logo_frame_result=aligned
 logo_frame_active=0
@@ -262,19 +275,27 @@ record_result "overdrive signal matrix uses aligned instrument rows" \
 
 COLUMNS=50
 narrow_signal_output="$(render_header_telemetry | strip_ansi)"
-if [[ "$narrow_signal_output" == *"║ TIME  │ 2088-08-15"* &&
-    "$narrow_signal_output" == *"║ LINK  │ ROUTED"* &&
-    "$narrow_signal_output" == *"║ NET   │ IFACE enp7s0"* &&
-    "$narrow_signal_output" == *"║ IP    │ 192.0.2.13"* &&
-    "$narrow_signal_output" == *"║ VPN   │ STATUS [ON // tailscale0]"* &&
-    "$narrow_signal_output" == *"║ V-IP  │ 100.64.0.13"* &&
-    "$narrow_signal_output" == *"║ L2    │ [MODIFIED // 02:13:37:aa:bb:cc]"* ]]; then
+if [[ "$narrow_signal_output" == *"[TIME ] 2088-08-15"* &&
+    "$narrow_signal_output" == *"[LINK ] ROUTED"* &&
+    "$narrow_signal_output" == *"[NET  ] IFACE enp7s0"* &&
+    "$narrow_signal_output" == *"[IP   ] 192.0.2.13"* &&
+    "$narrow_signal_output" == *"[VPN  ] STATUS [ON // tailscale0]"* &&
+    "$narrow_signal_output" == *"[V-IP ] 100.64.0.13"* &&
+    "$narrow_signal_output" == *"[L2   ] [MODIFIED // 02:13:37:aa:bb:cc]"* &&
+    "$narrow_signal_output" != *'║'* ]]; then
     narrow_signal_result=legible
 else
     narrow_signal_result=compressed
 fi
 record_result "narrow terminals split telemetry into legible instrument rows" \
     "$narrow_signal_result" legible
+if printf '%s\n' "$narrow_signal_output" | awk 'length($0) > 50 { exit 1 }'; then
+    narrow_width_result=bounded
+else
+    narrow_width_result=overflow
+fi
+record_result "narrow telemetry never exceeds the terminal width" \
+    "$narrow_width_result" bounded
 COLUMNS=80
 
 completed_path=""

@@ -14,6 +14,13 @@ All notable changes to CYBEROPS are documented in this file.
 - Recorded successful clean-system package installation, published-guide
   verification, and ExpressVPN and Tailscale stabilization smoke tests.
 
+### Interface
+
+- Realigned the Neon header's system-information rail and added a compact,
+  unboxed telemetry header for terminals narrower than the 67-column frame.
+- Added regression coverage for every full-width header rail and narrow-mode
+  overflow.
+
 ## 3.0 — 2026-08-26
 
 Version 3.0 introduces the CYBEROPS plugin framework, starting with VPN provider
