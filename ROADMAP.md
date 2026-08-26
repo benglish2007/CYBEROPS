@@ -349,11 +349,17 @@ packaging or upgrade corrections, and documentation repairs found during this
 period; it should not introduce a new plugin contract.
 
 - [x] Confirm the GitHub Actions run associated with `v3.0` is green.
-- [ ] Install the published `cyberops_3.0_all.deb` on a clean supported system.
-- [ ] Verify the published download, installation, upgrade, and removal instructions exactly as written.
+- [x] Install the published `cyberops_3.0_all.deb` on a clean supported system.
+- [x] Verify the published download, installation, upgrade, and removal instructions exactly as written.
 - [ ] Smoke-test install, validate, status, uninstall, and catalog-return behavior for every packaged VPN plugin.
 - [ ] Live-test NordVPN, Proton VPN, and Mullvad VPN where provider accounts and clients are available.
 - [ ] Record any v3.0 defects and provider CLI compatibility findings before deciding whether v3.0.1 is needed.
+
+### v3.0 stabilization verification — 2026-08-26
+
+- [x] Installed the published Debian package on a clean supported system without issues.
+- [x] Verified the published operational guides work as written.
+- [x] Smoke-tested live ExpressVPN and Tailscale controls successfully.
 
 ## Proposed Milestone 17: v3.1 Plugin Catalog Metadata
 

@@ -11,6 +11,8 @@ All notable changes to CYBEROPS are documented in this file.
   sanitization, system triage, menu organization, web and agent interfaces,
   and further cyberpunk presentation work. Clarified the long-term extensibility
   and portability backlog and marked its existing policy decisions complete.
+- Recorded successful clean-system package installation, published-guide
+  verification, and ExpressVPN and Tailscale stabilization smoke tests.
 
 ## 3.0 — 2026-08-26
 
