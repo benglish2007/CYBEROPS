@@ -5,6 +5,7 @@ set -uo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+CYBEROPS_BUILTIN_PLUGIN_DIR="$REPO_DIR/plugins-available"
 # shellcheck source=cyberops.sh
 source "$REPO_DIR/cyberops.sh"
 
@@ -60,7 +61,7 @@ run_checked() {
 }
 show_vpn_status >/dev/null
 record_result "combined VPN status queries each installed supported client" \
-    "${vpn_commands[*]}" "tailscale status expressvpnctl status"
+    "${vpn_commands[*]}" "expressvpnctl status tailscale status"
 
 vpn_commands=()
 have() { [[ "$1" == "expressvpn" ]]; }
@@ -74,7 +75,8 @@ vpn_missing_output="$(show_vpn_status 2>&1)"
 vpn_missing_status=$?
 set -e
 record_result "VPN status fails when no supported client exists" "$vpn_missing_status" 1
-if [[ "$vpn_missing_output" == *"No supported VPN client is installed"* ]]; then
+if [[ "$vpn_missing_output" == *"No supported VPN provider is ready"* &&
+    "$vpn_missing_output" == *"plugins available vpn"* ]]; then
     vpn_guidance=clear
 else
     vpn_guidance=missing

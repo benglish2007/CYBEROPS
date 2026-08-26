@@ -47,7 +47,7 @@ have() {
 DRY_RUN=0
 banner_output="$(banner | strip_ansi)"
 if [[ "$banner_output" == *"CYBEROPS // NIGHT CITY RELAY"* &&
-    "$banner_output" == *"BUILD://2.14.1"* &&
+    "$banner_output" == *"BUILD://3.0"* &&
     "$banner_output" == *"THREATGRID: ONLINE"* &&
     "$banner_output" == *"LIVE SIGNAL MATRIX"* ]]; then
     banner_result=themed

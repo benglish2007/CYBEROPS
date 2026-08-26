@@ -28,13 +28,15 @@ permanent-address state is yellow rather than being misreported as modified.
 | Command channel | `system services`, `system failures` | User | Read-only systemd unit telemetry with paging disabled |
 | Command channel | `storage devices` | User | Read-only block-device names, sizes, filesystems, mounts, models, and transport |
 | Command channel | `network interfaces`, `network routes`, `network sockets` | User | Read-only local addresses, routes, and listening sockets; does not contact an external service |
-| Command channel | `vpn status` | User | Queries local status from installed Tailscale and/or ExpressVPN clients |
+| Command channel | `vpn status` | User | Queries local status from user-selected VPN provider plugins |
+| Plugins | Install optional VPN provider | User | Copies one package-supplied plugin into the current user's XDG data directory |
+| Plugins | Uninstall VPN provider | User | Removes only the selected plugin from the current user's XDG data directory |
 | Admin | Update or upgrade packages | `sudo` | Changes package metadata or installed packages |
 | Admin | Local filesystem, memory, and service status | User; some details may be restricted | Read-only telemetry; Disk Usage excludes remote mounts |
 | Admin | Reboot | `sudo` | Terminates the session and restarts the host |
 | Info | Host, CPU, memory, storage, network, route, socket status | User | Read-only local telemetry |
 | Info | Public IP lookup | User and network access | Sends a request to `api.ipify.org` |
-| VPN | Status | User | Read-only Tailscale or ExpressVPN client telemetry |
+| VPN | Status | User | Read-only telemetry from installed provider plugins |
 | VPN | Connect, disconnect, up, or down | Client-dependent | Changes VPN or overlay-network connectivity |
 | VPN | ExpressVPN background mode | User | Allows or prevents the ExpressVPN daemon from remaining active without its GUI; disabling it may disconnect an active VPN |
 | Security | UFW status | `sudo` | Read-only firewall telemetry |

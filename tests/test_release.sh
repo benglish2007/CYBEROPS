@@ -14,7 +14,7 @@ source "$REPO_DIR/packaging/release.sh"
 
 tests_run=0
 tests_failed=0
-CURRENT_VERSION=2.14.1
+CURRENT_VERSION=3.0
 
 record_result() {
     local name="$1"
@@ -54,8 +54,8 @@ else
 fi
 record_result "$metadata_test_name" "$metadata_status" "$expected_metadata_status"
 notes="$(extract_release_notes "$CURRENT_VERSION")"
-[[ "$notes" == *"ExpressVPN Maintenance"* &&
-    "$notes" != *"## 2.14"* ]]
+[[ "$notes" == *"Plugin Architecture"* &&
+    "$notes" != *"## 2.14.1"* ]]
 record_result "extracts only the prepared release notes" "$?" 0
 
 if grep -Fq 'release-check:' "$REPO_DIR/Makefile" &&
@@ -84,7 +84,7 @@ unset -f make
 
 release_check() { return 0; }
 require_release_command() { return 0; }
-build_release_artifact() { printf '%s/cyberops_2.14.1_all.deb' "$TEST_DIR"; }
+build_release_artifact() { printf '%s/cyberops_3.0_all.deb' "$TEST_DIR"; }
 local_tag_state() { printf 'absent'; }
 git() {
     case "$*" in
@@ -104,13 +104,13 @@ gh() {
 
 publish_release "$CURRENT_VERSION" >/dev/null
 record_result "publishes a validated release" "$?" 0
-grep -Fq 'tag -a v2.14.1' "$MOCK_LOG"
+grep -Fq 'tag -a v3.0' "$MOCK_LOG"
 record_result "creates an annotated version tag" "$?" 0
-grep -Fq 'push origin v2.14.1' "$MOCK_LOG"
+grep -Fq 'push origin v3.0' "$MOCK_LOG"
 record_result "pushes only the version tag" "$?" 0
-grep -Fq 'release create v2.14.1 --verify-tag' "$MOCK_LOG"
+grep -Fq 'release create v3.0 --verify-tag' "$MOCK_LOG"
 record_result "creates a release from the verified tag" "$?" 0
-grep -Fq 'cyberops_2.14.1_all.deb#CYBEROPS v2.14.1 Debian package' "$MOCK_LOG"
+grep -Fq 'cyberops_3.0_all.deb#CYBEROPS v3.0 Debian package' "$MOCK_LOG"
 record_result "attaches the native Debian package to the release" "$?" 0
 
 : >"$MOCK_LOG"

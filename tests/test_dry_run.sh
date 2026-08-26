@@ -6,6 +6,8 @@
 set -uo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+CYBEROPS_BUILTIN_PLUGIN_DIR="$REPO_DIR/plugins-available"
 # shellcheck source=cyberops.sh
 source "$SCRIPT_DIR/../cyberops.sh"
 
@@ -137,7 +139,7 @@ record_result "Docker dry-run previews pull and recreation without execution" "$
 
 vpn_choice_index=0
 vpn_command=""
-vpn_choices=(3 0)
+vpn_choices=(5 3 0 0)
 
 banner() {
     return 0

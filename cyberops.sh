@@ -21,7 +21,7 @@ set -o pipefail
 CYBEROPS_SOURCE_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 CYBEROPS_LIB_DIR="${CYBEROPS_LIB_DIR:-$CYBEROPS_SOURCE_DIR/lib}"
 CYBEROPS_REQUIRED_MODULES=(
-    runtime core telemetry ui diagnostics docker admin info vpn security mac quickhacks usb menu
+    runtime core telemetry ui plugins diagnostics docker admin info vpn security mac quickhacks usb menu
 )
 
 load_cyberops_module() {
@@ -63,7 +63,9 @@ Usage:
   cyberops [OPTIONS] system <disk|memory|services|failures>
   cyberops [OPTIONS] storage devices
   cyberops [OPTIONS] network <interfaces|routes|sockets>
-  cyberops [OPTIONS] vpn status
+  cyberops [OPTIONS] vpn status [PLUGIN_ID]
+  cyberops [OPTIONS] plugins <list|validate|available> [CATEGORY]
+  cyberops [OPTIONS] plugins <install|uninstall> CATEGORY PLUGIN_ID
   cyberops [OPTIONS] docker status
   cyberops [OPTIONS] config <path|show|check>
   cyberops [OPTIONS] logs <path|tail>
@@ -85,7 +87,19 @@ Commands:
                    Print local network-interface addresses and state.
   network routes   Print the local routing table.
   network sockets  Print listening sockets.
-  vpn status       Print status for installed supported VPN clients.
+  vpn status       Print status for installed VPN provider plugins.
+  vpn status PLUGIN_ID
+                   Print status for one VPN provider plugin.
+  plugins list [CATEGORY]
+                   List discovered plugins, optionally filtered by category.
+  plugins validate [CATEGORY]
+                   Validate installed plugins, optionally filtered by category.
+  plugins available [CATEGORY]
+                   List optional plugins supplied with CYBEROPS.
+  plugins install CATEGORY PLUGIN_ID
+                   Install an optional plugin for the current user.
+  plugins uninstall CATEGORY PLUGIN_ID
+                   Uninstall a current user's plugin.
   docker status    Print container status and Docker disk usage.
   config path      Print the active configuration-file path.
   config show      Print the effective non-secret configuration.
@@ -157,6 +171,61 @@ cyberops_main() {
                 return 2
             fi
             export_diagnostics_bundle "${command_arguments[2]:-}"
+            return
+        fi
+        if [[ "${command_arguments[0]}" == "plugins" ]]; then
+            if [[ "${command_arguments[1]:-}" == "list" ]]; then
+                if ((${#command_arguments[@]} > 3)); then
+                    printf 'CYBEROPS: plugins list accepts at most one category.\n' >&2
+                    return 2
+                fi
+                list_plugins "${command_arguments[2]:-}"
+                return
+            fi
+            if [[ "${command_arguments[1]:-}" == "validate" ]]; then
+                if ((${#command_arguments[@]} > 3)); then
+                    printf 'CYBEROPS: plugins validate accepts at most one category.\n' >&2
+                    return 2
+                fi
+                validate_all_plugins "${command_arguments[2]:-}"
+                return
+            fi
+            if [[ "${command_arguments[1]:-}" == "available" ]]; then
+                if ((${#command_arguments[@]} > 3)); then
+                    printf 'CYBEROPS: plugins available accepts at most one category.\n' >&2
+                    return 2
+                fi
+                list_available_plugins "${command_arguments[2]:-}"
+                return
+            fi
+            if [[ "${command_arguments[1]:-}" == "install" ]]; then
+                if ((${#command_arguments[@]} != 4)); then
+                    printf 'CYBEROPS: plugins install requires CATEGORY and PLUGIN_ID.\n' >&2
+                    return 2
+                fi
+                install_user_plugin "${command_arguments[2]}" "${command_arguments[3]}"
+                return
+            fi
+            if [[ "${command_arguments[1]:-}" == "uninstall" ]]; then
+                if ((${#command_arguments[@]} != 4)); then
+                    printf 'CYBEROPS: plugins uninstall requires CATEGORY and PLUGIN_ID.\n' >&2
+                    return 2
+                fi
+                uninstall_user_plugin "${command_arguments[2]}" "${command_arguments[3]}"
+                return
+            fi
+            printf 'CYBEROPS: unknown plugins command: %s\n' "${command_arguments[*]}" >&2
+            printf "Try 'cyberops --help' for usage.\n" >&2
+            return 2
+        fi
+        if [[ "${command_arguments[0]}" == "vpn" &&
+            "${command_arguments[1]:-}" == "status" &&
+            -n "${command_arguments[2]:-}" ]]; then
+            if ((${#command_arguments[@]} > 3)); then
+                printf 'CYBEROPS: vpn status accepts at most one plugin id.\n' >&2
+                return 2
+            fi
+            run_vpn_plugin_action "${command_arguments[2]}" status
             return
         fi
         case "${command_arguments[*]}" in

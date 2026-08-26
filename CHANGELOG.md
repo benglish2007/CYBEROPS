@@ -2,6 +2,43 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## Unreleased
+
+### Optional VPN Providers
+
+- Moved Tailscale and ExpressVPN from the active built-in root into the packaged
+  optional-provider catalog, and added NordVPN, Proton VPN, and Mullvad VPN.
+- Added separate interactive install and uninstall submenus under VPN Control.
+- Added `cyberops plugins available`, `plugins install`, and `plugins uninstall`
+  so each user controls which VPN providers are active.
+- Kept user-installed plugins outside package ownership so upgrades and package
+  removal do not delete user choices.
+
+## 3.0 — 2026-08-25
+
+Version 3.0 introduces the CYBEROPS plugin framework, starting with VPN provider
+plugins that decouple Tailscale, ExpressVPN, and future providers from the core
+VPN menu.
+
+### Plugin Architecture
+
+- Added deterministic plugin discovery from built-in and user plugin roots.
+- Added fail-closed plugin validation for metadata, category, id, action names,
+  shell syntax, and action function contracts.
+- Added `cyberops plugins list`, `cyberops plugins validate`, and
+  `cyberops vpn status <plugin-id>` command channels.
+- Refactored Tailscale and ExpressVPN into built-in VPN plugins while preserving
+  the current ExpressVPN `expressvpnctl` command set and legacy `expressvpn`
+  fallback.
+- Generated the interactive VPN provider and action menus from plugin metadata,
+  preserving `[SUDO]` markers for privileged plugin actions.
+- Included built-in plugins and plugin documentation in the Debian package.
+
+### Verification
+
+- Added plugin discovery, validation, malformed-plugin, missing-dependency, CLI,
+  packaging, and VPN dispatch regression coverage.
+
 ## 2.14.1 — 2026-08-22
 
 Version 2.14.1 repairs the ExpressVPN integration for the current Linux client,
