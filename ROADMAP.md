@@ -368,6 +368,58 @@ plugin contract has completed its stabilization period.
 - [ ] Add provider-specific configuration actions without weakening action validation or dry-run behavior.
 - [ ] Update authoring documentation, package coverage, and migration tests for the finalized metadata contract.
 
+## Idea Backlog
+
+These ideas are exploratory and are not assigned to a release. Promote an idea
+to a milestone only after its scope, safety boundary, dependencies, user
+experience, and verification plan are understood.
+
+### Standards-aligned media sanitization
+
+- [ ] Research a stronger USB and storage sanitization workflow based on current media-sanitization guidance rather than assuming that a fixed three-pass overwrite is appropriate for every device.
+- [ ] Distinguish clear, purge, and destroy outcomes and explain what CYBEROPS can and cannot verify.
+- [ ] Detect relevant media characteristics, including flash storage where wear leveling can make overwrite claims unreliable.
+- [ ] Preserve protected-disk checks, identity revalidation, exact-capacity bounds, explicit confirmation, dry-run output, and interruption guidance.
+- [ ] Produce a verifiable sanitization report without claiming guarantees the underlying device cannot provide.
+
+### System triage and indicator-of-compromise plugin
+
+- [ ] Explore a triage or Cyber Defense plugin that runs a coordinated, read-only collection and analysis workflow.
+- [ ] Define trusted indicator sources, update provenance, signatures, caching, offline behavior, and expiration rules before downloading IOC data.
+- [ ] Separate evidence collection from findings, preserve timestamps and hashes, and avoid declaring a system clean solely because no indicators matched.
+- [ ] Redact secrets and personal data from reports, use private output permissions, and document false-positive and false-negative boundaries.
+- [ ] Require explicit authorization for any containment, quarantine, deletion, or remediation action added later.
+
+### Menu and information-architecture review
+
+- [ ] Inventory every command and interactive operation by user intent, privilege, side effect, and operational domain.
+- [ ] Prototype clearer menu groupings and names without changing command-channel compatibility.
+- [ ] Test navigation depth, `[00]` return behavior, `[SUDO]` visibility, narrow terminals, classic mode, and no-color accessibility.
+- [ ] Provide migration notes for any operation that moves between menus.
+
+### Web-reachable dashboard
+
+- [ ] Explore a local, read-only-first dashboard for host status, diagnostics, operation history, and plugin readiness.
+- [ ] Define the threat model, authentication, authorization, TLS, bind-address defaults, session security, and network-exposure warnings before implementation.
+- [ ] Keep the default listener on localhost and require deliberate configuration for remote reachability.
+- [ ] Reuse existing privacy filtering and avoid exposing secrets, raw command arguments, or unrestricted logs.
+- [ ] Require separate confirmation and least-privilege controls before allowing any state-changing operation.
+
+### API for AI-agent operation
+
+- [ ] Explore a versioned API that exposes narrowly scoped CYBEROPS capabilities to authenticated automation and AI agents.
+- [ ] Begin with read-only inventory, status, preview, and diagnostics operations; do not expose an unrestricted shell or generic command executor.
+- [ ] Design least-privilege credentials, capability scopes, rate limits, replay protection, idempotency, timeouts, and complete audit records.
+- [ ] Require human authorization for destructive, privileged, connectivity-changing, containment, and remediation actions.
+- [ ] Define safe failure, cancellation, concurrency, dry-run, and recovery semantics before enabling mutations.
+
+### More cyberpunk presentation
+
+- [ ] Explore additional cyberpunk visual polish, terminology, animation, sound-optional cues, and dashboard styling.
+- [ ] Keep operation names, risks, privilege markers, confirmations, recovery instructions, and current state unambiguous.
+- [ ] Preserve classic mode, no-color output, reduced-motion behavior, screen-reader-friendly text, narrow-terminal layouts, and noninteractive output stability.
+- [ ] Measure startup and redraw performance so visual effects never delay safety-critical feedback.
+
 ## Deferred: Additional Portability
 
 The initial v3 plugin system is intentionally scoped to VPN provider plugins.
