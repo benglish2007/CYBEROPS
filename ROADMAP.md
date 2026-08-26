@@ -335,6 +335,39 @@ ExpressVPN integration verified against the current `expressvpnctl` interface.
 See [docs/V3-READINESS.md](docs/V3-READINESS.md) for the contract and exact
 automated versus manual verification boundaries.
 
+### v3.0 release — 2026-08-26
+
+- [x] Published the annotated `v3.0` tag from synchronized `main`.
+- [x] Published the GitHub Release with `cyberops_3.0_all.deb` attached.
+- [x] Verified the public release is neither a draft nor a prerelease.
+
+## Milestone 16: v3.0 Stabilization and v3.0.1 Policy
+
+Stabilize the published plugin architecture before expanding its scope. A
+v3.0.1 release is reserved for defects, provider compatibility fixes,
+packaging or upgrade corrections, and documentation repairs found during this
+period; it should not introduce a new plugin contract.
+
+- [x] Confirm the GitHub Actions run associated with `v3.0` is green.
+- [ ] Install the published `cyberops_3.0_all.deb` on a clean supported system.
+- [ ] Verify the published download, installation, upgrade, and removal instructions exactly as written.
+- [ ] Smoke-test install, validate, status, uninstall, and catalog-return behavior for every packaged VPN plugin.
+- [ ] Live-test NordVPN, Proton VPN, and Mullvad VPN where provider accounts and clients are available.
+- [ ] Record any v3.0 defects and provider CLI compatibility findings before deciding whether v3.0.1 is needed.
+
+## Proposed Milestone 17: v3.1 Plugin Catalog Metadata
+
+Improve the local plugin catalog experience without introducing remote plugin
+downloads or a marketplace. Freeze any metadata additions only after the v3.0
+plugin contract has completed its stabilization period.
+
+- [ ] Define optional metadata for supported platforms and provider client versions.
+- [ ] Add plugin descriptions and official installation or support URLs.
+- [ ] Show dependency readiness and missing-client guidance in the install catalog.
+- [ ] Define catalog and plugin compatibility-version fields with fail-closed validation.
+- [ ] Add provider-specific configuration actions without weakening action validation or dry-run behavior.
+- [ ] Update authoring documentation, package coverage, and migration tests for the finalized metadata contract.
+
 ## Deferred: Additional Portability
 
 The initial v3 plugin system is intentionally scoped to VPN provider plugins.

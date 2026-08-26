@@ -2,6 +2,13 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## Unreleased
+
+### Project Planning
+
+- Added the post-v3.0 stabilization, v3.0.1 patch-policy, and proposed v3.1
+  plugin-metadata milestones to the roadmap.
+
 ## 3.0 — 2026-08-26
 
 Version 3.0 introduces the CYBEROPS plugin framework, starting with VPN provider
