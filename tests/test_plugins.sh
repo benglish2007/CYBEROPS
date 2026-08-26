@@ -5,6 +5,12 @@ set -uo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+TEST_PLUGIN_DIR="$(mktemp -d)"
+trap 'rm -rf -- "$TEST_PLUGIN_DIR"' EXIT
+mkdir -p -- "$TEST_PLUGIN_DIR/builtin" "$TEST_PLUGIN_DIR/user"
+CYBEROPS_BUILTIN_PLUGIN_DIR="$TEST_PLUGIN_DIR/builtin"
+CYBEROPS_AVAILABLE_PLUGIN_DIR="$REPO_DIR/plugins-available"
+CYBEROPS_USER_PLUGIN_DIR="$TEST_PLUGIN_DIR/user"
 # shellcheck source=cyberops.sh
 source "$REPO_DIR/cyberops.sh"
 
@@ -26,16 +32,24 @@ record_result() {
     fi
 }
 
-builtin_plugins="$(discover_plugins vpn | tr '\n' ' ')"
-case "$builtin_plugins" in
-    *"vpn:expressvpn:"*"vpn:tailscale:"*) discovery_result=found ;;
+installed_plugins="$(discover_plugins vpn)"
+record_result "ships no preinstalled VPN plugins" "$installed_plugins" ""
+
+available_plugins="$(discover_available_plugins vpn | tr '\n' ' ')"
+case "$available_plugins" in
+    *"vpn:expressvpn:"*"vpn:mullvad:"*"vpn:nordvpn:"*"vpn:protonvpn:"*"vpn:tailscale:"*) discovery_result=found ;;
     *) discovery_result=missing ;;
 esac
-record_result "discovers built-in VPN plugins" "$discovery_result" found
+record_result "discovers optional VPN plugins" "$discovery_result" found
 
-tailscale_path="$(plugin_path_for vpn tailscale)"
-record_result "resolves a built-in VPN plugin by id" \
-    "$tailscale_path" "$REPO_DIR/plugins/vpn/tailscale/plugin.sh"
+install_user_plugin vpn tailscale >/dev/null
+tailscale_error_file="$(mktemp)"
+tailscale_path="$(plugin_path_for vpn tailscale 2>"$tailscale_error_file")"
+record_result "installs and resolves a selected VPN plugin" \
+    "$tailscale_path" "$TEST_PLUGIN_DIR/user/vpn/tailscale/plugin.sh"
+record_result "resolves a plugin without stderr warnings" \
+    "$(<"$tailscale_error_file")" ""
+rm -f -- "$tailscale_error_file"
 
 if validate_plugin vpn "$tailscale_path" >/dev/null; then
     tailscale_valid=valid
@@ -44,14 +58,19 @@ else
 fi
 record_result "validates a well-formed VPN plugin" "$tailscale_valid" valid
 
-TEST_PLUGIN_DIR="$(mktemp -d)"
-trap 'rm -rf -- "$TEST_PLUGIN_DIR"' EXIT
-mkdir -p -- "$TEST_PLUGIN_DIR/vpn/broken"
+uninstall_user_plugin vpn tailscale >/dev/null
+if [[ ! -e "$tailscale_path" ]]; then
+    uninstall_result=removed
+else
+    uninstall_result=present
+fi
+record_result "uninstalls a selected user VPN plugin" "$uninstall_result" removed
+
+mkdir -p -- "$TEST_PLUGIN_DIR/user/vpn/broken"
 printf 'CYBEROPS_PLUGIN_ID="bad id"\nCYBEROPS_PLUGIN_CATEGORY="vpn"\n' \
-    >"$TEST_PLUGIN_DIR/vpn/broken/plugin.sh"
-CYBEROPS_USER_PLUGIN_DIR="$TEST_PLUGIN_DIR"
+    >"$TEST_PLUGIN_DIR/user/vpn/broken/plugin.sh"
 set +e
-broken_output="$(validate_plugin vpn "$TEST_PLUGIN_DIR/vpn/broken/plugin.sh" 2>&1)"
+broken_output="$(validate_plugin vpn "$TEST_PLUGIN_DIR/user/vpn/broken/plugin.sh" 2>&1)"
 broken_status=$?
 set -e
 record_result "rejects malformed plugin metadata" "$broken_status" 1
@@ -61,8 +80,8 @@ case "$broken_output" in
 esac
 record_result "explains malformed plugin rejection" "$broken_message" clear
 
-mkdir -p -- "$TEST_PLUGIN_DIR/vpn/demo"
-cat >"$TEST_PLUGIN_DIR/vpn/demo/plugin.sh" <<'PLUGIN'
+mkdir -p -- "$TEST_PLUGIN_DIR/user/vpn/demo"
+cat >"$TEST_PLUGIN_DIR/user/vpn/demo/plugin.sh" <<'PLUGIN'
 CYBEROPS_PLUGIN_ID="demo"
 CYBEROPS_PLUGIN_CATEGORY="vpn"
 CYBEROPS_PLUGIN_NAME="Demo VPN"
@@ -78,7 +97,7 @@ PLUGIN
 
 demo_path="$(plugin_path_for vpn demo)"
 record_result "resolves user-installed VPN plugin by id" \
-    "$demo_path" "$TEST_PLUGIN_DIR/vpn/demo/plugin.sh"
+    "$demo_path" "$TEST_PLUGIN_DIR/user/vpn/demo/plugin.sh"
 
 if load_plugin vpn "$demo_path" >/dev/null && plugin_action_supported connect; then
     action_result=supported

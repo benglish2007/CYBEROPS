@@ -4,7 +4,7 @@
 # Plugin framework contract
 # -------------------------
 # Inputs:
-#   Runtime directories plus plugin files under built-in and user plugin roots.
+#   Runtime directories plus available, administrator, and user plugin roots.
 # Outputs:
 #   Plugin discovery, validation, and action dispatch results.
 # Return statuses:
@@ -14,6 +14,7 @@
 #   defines the plugin action functions from the selected plugin file only.
 
 CYBEROPS_BUILTIN_PLUGIN_DIR="${CYBEROPS_BUILTIN_PLUGIN_DIR:-$CYBEROPS_SOURCE_DIR/plugins}"
+CYBEROPS_AVAILABLE_PLUGIN_DIR="${CYBEROPS_AVAILABLE_PLUGIN_DIR:-$CYBEROPS_SOURCE_DIR/plugins-available}"
 CYBEROPS_USER_PLUGIN_DIR="${CYBEROPS_USER_PLUGIN_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/cyberops/plugins}"
 CYBEROPS_PLUGIN_ID=""
 CYBEROPS_PLUGIN_CATEGORY=""
@@ -56,15 +57,20 @@ plugin_path_allowed() {
     local plugin_path="$1"
     local real_plugin
     local real_builtin
+    local real_available
     local real_user
 
     [[ "$plugin_path" == */plugin.sh ]] || return 1
     [[ "$plugin_path" != *'/../'* && "$plugin_path" != */.. ]] || return 1
     real_plugin="$(plugin_realpath "$plugin_path")" || return 1
     real_builtin="$(plugin_realpath "$CYBEROPS_BUILTIN_PLUGIN_DIR")" || real_builtin=""
+    real_available="$(plugin_realpath "$CYBEROPS_AVAILABLE_PLUGIN_DIR")" || real_available=""
     real_user="$(plugin_realpath "$CYBEROPS_USER_PLUGIN_DIR")" || real_user=""
 
     if [[ -n "$real_builtin" && "$real_plugin" == "$real_builtin"/* ]]; then
+        return 0
+    fi
+    if [[ -n "$real_available" && "$real_plugin" == "$real_available"/* ]]; then
         return 0
     fi
     if [[ -n "$real_user" && "$real_plugin" == "$real_user"/* ]]; then
@@ -90,7 +96,7 @@ load_plugin_file() {
     fi
 
     reset_plugin_metadata
-    # Plugin paths are constrained to the built-in and user plugin roots above.
+    # Plugin paths are constrained to the recognized plugin roots above.
     # shellcheck disable=SC1090
     source "$plugin_path"
 }
@@ -184,22 +190,126 @@ discover_plugins() {
     done
 }
 
+discover_available_plugins() {
+    local category="$1"
+    local plugin_path
+
+    [[ -d "$CYBEROPS_AVAILABLE_PLUGIN_DIR/$category" ]] || return 0
+    while IFS= read -r plugin_path; do
+        [[ -n "$plugin_path" ]] || continue
+        if validate_plugin "$category" "$plugin_path" >/dev/null 2>&1; then
+            printf '%s:%s:%s\n' "$category" "$CYBEROPS_PLUGIN_ID" "$plugin_path"
+        fi
+    done < <(find "$CYBEROPS_AVAILABLE_PLUGIN_DIR/$category" \
+        -mindepth 2 -maxdepth 2 -name plugin.sh -type f | sort)
+}
+
+available_plugin_path_for() {
+    local category="$1"
+    local requested_id="$2"
+    local descriptor
+    local plugin_id
+    local matched_path=""
+
+    while IFS= read -r descriptor; do
+        plugin_id="${descriptor#*:}"
+        plugin_id="${plugin_id%%:*}"
+        if [[ -z "$matched_path" && "$plugin_id" == "$requested_id" ]]; then
+            matched_path="${descriptor#*:*:}"
+        fi
+    done < <(discover_available_plugins "$category")
+
+    if [[ -n "$matched_path" ]]; then
+        printf '%s\n' "$matched_path"
+        return 0
+    fi
+
+    report_error "No available $category plugin found with id: $requested_id"
+    return 1
+}
+
+list_available_plugins() {
+    local category="${1:-vpn}"
+    local descriptor
+    local plugin_path
+
+    while IFS= read -r descriptor; do
+        plugin_path="${descriptor#*:*:}"
+        load_plugin "$category" "$plugin_path" >/dev/null || continue
+        printf '%s\t%s\t%s\t%s\n' \
+            "$CYBEROPS_PLUGIN_CATEGORY" "$CYBEROPS_PLUGIN_ID" \
+            "$CYBEROPS_PLUGIN_NAME" "${CYBEROPS_PLUGIN_ACTIONS[*]}"
+    done < <(discover_available_plugins "$category")
+}
+
+install_user_plugin() {
+    local category="$1"
+    local plugin_id="$2"
+    local source_path
+    local destination_path="$CYBEROPS_USER_PLUGIN_DIR/$category/$plugin_id/plugin.sh"
+
+    source_path="$(available_plugin_path_for "$category" "$plugin_id")" || return 1
+    validate_plugin "$category" "$source_path" || return 1
+    if [[ -e "$destination_path" ]]; then
+        report_error \
+            "Plugin is already installed: $category/$plugin_id" \
+            "Remove $destination_path first if you want to reinstall it."
+        return 1
+    fi
+    install -D -m 0644 -- "$source_path" "$destination_path" || {
+        report_error "Could not install plugin at: $destination_path"
+        return 1
+    }
+    printf 'installed\t%s\t%s\n' "$plugin_id" "$destination_path"
+}
+
+uninstall_user_plugin() {
+    local category="$1"
+    local plugin_id="$2"
+    local destination_dir="$CYBEROPS_USER_PLUGIN_DIR/$category/$plugin_id"
+    local destination_path="$destination_dir/plugin.sh"
+
+    if [[ ! "$plugin_id" =~ ^[a-z][a-z0-9_-]*$ ]]; then
+        report_error "Invalid plugin id: $plugin_id"
+        return 1
+    fi
+    if [[ ! -f "$destination_path" ]]; then
+        report_error "User plugin is not installed: $category/$plugin_id"
+        return 1
+    fi
+    if ! validate_plugin "$category" "$destination_path"; then
+        report_error "Refusing to remove an invalid plugin path: $destination_path"
+        return 1
+    fi
+    rm -f -- "$destination_path" || {
+        report_error "Could not remove plugin at: $destination_path"
+        return 1
+    }
+    rmdir -- "$destination_dir" 2>/dev/null || true
+    printf 'uninstalled\t%s\t%s\n' "$plugin_id" "$destination_path"
+}
+
 plugin_path_for() {
     local category="$1"
     local requested_id="$2"
     local descriptor
     local plugin_id
     local plugin_path
+    local matched_path=""
 
     while IFS= read -r descriptor; do
         plugin_id="${descriptor#*:}"
         plugin_id="${plugin_id%%:*}"
         plugin_path="${descriptor#*:*:}"
-        if [[ "$plugin_id" == "$requested_id" ]]; then
-            printf '%s\n' "$plugin_path"
-            return 0
+        if [[ -z "$matched_path" && "$plugin_id" == "$requested_id" ]]; then
+            matched_path="$plugin_path"
         fi
     done < <(discover_plugins "$category")
+
+    if [[ -n "$matched_path" ]]; then
+        printf '%s\n' "$matched_path"
+        return 0
+    fi
 
     report_error "No $category plugin found with id: $requested_id"
     return 1
@@ -240,6 +350,7 @@ list_plugins() {
     local category
     local descriptor
     local plugin_path
+    local -a categories=()
 
     if [[ -n "$category_filter" ]]; then
         categories=("$category_filter")
@@ -264,6 +375,7 @@ validate_all_plugins() {
     local root
     local plugin_path
     local failures=0
+    local -a categories=()
 
     if [[ -n "$category_filter" ]]; then
         categories=("$category_filter")

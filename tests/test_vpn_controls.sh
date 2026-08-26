@@ -4,6 +4,7 @@
 set -uo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+CYBEROPS_BUILTIN_PLUGIN_DIR="$REPO_DIR/plugins-available"
 # shellcheck source=cyberops.sh
 source "$REPO_DIR/cyberops.sh"
 
@@ -53,10 +54,15 @@ run_mutating_checked() {
 
 vpn_menu >/dev/null
 case "${menu_rows[*]}" in
-    *"item:1:ExpressVPN:VPN // ExpressVPN"*"item:2:Tailscale:VPN // Tailscale"*) provider_menu=dynamic ;;
+    *"item:1:ExpressVPN:VPN // ExpressVPN"*"item:2:Mullvad VPN:VPN // Mullvad VPN"*"item:3:NordVPN:VPN // NordVPN"*"item:4:Proton VPN:VPN // Proton VPN"*"item:5:Tailscale:VPN // Tailscale"*) provider_menu=dynamic ;;
     *) provider_menu=static ;;
 esac
 record_result "VPN menu lists discovered provider plugins" "$provider_menu" dynamic
+case "${menu_rows[*]}" in
+    *"item:6:Install VPN plugins:VPN // PLUGIN CATALOG"*"item:7:Uninstall VPN plugins:VPN // USER PLUGINS"*) plugin_menus=separate ;;
+    *) plugin_menus=missing ;;
+esac
+record_result "VPN menu separates plugin installation and removal" "$plugin_menus" separate
 case "${menu_rows[*]}" in
     *"item:1:Status:VPN // STATUS"*"item:2:Connect:VPN // CONNECT"*"item:3:Disconnect:VPN // DISCONNECT"*"item:4:Background mode on:VPN // HEADLESS ENABLE"*"item:5:Background mode off:VPN // HEADLESS DISABLE"*) action_menu=plugin ;;
     *) action_menu=missing ;;

@@ -6,12 +6,17 @@ core menu and command dispatch code.
 
 ## Plugin roots
 
-CYBEROPS discovers plugins from two roots, in deterministic sorted order:
+CYBEROPS keeps optional providers separate from active plugins:
 
-1. Built-in plugins shipped with CYBEROPS:
-   `/usr/lib/cyberops/plugins` when installed, or `./plugins` from source.
-2. User plugins:
+1. Package-supplied, inactive choices:
+   `/usr/lib/cyberops/plugins-available` when installed, or
+   `./plugins-available` from source.
+2. Active user plugins:
    `${XDG_DATA_HOME:-$HOME/.local/share}/cyberops/plugins`.
+
+The reserved `/usr/lib/cyberops/plugins` root remains supported for
+administrator-managed plugins, but the standard package installs no active VPN
+provider there.
 
 A plugin lives at:
 
@@ -22,8 +27,8 @@ plugins/<category>/<plugin-id>/plugin.sh
 For example:
 
 ```text
-plugins/vpn/tailscale/plugin.sh
-plugins/vpn/expressvpn/plugin.sh
+plugins-available/vpn/tailscale/plugin.sh
+plugins-available/vpn/expressvpn/plugin.sh
 ~/.local/share/cyberops/plugins/vpn/mullvad/plugin.sh
 ```
 
@@ -32,7 +37,7 @@ plugins/vpn/expressvpn/plugin.sh
 Plugin loading is intentionally conservative:
 
 - plugin files must be named `plugin.sh`;
-- plugin paths must resolve inside the built-in or user plugin roots;
+- plugin paths must resolve inside the available, administrator, or user plugin roots;
 - plugin files must pass `bash -n` before sourcing;
 - plugin ids must match `^[a-z][a-z0-9_-]*$`;
 - category metadata must match the discovery category;
@@ -53,6 +58,9 @@ cyberops plugins list
 cyberops plugins list vpn
 cyberops plugins validate
 cyberops plugins validate vpn
+cyberops plugins available vpn
+cyberops plugins install vpn tailscale
+cyberops plugins uninstall vpn tailscale
 ```
 
 `plugins list` prints tab-separated rows:
@@ -64,8 +72,13 @@ category    id    display name    actions
 `plugins validate` prints `valid` or `invalid` with each plugin path and returns
 nonzero if any discovered plugin is malformed.
 
+`plugins available` lists package-supplied choices. `plugins install` copies the
+selected provider into the current user's plugin root; `plugins uninstall`
+removes it from that root. Neither operation requires root. Administrator-managed
+plugins are never removed by the user uninstall command.
+
 ## Packaging
 
-Built-in plugins are installed beneath `/usr/lib/cyberops/plugins` and included
-in the Debian package. User plugins remain user-owned and are never removed by
-package upgrades or uninstalls.
+Optional plugins are packaged beneath `/usr/lib/cyberops/plugins-available` but
+are inactive until selected. User plugins remain user-owned and are never
+removed by package upgrades or uninstalls.

@@ -5,9 +5,9 @@ major-version contract and introduces the first extensibility point: guarded VPN
 provider plugins.
 
 The v2.14.1 maintenance release repaired and verified the ExpressVPN integration.
-The v3 candidate keeps that behavior by moving ExpressVPN and Tailscale into
-built-in VPN plugins while preserving command behavior, dry-run previews,
-operation logging, menu styling, and Debian packaging.
+The v3 line keeps that behavior through optional ExpressVPN, Mullvad VPN,
+NordVPN, Proton VPN, and Tailscale plugins while preserving command behavior,
+dry-run previews, operation logging, menu styling, and Debian packaging.
 
 ## Stable contracts
 
@@ -20,21 +20,23 @@ is explicitly documented as a v3 migration:
 - operation logging and diagnostics privacy boundaries
 - package name `cyberops`, `/usr` Debian layout, desktop identity, and in-place APT upgrades
 - classic, Neon Overdrive, narrow-terminal, and no-color presentation modes
-- deterministic plugin discovery from built-in and user plugin roots
+- deterministic discovery from package-supplied choices and user plugin roots
 - fail-closed plugin validation before plugin actions are executed
 
 ## Plugin gate
 
 The v3 plugin contract must be verified before release:
 
-1. Built-in `vpn/tailscale` and `vpn/expressvpn` plugins are discovered.
+1. All five catalog VPN plugins are discoverable but are not active before the
+   user selects them.
 2. User plugins under `${XDG_DATA_HOME:-$HOME/.local/share}/cyberops/plugins`
-   are discovered without contaminating built-in state.
+   are discovered without contaminating package-managed state.
 3. Malformed plugins are rejected and omitted from runtime menus.
 4. Missing provider commands are reported before actions execute.
 5. VPN menu rows are generated from plugin metadata and preserve `[SUDO]`
    markers for privileged actions.
-6. `cyberops plugins list`, `cyberops plugins validate`, and
+6. `cyberops plugins available`, `cyberops plugins install`, `cyberops plugins uninstall`,
+   `cyberops plugins list`, `cyberops plugins validate`, and
    `cyberops vpn status <plugin-id>` remain documented and tested.
 
 ## Automated gate
@@ -64,8 +66,8 @@ Use disposable supported systems and disposable removable media where needed:
    narrow-terminal, plugin-listing, and representative read-only command paths.
 4. Exercise Docker, VPN, MAC-policy, and destructive-media workflows only on
    appropriate disposable test targets.
-5. Install a disposable user VPN plugin, validate it, then remove it and confirm
-   built-in plugins still load.
+5. Use the separate VPN install and uninstall submenus, validate the selected
+   plugin, then confirm the removed provider returns to the available choices.
 6. Remove the package and confirm package-managed files disappear while
    user-owned configuration, state, and plugins remain.
 

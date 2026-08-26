@@ -95,6 +95,9 @@ show_listening_sockets() { printf 'SOCKET_STATUS\n'; }
 show_vpn_status() { printf 'VPN_STATUS\n'; }
 list_plugins() { printf 'PLUGIN_LIST:%s\n' "${1:-all}"; }
 validate_all_plugins() { printf 'PLUGIN_VALIDATE:%s\n' "${1:-all}"; }
+list_available_plugins() { printf 'PLUGIN_AVAILABLE:%s\n' "${1:-vpn}"; }
+install_user_plugin() { printf 'PLUGIN_INSTALL:%s:%s\n' "$1" "$2"; }
+uninstall_user_plugin() { printf 'PLUGIN_UNINSTALL:%s:%s\n' "$1" "$2"; }
 run_vpn_plugin_action() { printf 'VPN_PLUGIN:%s:%s\n' "$1" "$2"; }
 
 command_cases=(
@@ -111,6 +114,10 @@ command_cases=(
     "plugins list vpn|PLUGIN_LIST:vpn"
     "plugins validate|PLUGIN_VALIDATE:all"
     "plugins validate vpn|PLUGIN_VALIDATE:vpn"
+    "plugins available|PLUGIN_AVAILABLE:vpn"
+    "plugins available vpn|PLUGIN_AVAILABLE:vpn"
+    "plugins install vpn tailscale|PLUGIN_INSTALL:vpn:tailscale"
+    "plugins uninstall vpn tailscale|PLUGIN_UNINSTALL:vpn:tailscale"
     "vpn status expressvpn|VPN_PLUGIN:expressvpn:status"
 )
 for command_case in "${command_cases[@]}"; do

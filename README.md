@@ -25,8 +25,9 @@
 ### CYBEROPS Terminal v3.0
 
 Version 3.0 introduces the CYBEROPS plugin framework. VPN controls now run
-through provider plugins, with Tailscale and ExpressVPN shipped as built-in VPN
-plugins and user-installed provider plugins supported from the user plugin root.
+through provider plugins. ExpressVPN, Mullvad VPN, NordVPN, Proton VPN, and
+Tailscale ship as optional catalog choices and activate only when a user
+installs one.
 The existing safety model, dry-run previews, operation logging, command channel,
 and Debian package layout remain intact. See the [plugin guide](docs/PLUGINS.md),
 [VPN plugin guide](docs/VPN-PLUGINS.md), [changelog](CHANGELOG.md), and
@@ -126,7 +127,7 @@ upgrade, and coexistence details.
 | `[00]` | Exit Interface | Disconnect from the control deck |
 | `[01]` | Admin Ops | APT, storage, memory, services, and reboot |
 | `[02]` | Info Scan | Host, hardware, network, route, and socket telemetry |
-| `[03]` | VPN Control | Tailscale and ExpressVPN status and links |
+| `[03]` | VPN Control | User-selected VPN provider plugins and encrypted links |
 | `[04]` | Cyber Defense | UFW, ClamAV, `rkhunter`, and authentication inspection |
 | `[05]` | Quickhacks | Diagnostics, process, DNS, shred, and MAC utilities |
 | `[06]` | Docker Ops | Selective Compose maintenance, recovery evidence, and status |
@@ -156,7 +157,8 @@ Usage:
   cyberops [OPTIONS] storage devices
   cyberops [OPTIONS] network <interfaces|routes|sockets>
   cyberops [OPTIONS] vpn status [PLUGIN_ID]
-  cyberops [OPTIONS] plugins <list|validate> [CATEGORY]
+  cyberops [OPTIONS] plugins <list|validate|available> [CATEGORY]
+  cyberops [OPTIONS] plugins <install|uninstall> CATEGORY PLUGIN_ID
   cyberops [OPTIONS] docker status
   cyberops [OPTIONS] config <path|show|check>
   cyberops [OPTIONS] logs <path|tail>
@@ -186,6 +188,9 @@ cyberops network routes
 cyberops network sockets
 cyberops vpn status
 cyberops vpn status expressvpn
+cyberops plugins available vpn
+cyberops plugins install vpn tailscale
+cyberops plugins uninstall vpn tailscale
 cyberops plugins list vpn
 cyberops plugins validate vpn
 cyberops docker status

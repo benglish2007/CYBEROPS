@@ -5,6 +5,7 @@ set -uo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+CYBEROPS_BUILTIN_PLUGIN_DIR="$REPO_DIR/plugins-available"
 # shellcheck source=cyberops.sh
 source "$REPO_DIR/cyberops.sh"
 

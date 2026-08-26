@@ -30,9 +30,10 @@ The core script requires:
 - APT and systemd for the package-management and service-management modules
 
 Individual operations check their own command dependencies before starting.
-Optional features require their corresponding tools, such as Docker Compose,
-Tailscale, ExpressVPN (`expressvpnctl`, with legacy `expressvpn` fallback), UFW, ClamAV, `rkhunter`, `nmap`, `wavemon`, or
-`macchanger`.
+Optional features require their corresponding tools, such as Docker Compose;
+the Tailscale, ExpressVPN (`expressvpnctl`, with legacy `expressvpn` fallback),
+NordVPN, Proton VPN, or Mullvad VPN clients; UFW; ClamAV; `rkhunter`; `nmap`;
+`wavemon`; or `macchanger`.
 
 ## Automated Coverage
 

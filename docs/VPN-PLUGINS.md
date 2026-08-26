@@ -4,11 +4,23 @@ CYBEROPS v3 routes VPN status and control operations through `vpn` plugins.
 Core CYBEROPS discovers valid provider plugins, renders the provider menu, checks
 required commands, and then dispatches the selected plugin action.
 
-## Built-in VPN plugins
+## Optional VPN plugins
+
+List and install package-supplied providers with:
+
+```bash
+cyberops plugins available vpn
+cyberops plugins install vpn tailscale
+cyberops plugins uninstall vpn tailscale
+```
+
+The interactive VPN Control screen provides separate **Install VPN plugins**
+and **Uninstall VPN plugins** submenus. The uninstall menu shows only plugins
+owned by the current user.
 
 ### Tailscale
 
-Path: `plugins/vpn/tailscale/plugin.sh`
+Catalog path: `plugins-available/vpn/tailscale/plugin.sh`
 
 Actions:
 
@@ -21,7 +33,7 @@ respect `DRY_RUN=1` through `run_mutating_checked`.
 
 ### ExpressVPN
 
-Path: `plugins/vpn/expressvpn/plugin.sh`
+Catalog path: `plugins-available/vpn/expressvpn/plugin.sh`
 
 Actions:
 
@@ -35,6 +47,25 @@ Actions:
 The current `expressvpnctl` command is preferred. The legacy `expressvpn`
 command remains a compatibility fallback for status, connect, and disconnect.
 Background-mode actions require `expressvpnctl`.
+
+### NordVPN
+
+Catalog path: `plugins-available/vpn/nordvpn/plugin.sh`
+
+Actions map to `nordvpn status`, `nordvpn connect`, and `nordvpn disconnect`.
+
+### Proton VPN
+
+Catalog path: `plugins-available/vpn/protonvpn/plugin.sh`
+
+Actions map to the current official Linux CLI commands `protonvpn status`,
+`protonvpn connect`, and `protonvpn disconnect`.
+
+### Mullvad VPN
+
+Catalog path: `plugins-available/vpn/mullvad/plugin.sh`
+
+Actions map to `mullvad status`, `mullvad connect`, and `mullvad disconnect`.
 
 ## VPN plugin contract
 

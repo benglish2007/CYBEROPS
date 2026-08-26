@@ -12,7 +12,8 @@ Usage:
   cyberops [OPTIONS]
   cyberops [OPTIONS] info
   cyberops [OPTIONS] vpn status [PLUGIN_ID]
-  cyberops [OPTIONS] plugins <list|validate> [CATEGORY]
+  cyberops [OPTIONS] plugins <list|validate|available> [CATEGORY]
+  cyberops [OPTIONS] plugins <install|uninstall> CATEGORY PLUGIN_ID
   cyberops [OPTIONS] docker status
 
 $ cyberops info

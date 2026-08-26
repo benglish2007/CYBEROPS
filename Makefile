@@ -14,7 +14,7 @@ LEGACY_ICON_PATH := $(DATADIR)/icons/hicolor/1024x1024/apps/cyberops.png
 INSTALL ?= install
 SED ?= sed
 VERSION ?=
-SHELL_SOURCES := cyberops.sh $(wildcard lib/*.sh) $(wildcard plugins/*/*/plugin.sh) $(wildcard packaging/*.sh) \
+SHELL_SOURCES := cyberops.sh $(wildcard lib/*.sh) $(wildcard plugins-available/*/*/plugin.sh) $(wildcard packaging/*.sh) \
 	packaging/cyberops.in $(wildcard tests/*.sh)
 
 .PHONY: check syntax quality test install install-deps full-install uninstall deb deb-inspect release-check release-preview release
@@ -60,13 +60,13 @@ install-deps:
 full-install: install-deps install
 
 install:
-	$(INSTALL) -d "$(DESTDIR)$(BINDIR)" "$(DESTDIR)$(CYBEROPS_DIR)/lib" "$(DESTDIR)$(CYBEROPS_DIR)/plugins"
+	$(INSTALL) -d "$(DESTDIR)$(BINDIR)" "$(DESTDIR)$(CYBEROPS_DIR)/lib" "$(DESTDIR)$(CYBEROPS_DIR)/plugins" "$(DESTDIR)$(CYBEROPS_DIR)/plugins-available"
 	$(INSTALL) -d "$(DESTDIR)$(APPLICATIONS_DIR)" "$(DESTDIR)$(PIXMAPS_DIR)" "$(DESTDIR)$(DOC_DIR)"
 	$(INSTALL) -m 755 cyberops.sh "$(DESTDIR)$(CYBEROPS_DIR)/cyberops.sh"
 	$(INSTALL) -m 644 lib/*.sh "$(DESTDIR)$(CYBEROPS_DIR)/lib/"
-	cp -R plugins/. "$(DESTDIR)$(CYBEROPS_DIR)/plugins/"
-	find "$(DESTDIR)$(CYBEROPS_DIR)/plugins" -type d -exec chmod 755 {} +
-	find "$(DESTDIR)$(CYBEROPS_DIR)/plugins" -type f -exec chmod 644 {} +
+	cp -R plugins-available/. "$(DESTDIR)$(CYBEROPS_DIR)/plugins-available/"
+	find "$(DESTDIR)$(CYBEROPS_DIR)/plugins-available" -type d -exec chmod 755 {} +
+	find "$(DESTDIR)$(CYBEROPS_DIR)/plugins-available" -type f -exec chmod 644 {} +
 	rm -f -- "$(DESTDIR)$(CYBEROPS_DIR)/lib/setup.sh"
 	$(INSTALL) -m 755 packaging/cyberops.in "$(DESTDIR)$(BINDIR)/cyberops"
 	$(SED) -i 's|@CYBEROPS_LAUNCHER@|$(CYBEROPS_DIR)/cyberops.sh|g' "$(DESTDIR)$(BINDIR)/cyberops"
@@ -96,5 +96,6 @@ uninstall:
 	rm -f -- "$(DESTDIR)$(DOC_DIR)/NEON-OVERDRIVE.md" "$(DESTDIR)$(DOC_DIR)/V3-READINESS.md"
 	rm -f -- "$(DESTDIR)$(CYBEROPS_DIR)/cyberops.sh" "$(DESTDIR)$(CYBEROPS_DIR)/lib/"*.sh
 	rm -rf -- "$(DESTDIR)$(CYBEROPS_DIR)/plugins"
+	rm -rf -- "$(DESTDIR)$(CYBEROPS_DIR)/plugins-available"
 	rmdir --ignore-fail-on-non-empty -- "$(DESTDIR)$(CYBEROPS_DIR)/lib" "$(DESTDIR)$(CYBEROPS_DIR)"
 	rmdir --ignore-fail-on-non-empty -- "$(DESTDIR)$(DOC_DIR)"

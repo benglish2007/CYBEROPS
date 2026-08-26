@@ -55,8 +55,8 @@ show_vpn_status() {
 
     if ((clients_found == 0)); then
         report_error \
-            "No supported VPN client is installed." \
-            "Install a VPN provider plugin dependency such as tailscale or expressvpnctl, then retry."
+            "No supported VPN provider is ready." \
+            "Run 'cyberops plugins available vpn', install a provider plugin and its client, then retry."
         return 1
     fi
     ((failures == 0))
@@ -128,6 +128,96 @@ vpn_plugin_menu() {
     done
 }
 
+vpn_plugin_install_menu() {
+    local choice=""
+    local descriptor
+    local plugin_id
+    local plugin_path
+    local index
+    local installed_ids
+    local -a plugin_ids=()
+
+    while true; do
+        plugin_ids=()
+        installed_ids=" "
+        while IFS= read -r descriptor; do
+            plugin_id="${descriptor#*:}"
+            plugin_id="${plugin_id%%:*}"
+            installed_ids+="$plugin_id "
+        done < <(discover_plugins vpn)
+
+        banner
+        ui_section "VPN PLUGIN INSTALL" "OPTIONAL PROVIDER CATALOG"
+        index=1
+        while IFS= read -r descriptor; do
+            plugin_id="${descriptor#*:}"
+            plugin_id="${plugin_id%%:*}"
+            [[ "$installed_ids" == *" $plugin_id "* ]] && continue
+            plugin_path="${descriptor#*:*:}"
+            load_plugin vpn "$plugin_path" >/dev/null || continue
+            menu_item "$index" "$CYBEROPS_PLUGIN_NAME" "VPN // INSTALL"
+            plugin_ids+=("$plugin_id")
+            ((index += 1))
+        done < <(discover_available_plugins vpn)
+        if ((${#plugin_ids[@]} == 0)); then
+            printf '  All available VPN plugins are installed.\n'
+        fi
+        menu_navigation_item 0 "Return to VPN control" "NAV // BACK"
+
+        prompt_choice choice "VPN INSTALL"
+        if [[ "$choice" == "0" ]]; then
+            return
+        fi
+        if integer_in_range "$choice" 1 "${#plugin_ids[@]}"; then
+            install_user_plugin vpn "${plugin_ids[$((10#$choice - 1))]}"
+            pause
+        else
+            invalid_selection
+        fi
+    done
+}
+
+vpn_plugin_uninstall_menu() {
+    local choice=""
+    local plugin_path
+    local plugin_id
+    local index
+    local -a plugin_ids=()
+
+    while true; do
+        plugin_ids=()
+        banner
+        ui_section "VPN PLUGIN UNINSTALL" "USER PROVIDERS // REMOVE"
+        index=1
+        if [[ -d "$CYBEROPS_USER_PLUGIN_DIR/vpn" ]]; then
+            while IFS= read -r plugin_path; do
+                [[ -n "$plugin_path" ]] || continue
+                validate_plugin vpn "$plugin_path" >/dev/null 2>&1 || continue
+                plugin_id="$CYBEROPS_PLUGIN_ID"
+                menu_item "$index" "$CYBEROPS_PLUGIN_NAME" "VPN // UNINSTALL"
+                plugin_ids+=("$plugin_id")
+                ((index += 1))
+            done < <(find "$CYBEROPS_USER_PLUGIN_DIR/vpn" \
+                -mindepth 2 -maxdepth 2 -name plugin.sh -type f | sort)
+        fi
+        if ((${#plugin_ids[@]} == 0)); then
+            printf '  No user-installed VPN plugins are available to remove.\n'
+        fi
+        menu_navigation_item 0 "Return to VPN control" "NAV // BACK"
+
+        prompt_choice choice "VPN UNINSTALL"
+        if [[ "$choice" == "0" ]]; then
+            return
+        fi
+        if integer_in_range "$choice" 1 "${#plugin_ids[@]}"; then
+            uninstall_user_plugin vpn "${plugin_ids[$((10#$choice - 1))]}"
+            pause
+        else
+            invalid_selection
+        fi
+    done
+}
+
 vpn_menu() {
     local choice=""
     local descriptor
@@ -135,6 +225,8 @@ vpn_menu() {
     local plugin_path
     local index
     local -a plugin_ids=()
+    local install_index
+    local uninstall_index
 
     while true; do
         plugin_ids=()
@@ -150,13 +242,22 @@ vpn_menu() {
             plugin_ids+=("$plugin_id")
             ((index += 1))
         done < <(discover_plugins vpn)
+        menu_item "$index" "Install VPN plugins" "VPN // PLUGIN CATALOG"
+        install_index="$index"
+        ((index += 1))
+        menu_item "$index" "Uninstall VPN plugins" "VPN // USER PLUGINS"
+        uninstall_index="$index"
         menu_navigation_item 0 "Return to control deck" "NAV // BACK"
 
         prompt_choice choice "VPN"
         if [[ "$choice" == "0" ]]; then
             return
         fi
-        if integer_in_range "$choice" 1 "${#plugin_ids[@]}"; then
+        if [[ "$choice" == "$install_index" ]]; then
+            vpn_plugin_install_menu
+        elif [[ "$choice" == "$uninstall_index" ]]; then
+            vpn_plugin_uninstall_menu
+        elif integer_in_range "$choice" 1 "${#plugin_ids[@]}"; then
             vpn_plugin_menu "${plugin_ids[$((10#$choice - 1))]}"
         else
             invalid_selection
