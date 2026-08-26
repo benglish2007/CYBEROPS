@@ -9,7 +9,8 @@ All notable changes to CYBEROPS are documented in this file.
 - Added the post-v3.0 stabilization, v3.0.1 patch-policy, proposed v3.1
   plugin-metadata milestone, and an exploratory idea backlog covering media
   sanitization, system triage, menu organization, web and agent interfaces,
-  and further cyberpunk presentation work.
+  and further cyberpunk presentation work. Clarified the long-term extensibility
+  and portability backlog and marked its existing policy decisions complete.
 
 ## 3.0 — 2026-08-26
 

@@ -420,15 +420,17 @@ experience, and verification plan are understood.
 - [ ] Preserve classic mode, no-color output, reduced-motion behavior, screen-reader-friendly text, narrow-terminal layouts, and noninteractive output stability.
 - [ ] Measure startup and redraw performance so visual effects never delay safety-critical feedback.
 
-## Deferred: Additional Portability
+## Long-Term Backlog: Extensibility and Portability
 
-The initial v3 plugin system is intentionally scoped to VPN provider plugins.
-Broader module marketplaces, remote plugin installation, signatures, and
-additional package-manager or distribution support remain future evaluations.
+The initial v3 plugin system remains intentionally scoped to VPN providers.
+Broader extensibility and portability work requires separate design, security,
+packaging, and verification decisions.
 
-- [ ] Reconsider broader plugin categories after the VPN contract proves stable.
-- [ ] Treat additional package-manager and distribution support as a separate future evaluation.
-- [ ] Claim portability only where CI can enforce the complete runtime and installer contract.
+- [ ] Evaluate a second plugin category after the v3 VPN contract completes stabilization.
+- [ ] Evaluate remote plugin distribution, provenance, signatures, and marketplace security.
+- [ ] Evaluate additional Linux distributions only with enforceable CI and packaging coverage.
+- [x] Separate portability expansion from the supported Ubuntu and Debian baseline.
+- [x] Limit portability claims to environments covered by automated compatibility checks.
 
 ## Release Gate
 
