@@ -2,7 +2,11 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
-## Unreleased
+## 3.0.1 — 2026-08-26
+
+Version 3.0.1 is a focused stabilization release for the Neon header frame. It
+also records the successful published-package, documentation, and five-provider
+VPN verification completed after v3.0.
 
 ### Project Planning
 

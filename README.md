@@ -3,7 +3,7 @@
   <h1>CYBEROPS TERMINAL</h1>
   <p><strong><code>NEON GRID // UNIFIED LINUX OPERATIONS CONSOLE</code></strong></p>
 
-  [![Release](https://img.shields.io/badge/RELEASE-v3.0-ff2d95?style=for-the-badge)](CHANGELOG.md)
+  [![Release](https://img.shields.io/badge/RELEASE-v3.0.1-ff2d95?style=for-the-badge)](CHANGELOG.md)
   [![Bash](https://img.shields.io/badge/SHELL-BASH_5+-00e5ff?style=for-the-badge&logo=gnubash&logoColor=050816)](cyberops.sh)
   [![Validate](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/benglish2007/CYBEROPS/actions/workflows/validate.yml)
   [![Platform](https://img.shields.io/badge/PLATFORM-UBUNTU_%2F_DEBIAN-8b5cf6?style=for-the-badge&logo=linux&logoColor=white)](COMPATIBILITY.md)
@@ -22,9 +22,9 @@
 
 ## `//` CURRENT BUILD
 
-### CYBEROPS Terminal v3.0
+### CYBEROPS Terminal v3.0.1
 
-Version 3.0 introduces the CYBEROPS plugin framework. VPN controls now run
+Version 3.0.1 stabilizes the CYBEROPS v3 plugin framework. VPN controls run
 through provider plugins. ExpressVPN, Mullvad VPN, NordVPN, Proton VPN, and
 Tailscale ship as optional catalog choices and activate only when a user
 installs one.
@@ -41,14 +41,14 @@ Choose the workflow that matches how you use CYBEROPS.
 
 ### Option 1: Normal installation
 
-New users should download `cyberops_3.0_all.deb` from the
+New users should download `cyberops_3.0.1_all.deb` from the
 [latest GitHub Release](https://github.com/benglish2007/CYBEROPS/releases/latest),
 then install it through APT so required dependencies are resolved:
 
 ```bash
 cd /tmp
-wget https://github.com/benglish2007/CYBEROPS/releases/download/v3.0/cyberops_3.0_all.deb
-sudo apt install ./cyberops_3.0_all.deb
+wget https://github.com/benglish2007/CYBEROPS/releases/download/v3.0.1/cyberops_3.0.1_all.deb
+sudo apt install ./cyberops_3.0.1_all.deb
 cyberops
 ```
 
@@ -90,7 +90,7 @@ current development package:
 ```bash
 make deb
 make deb-inspect
-sudo apt install ./dist/cyberops_3.0_all.deb
+sudo apt install ./dist/cyberops_3.0.1_all.deb
 hash -r
 cyberops --version
 ```
@@ -307,7 +307,7 @@ CYBEROPS is released under the [MIT License](LICENSE).
 
 <div align="center">
 
-  **`CYBEROPS TERMINAL v3.0 // LINK STANDBY`**
+  **`CYBEROPS TERMINAL v3.0.1 // LINK STANDBY`**
 
   *One terminal. One toolkit. Linux operations under control.*
 

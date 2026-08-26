@@ -26,7 +26,7 @@ record_result() {
 
 VERSION="$(sed -n 's/^VERSION="\([^"]*\)"$/\1/p' "$REPO_DIR/lib/runtime.sh")"
 version_output="$(bash "$LAUNCHER" --version)"
-record_result "version option prints the current release candidate" "$version_output" "CYBEROPS Terminal 3.0"
+record_result "version option prints the current release" "$version_output" "CYBEROPS Terminal 3.0.1"
 
 help_output="$(bash "$LAUNCHER" --help)"
 if [[ "$help_output" == *"Usage:"* && "$help_output" == *"--no-color"* &&
