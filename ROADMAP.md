@@ -2,7 +2,7 @@
 
 This document tracks proposed improvements discovered during the initial CYBEROPS v2 review. Items are grouped by priority so safety and reliability work lands before new features.
 
-Current release: **v3.0 — VPN plugin architecture candidate.**
+Current release: **v3.0 — VPN plugin architecture.**
 
 ## Milestone 1: Safety and Test Foundation
 
@@ -316,14 +316,21 @@ ExpressVPN integration verified against the current `expressvpnctl` interface.
 - [x] Remove stale experimental wording from the released Neon Overdrive configuration guide.
 - [x] Remove the clean, fully merged Neon Overdrive experiment worktree and local branch.
 - [x] Verify the complete GitHub Actions shell and five-distribution compatibility matrix.
-- [x] Add deterministic plugin discovery from built-in and user plugin roots.
-- [x] Move Tailscale and ExpressVPN VPN controls into built-in provider plugins.
+- [x] Add deterministic discovery for catalog, administrator-managed, and user plugins.
+- [x] Move Tailscale and ExpressVPN into the optional provider catalog and add Mullvad VPN, NordVPN, and Proton VPN.
 - [x] Add plugin list, validation, and provider-specific VPN status command channels.
 - [x] Add plugin documentation, VPN plugin authoring guidance, and package coverage.
-- [ ] Upgrade an installed v2 package to the v3 release candidate without uninstalling it.
-- [ ] Verify command, desktop, icon, configuration, and operation-log continuity after upgrade.
-- [ ] Run the documented v3 manual release-candidate checks on disposable targets.
-- [ ] Complete the real v2-to-v3 upgrade test, then tag and publish only after every gate passes.
+- [x] Upgrade an installed v2 package to the v3 release candidate without uninstalling it.
+- [x] Verify command, desktop, icon, configuration, and operation-log continuity after upgrade.
+- [x] Run the documented v3 manual release-candidate checks on disposable targets.
+- [x] Complete the real v2-to-v3 upgrade test and clear every gate for release.
+
+### v3.0 manual release-candidate verification — 2026-08-26
+
+- [x] Verified the in-place v2-to-v3 package upgrade.
+- [x] Verified command, desktop launcher, icon, configuration, plugin, and operation-log continuity.
+- [x] Exercised the documented interface, command, VPN plugin, and representative operational checks on disposable targets.
+- [x] Verified package removal clears managed files while preserving user-owned configuration, state, and plugins.
 
 See [docs/V3-READINESS.md](docs/V3-READINESS.md) for the contract and exact
 automated versus manual verification boundaries.
