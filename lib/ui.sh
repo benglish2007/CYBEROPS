@@ -443,6 +443,8 @@ render_overdrive_logo() {
 
 banner() {
     local width="${COLUMNS:-80}"
+    local system_status
+    local system_fill
 
     clear_screen
 
@@ -465,8 +467,13 @@ banner() {
     if [[ "$CYBEROPS_THEME" == "neon-overdrive" ]]; then
         printf '%b╔═[%b CYBEROPS // NIGHT CITY RELAY %b]═════════[%b THREATGRID: ONLINE %b]═╗%b\n' \
             "$MAGENTA" "$CYAN" "$MAGENTA" "$GREEN" "$MAGENTA" "$RESET"
-        printf '%b║%b  SYS://CYBEROPS  %bBUILD://%s%b  OPERATOR://LOCAL  TRUST://ZERO    %b║%b\n' \
-            "$MAGENTA" "$RESET" "$PURPLE" "$VERSION" "$RESET" "$MAGENTA" "$RESET"
+        system_status="  SYS://CYBEROPS  BUILD://$VERSION  OPERATOR://LOCAL  TRUST://ZERO"
+        system_fill=$((65 - ${#system_status}))
+        ((system_fill < 1)) && system_fill=1
+        printf '%b║%b  SYS://CYBEROPS  %bBUILD://%s%b  OPERATOR://LOCAL  TRUST://ZERO' \
+            "$MAGENTA" "$RESET" "$PURPLE" "$VERSION" "$RESET"
+        ui_repeat ' ' "$system_fill"
+        printf '%b║%b\n' "$MAGENTA" "$RESET"
         printf '%b╠═[%b NEURAL COMMAND FABRIC %b]═══════════════════════════════════════╣%b\n' \
             "$MAGENTA" "$ORANGE" "$MAGENTA" "$RESET"
     else
