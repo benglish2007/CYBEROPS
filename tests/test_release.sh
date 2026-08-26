@@ -54,8 +54,8 @@ else
 fi
 record_result "$metadata_test_name" "$metadata_status" "$expected_metadata_status"
 notes="$(extract_release_notes "$CURRENT_VERSION")"
-[[ "$notes" == *"Plugin Architecture"* &&
-    "$notes" != *"## 2.14.1"* ]]
+[[ "$notes" == *"### Interface"* &&
+    "$notes" != *"## 3.0 —"* ]]
 record_result "extracts only the prepared release notes" "$?" 0
 
 if grep -Fq 'release-check:' "$REPO_DIR/Makefile" &&
