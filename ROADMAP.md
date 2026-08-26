@@ -351,15 +351,19 @@ period; it should not introduce a new plugin contract.
 - [x] Confirm the GitHub Actions run associated with `v3.0` is green.
 - [x] Install the published `cyberops_3.0_all.deb` on a clean supported system.
 - [x] Verify the published download, installation, upgrade, and removal instructions exactly as written.
-- [ ] Smoke-test install, validate, status, uninstall, and catalog-return behavior for every packaged VPN plugin.
-- [ ] Live-test NordVPN, Proton VPN, and Mullvad VPN where provider accounts and clients are available.
-- [ ] Record any v3.0 defects and provider CLI compatibility findings before deciding whether v3.0.1 is needed.
+- [x] Smoke-test install, validate, status, uninstall, and catalog-return behavior for every packaged VPN plugin.
+- [x] Live-test NordVPN, Proton VPN, and Mullvad VPN where provider accounts and clients are available.
+- [x] Record v3.0 defects and provider CLI compatibility findings; publish v3.0.1 for the confirmed header alignment defect.
 
 ### v3.0 stabilization verification — 2026-08-26
 
 - [x] Installed the published Debian package on a clean supported system without issues.
 - [x] Verified the published operational guides work as written.
 - [x] Smoke-tested live ExpressVPN and Tailscale controls successfully.
+- [x] Smoke-tested NordVPN, Proton VPN, and Mullvad VPN successfully.
+- [x] Completed install, validation, status, uninstall, and catalog-return coverage across all five packaged providers.
+- [x] Found no provider CLI compatibility defects during stabilization.
+- [x] Confirmed v3.0.1 is needed to deliver the post-release Neon header alignment fix.
 
 ## Proposed Milestone 17: v3.1 Plugin Catalog Metadata
 

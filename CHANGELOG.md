@@ -12,7 +12,8 @@ All notable changes to CYBEROPS are documented in this file.
   and further cyberpunk presentation work. Clarified the long-term extensibility
   and portability backlog and marked its existing policy decisions complete.
 - Recorded successful clean-system package installation, published-guide
-  verification, and ExpressVPN and Tailscale stabilization smoke tests.
+  verification, and all-provider VPN stabilization tests. No provider CLI
+  compatibility defects were found.
 
 ### Interface
 
