@@ -60,9 +60,8 @@ current_menu="info"
 info_menu >/dev/null
 
 expected_rows=(
-    "admin:1:Update package lists"
-    "admin:2:Upgrade installed packages"
-    "admin:7:Reboot system"
+    "admin:1:Update and clean packages"
+    "admin:6:Reboot system"
     "vpn:2:Connect"
     "vpn:3:Disconnect"
     "security:1:UFW status"

@@ -2,6 +2,12 @@
 
 All notable changes to CYBEROPS are documented in this file.
 
+## 3.0.2 — 2026-11-20
+
+- Combined package updates, upgrades, and cleanup in one Admin Ops action.
+- Added Flatpak updates and unused runtime removal, plus Snap refreshes.
+- Renumbered the remaining Admin Ops menu entries.
+
 ## 3.0.1 — 2026-08-26
 
 Version 3.0.1 is a focused stabilization release for the Neon header frame. It

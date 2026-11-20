@@ -9,7 +9,7 @@
 # Return statuses:
 #   Menu functions contain operation failures and return control to their caller.
 # Side effects:
-#   May invoke confirmed APT upgrades and reboot commands.
+#   May refresh package metadata, upgrade packages, and reboot the system.
 #   Loading this module itself produces no output and performs no mutation.
 
 # ------------------------------------------------------------------------------
@@ -54,13 +54,12 @@ admin_menu() {
     while true; do
         banner
         ui_section "ADMIN OPS" "SYSTEM CONTROL // PACKAGES + SERVICES"
-        menu_privileged_item 1 "Update package lists" "APT // SYNC"
-        menu_privileged_item 2 "Upgrade installed packages" "APT // UPGRADE"
-        menu_item 3 "Disk usage" "STORAGE // TELEMETRY"
-        menu_item 4 "Memory usage" "MEMORY // TELEMETRY"
-        menu_item 5 "Active systemd services" "SERVICES // ACTIVE"
-        menu_item 6 "Failed systemd services" "SERVICES // FAILED"
-        menu_privileged_item 7 "Reboot system" "POWER // RESTART"
+        menu_privileged_item 1 "Update and clean packages" "APT + FLATPAK + SNAP // MAINTENANCE"
+        menu_item 2 "Disk usage" "STORAGE // TELEMETRY"
+        menu_item 3 "Memory usage" "MEMORY // TELEMETRY"
+        menu_item 4 "Active systemd services" "SERVICES // ACTIVE"
+        menu_item 5 "Failed systemd services" "SERVICES // FAILED"
+        menu_privileged_item 6 "Reboot system" "POWER // RESTART"
         menu_navigation_item 0 "Return to control deck" "NAV // BACK"
 
         prompt_choice choice "ADMIN"
@@ -68,44 +67,53 @@ admin_menu() {
         case "$choice" in
             1)
                 if require_commands sudo apt; then
-                    run_mutating_checked \
-                        "Package-list update" \
+                    if run_mutating_checked "APT package-list update" \
                         "Check network connectivity and APT repository configuration, then retry." \
-                        sudo apt update
+                        sudo apt update &&
+                        run_mutating_checked "APT upgrade" \
+                            "Review the APT error above, resolve held or conflicting packages, then retry." \
+                            sudo apt upgrade -y; then
+                        run_mutating_checked "APT unused package removal" \
+                            "Review the APT error above, then retry." \
+                            sudo apt autoremove -y
+                        run_mutating_checked "APT cache cleanup" \
+                            "Review the APT error above, then retry." \
+                            sudo apt autoclean -y
+                    fi
+                fi
+                if command -v flatpak >/dev/null 2>&1; then
+                    if run_mutating_checked "Flatpak upgrade" \
+                        "Check Flatpak remotes and network connectivity, then retry." \
+                        flatpak update -y; then
+                        run_mutating_checked "Flatpak unused runtime removal" \
+                            "Review the Flatpak error above, then retry." \
+                            flatpak uninstall --unused -y
+                    fi
+                fi
+                if command -v snap >/dev/null 2>&1 && require_commands sudo; then
+                    run_mutating_checked "Snap refresh" \
+                        "Check snapd, sudo authorization, and network connectivity, then retry." \
+                        sudo snap refresh
                 fi
                 pause
                 ;;
             2)
-                if require_commands sudo apt; then
-                    if run_mutating_checked \
-                        "Package-list update" \
-                        "Check network connectivity and APT repository configuration, then retry." \
-                        sudo apt update; then
-                        run_mutating_checked \
-                            "Package upgrade" \
-                            "Review the APT error above, resolve held or conflicting packages, then retry." \
-                            sudo apt upgrade -y
-                    fi
-                fi
-                pause
-                ;;
-            3)
                 show_local_disk_usage
                 pause
                 ;;
-            4)
+            3)
                 show_memory_usage
                 pause
                 ;;
-            5)
+            4)
                 show_running_services
                 pause
                 ;;
-            6)
+            5)
                 show_failed_services
                 pause
                 ;;
-            7)
+            6)
                 printf '%bSystem reboot requested.%b\n' "$YELLOW" "$RESET"
                 if require_commands sudo reboot && confirm_yes "Type YES to reboot: "; then
                     run_mutating_checked \

@@ -45,7 +45,7 @@ record_result "local disk usage query succeeds through checked execution" "$quer
 record_result "local disk usage excludes remote filesystems" "$checked_command" "df -lhT"
 
 mutating_commands=()
-choices=(2 0)
+choices=(1 0)
 choice_index=0
 banner() { :; }
 ui_section() { :; }
@@ -54,6 +54,12 @@ menu_privileged_item() { :; }
 menu_navigation_item() { :; }
 pause() { :; }
 require_commands() { return 0; }
+command() {
+    if [[ "$1" == -v && ("$2" == flatpak || "$2" == snap) ]]; then
+        return 0
+    fi
+    builtin command "$@"
+}
 prompt_choice() {
     local -n destination="$1"
     destination="${choices[choice_index]}"
@@ -63,10 +69,9 @@ run_mutating_checked() {
     shift 2
     mutating_commands+=("$*")
 }
-
 admin_menu >/dev/null
-record_result "package upgrade accepts APT confirmation automatically" \
-    "${mutating_commands[*]}" "sudo apt update sudo apt upgrade -y"
+record_result "package maintenance updates and cleans all available managers" \
+    "${mutating_commands[*]}" "sudo apt update sudo apt upgrade -y sudo apt autoremove -y sudo apt autoclean -y flatpak update -y flatpak uninstall --unused -y sudo snap refresh"
 
 printf '1..%d\n' "$tests_run"
 
